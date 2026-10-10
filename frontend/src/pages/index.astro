@@ -1,199 +1,337 @@
 ---
-const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
+import Layout from '../layouts/Layout.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>BUST — Minimal Setup</title>
-		<style>
-			:root {
-				--bg: #0f172a;
-				--card-bg: #1e293b;
-				--text: #f8fafc;
-				--text-muted: #94a3b8;
-				--primary: #3b82f6;
-				--primary-hover: #2563eb;
-				--border: #334155;
-				--success: #10b981;
-				--error: #ef4444;
-			}
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
-			body {
-				font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-				background-color: var(--bg);
-				color: var(--text);
-				padding: 2rem;
-				display: flex;
-				justify-content: center;
-				min-height: 100vh;
-			}
-			.container {
-				width: 100%;
-				max-width: 680px;
-			}
-			header {
-				margin-bottom: 2rem;
-			}
-			h1 {
-				font-size: 2rem;
-				font-weight: 700;
-				letter-spacing: -0.025em;
-			}
-			.subtitle {
-				color: var(--text-muted);
-				margin-top: 0.5rem;
-				font-size: 0.95rem;
-			}
-			.card {
-				background: var(--card-bg);
-				border: 1px solid var(--border);
-				border-radius: 0.75rem;
-				padding: 1.5rem;
-				margin-bottom: 1.5rem;
-			}
-			.info-row {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				padding-bottom: 1rem;
-				margin-bottom: 1rem;
-				border-bottom: 1px solid var(--border);
-				font-size: 0.875rem;
-			}
-			.badge {
-				background: #0284c7;
-				padding: 0.2rem 0.6rem;
-				border-radius: 9999px;
-				font-size: 0.75rem;
-				font-weight: 600;
-			}
-			.btn-group {
-				display: flex;
-				gap: 0.75rem;
-				margin-bottom: 1rem;
-			}
-			button {
-				background-color: var(--primary);
-				color: white;
-				border: none;
-				border-radius: 0.5rem;
-				padding: 0.625rem 1.25rem;
-				font-size: 0.875rem;
-				font-weight: 600;
-				cursor: pointer;
-				transition: background-color 0.15s ease;
-			}
-			button:hover {
-				background-color: var(--primary-hover);
-			}
-			button:disabled {
-				opacity: 0.6;
-				cursor: not-allowed;
-			}
-			.btn-secondary {
-				background-color: #334155;
-			}
-			.btn-secondary:hover {
-				background-color: #475569;
-			}
-			.output-box {
-				background-color: #0b1120;
-				border: 1px solid var(--border);
-				border-radius: 0.5rem;
-				padding: 1rem;
-				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-				font-size: 0.875rem;
-				color: #e2e8f0;
-				white-space: pre-wrap;
-				word-break: break-all;
-				min-height: 80px;
-			}
-			.status {
-				margin-bottom: 0.5rem;
-				font-size: 0.8rem;
-				font-weight: 600;
-			}
-			.status.success { color: var(--success); }
-			.status.error { color: var(--error); }
-			.status.loading { color: #f59e0b; }
-		</style>
-	</head>
-	<body>
-		<main class="container">
-			<header>
-				<h1>BUST — Minimal Setup</h1>
-				<p class="subtitle">Astro + FastAPI + LiteLLM + NeatLogs</p>
-			</header>
+<Layout title="Deal Command Director" description="Command-Driven Sales Planning & Execution Center">
+	<div class="space-y-6 w-full">
+		<!-- Standardized Header Toolbar -->
+		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
+			<div>
+				<div class="flex items-center gap-2.5">
+					<h1 class="text-xl font-bold tracking-tight text-base-content">Deal Command Director</h1>
+					<span class="badge badge-sm badge-neutral font-semibold">Directives Active</span>
+					<span class="badge badge-sm badge-success font-semibold">ACME Corp ($150k ARR)</span>
+				</div>
+				<p class="text-xs text-base-content/85 mt-1 font-medium">
+					Command-driven sales execution: direct collateral generation, roadmaps, and closing assets via structured directives.
+				</p>
+			</div>
+			<!-- Consistent Top-Right Action Buttons -->
+			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+				<button id="btn-toggle-reasoning" type="button" class="btn btn-sm btn-outline gap-1.5 font-medium">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+					<span id="reasoning-toggle-text">Show Agent Reasoning & Steps</span>
+				</button>
+				<button id="btn-execute-command" type="button" class="btn btn-sm btn-neutral gap-1.5 font-bold shadow-sm">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+					<span id="exec-btn-text">Execute Directive</span>
+				</button>
+			</div>
+		</div>
 
-			<section class="card">
-				<div class="info-row">
-					<span>FastAPI Backend URL:</span>
-					<span id="api-url-display" class="badge">{apiUrl}</span>
+		<!-- EXECUTIVE COMMAND DIRECTOR CONSOLE -->
+		<section class="card bg-base-200 border-2 border-base-300 shadow-md w-full">
+			<div class="card-body p-6 space-y-4">
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-base-300 pb-3">
+					<div>
+						<h2 class="text-xs font-bold text-base-content uppercase tracking-wider flex items-center gap-2">
+							<span class="w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
+							Executive Command Console
+						</h2>
+						<p class="text-xs text-base-content/80 mt-0.5 font-medium">
+							Type a deal directive or select a quick-action command below to orchestrate collateral.
+						</p>
+					</div>
+					<div class="flex items-center gap-2">
+						<span id="command-status-badge" class="text-xs font-semibold text-base-content/80 bg-base-100 px-3 py-1 rounded-full border border-base-300">
+							Command Console Ready
+						</span>
+					</div>
 				</div>
 
-				<div class="btn-group">
-					<button id="btn-health" class="btn-secondary" type="button">Check /health</button>
-					<button id="btn-test-llm" type="button">Test LLM (/api/test-llm)</button>
+				<!-- Command Bar Input -->
+				<div class="relative">
+					<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-base-content/50 font-mono font-bold text-sm">
+						&gt;
+					</div>
+					<input
+						id="command-input"
+						type="text"
+						class="input input-bordered w-full pl-8 bg-base-100 text-xs font-mono font-semibold text-base-content border-2 border-base-300 focus:border-primary focus:outline-none rounded-xl"
+						value="/dispatch-all --account 'ACME Corp' --arr '$150k' --competitor 'LegacyVendor'"
+					/>
 				</div>
 
-				<div id="status-label" class="status"></div>
-				<pre id="output-box" class="output-box">Click "Check /health" or "Test LLM" to initiate a request.</pre>
-			</section>
-		</main>
+				<!-- Fast Executable Command Chips -->
+				<div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+					<span class="text-[11px] font-bold uppercase tracking-wider text-base-content/60 mr-1">Directives:</span>
+					<button class="command-chip btn btn-xs btn-neutral" data-cmd="/dispatch-all --account 'ACME Corp' --arr '$150k' --competitor 'LegacyVendor'">
+						⚡ /dispatch-all
+					</button>
+					<button class="command-chip btn btn-xs btn-outline" data-cmd="/battlecards --account 'ACME Corp' --competitor 'LegacyVendor'">
+						🎴 /battlecards
+					</button>
+					<button class="command-chip btn btn-xs btn-outline" data-cmd="/map --account 'ACME Corp' --target-date 'Oct 28'">
+						🗺️ /map
+					</button>
+					<button class="command-chip btn btn-xs btn-outline" data-cmd="/email --to 'Sarah Jenkins' --stage 'Proposal'">
+						✉️ /email
+					</button>
+					<button class="command-chip btn btn-xs btn-outline" data-cmd="/deck --slides 4 --theme 'Executive'">
+						📽️ /deck
+					</button>
+					<button class="command-chip btn btn-xs btn-outline" data-cmd="/suite --room 1001 --guest 'Sarah Jenkins'">
+						🏨 /suite
+					</button>
+				</div>
+			</div>
+		</section>
 
-		<script define:vars={{ apiUrl }}>
-			const healthBtn = document.getElementById('btn-health');
-			const testLlmBtn = document.getElementById('btn-test-llm');
-			const outputBox = document.getElementById('output-box');
-			const statusLabel = document.getElementById('status-label');
+		<!-- Agent Reasoning & Plan Steps (Hidden by default, shown on demand) -->
+		<section id="agent-reasoning-panel" class="hidden card bg-base-100 border-2 border-base-300 shadow-md w-full">
+			<div class="card-body p-6 space-y-4">
+				<div class="flex items-center justify-between border-b border-base-200 pb-3">
+					<div>
+						<h3 class="font-bold text-sm text-base-content">Agent Execution Plan & Directive Steps</h3>
+						<p class="text-xs text-base-content/70">Topological breakdown of active deal directives</p>
+					</div>
+					<span id="reasoning-status-badge" class="badge badge-xs badge-neutral">Standby</span>
+				</div>
 
-			function setStatus(text, type) {
-				statusLabel.textContent = text;
-				statusLabel.className = 'status ' + type;
+				<!-- Step Breakdown Cards -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+					<div class="p-4 bg-base-200/90 rounded-xl border border-base-300 space-y-1">
+						<div class="font-bold text-base-content">1. Directive Parse & Context</div>
+						<p class="text-[11px] text-base-content/80">
+							Extracts account size ($150k ARR), incumbent (LegacyVendor), and target sponsor (Sarah Jenkins).
+						</p>
+					</div>
+					<div class="p-4 bg-base-200/90 rounded-xl border border-base-300 space-y-1">
+						<div class="font-bold text-base-content">2. Concurrent Tool Dispatch</div>
+						<p class="text-[11px] text-base-content/80">
+							Triggers parallel generators: Objection Battlecards, MAP closing roadmap, and cfo.ai financial model.
+						</p>
+					</div>
+					<div class="p-4 bg-base-200/90 rounded-xl border border-base-300 space-y-1">
+						<div class="font-bold text-base-content">3. Output Validation</div>
+						<p class="text-[11px] text-base-content/80">
+							Validates complete deliverable suite against enterprise schema and confirms alignment.
+						</p>
+					</div>
+				</div>
+
+				<!-- Execution Trace Log -->
+				<div class="space-y-1.5 pt-1">
+					<span class="text-xs font-bold text-base-content/80">Directive Execution Log:</span>
+					<pre id="agent-trace-log" class="p-4 rounded-xl bg-base-200 border border-base-300 font-mono text-xs overflow-x-auto whitespace-pre-wrap min-h-16 text-base-content font-semibold">Click "Execute Directive" to observe real-time agent execution steps.</pre>
+				</div>
+			</div>
+		</section>
+
+		<!-- Active Deliverables Suite (Self-Contained Content, No Outbound Links) -->
+		<section id="deliverables-preview-panel" class="space-y-4 w-full">
+			<div class="flex items-center justify-between">
+				<h3 class="text-xs font-bold uppercase tracking-wider text-base-content/70">
+					Active Deliverables Portfolio
+				</h3>
+				<span class="text-xs font-semibold text-base-content/80 bg-base-200 px-2.5 py-0.5 rounded-full border border-base-300">
+					4 Modules Synced
+				</span>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+				
+				<!-- Deliverable 1: Battlecards Module -->
+				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
+					<div class="flex items-center justify-between border-b border-base-200 pb-3">
+						<div class="flex items-center gap-2">
+							<span class="font-bold text-sm text-base-content">Objection Battlecards</span>
+							<span class="badge badge-xs badge-neutral font-semibold">4 Cards</span>
+						</div>
+						<span class="badge badge-xs badge-success font-semibold">Active Deck</span>
+					</div>
+					<div class="space-y-2">
+						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Top Objection:</span>
+						<p class="text-sm font-bold text-base-content">
+							"Your quote is 20% higher than our renewal price from LegacyVendor."
+						</p>
+					</div>
+					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
+						<span class="font-bold text-base-content">Winning Response:</span>
+						<p class="text-xs text-base-content/90 font-medium" id="preview-battlecard-text">
+							"Pivot to TCO. Highlight $80k/yr labor savings by eliminating LegacyVendor's manual data maintenance."
+						</p>
+					</div>
+					<div class="flex gap-2 text-[11px] pt-1">
+						<span class="badge badge-xs badge-outline">TCO Comparison</span>
+						<span class="badge badge-xs badge-outline">$80k Net Savings</span>
+					</div>
+				</div>
+
+				<!-- Deliverable 2: Mutual Action Plan Module -->
+				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
+					<div class="flex items-center justify-between border-b border-base-200 pb-3">
+						<div class="flex items-center gap-2">
+							<span class="font-bold text-sm text-base-content">Mutual Action Plan (MAP)</span>
+							<span class="badge badge-xs badge-warning font-semibold">Stage 3 / 6</span>
+						</div>
+						<span class="text-xs font-mono font-semibold text-base-content/70">Target: Oct 28 Close</span>
+					</div>
+					<div class="space-y-1">
+						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Current Milestone:</span>
+						<div class="font-bold text-sm text-base-content">Security & Compliance Review</div>
+						<p class="text-xs text-base-content/75 font-medium">InfoSec review of SOC2 Type II compliance and dedicated cloud isolation.</p>
+					</div>
+					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
+						<div class="flex justify-between">
+							<span class="font-bold text-base-content">Next Milestone:</span>
+							<span class="font-mono text-warning font-bold">This Thursday, 5:00 PM</span>
+						</div>
+						<p class="text-xs text-base-content/80 font-medium">Legal MSA review & CFO budget sign-off.</p>
+					</div>
+					<div class="flex gap-2 text-[11px] pt-1">
+						<span class="badge badge-xs badge-outline">Stage 01-02 Done</span>
+						<span class="badge badge-xs badge-outline">Stage 03 Active</span>
+					</div>
+				</div>
+
+				<!-- Deliverable 3: Follow-Up Email Module -->
+				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
+					<div class="flex items-center justify-between border-b border-base-200 pb-3">
+						<div class="flex items-center gap-2">
+							<span class="font-bold text-sm text-base-content">Executive Proposal Email</span>
+							<span class="badge badge-xs badge-neutral font-semibold">VP Sales Ops</span>
+						</div>
+						<span class="badge badge-xs badge-success font-semibold">Draft Ready</span>
+					</div>
+					<div class="space-y-1">
+						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Target Recipient:</span>
+						<div class="font-bold text-xs text-base-content">sarah.jenkins@acmecorp.com (VP Sales Ops)</div>
+					</div>
+					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
+						<span class="font-bold text-base-content">Subject Line:</span>
+						<p class="text-xs text-base-content/90 font-medium" id="preview-email-subject">
+							Executive Summary & Next Steps — BUST x ACME Corp Partnership
+						</p>
+					</div>
+					<div class="flex gap-2 text-[11px] pt-1">
+						<span class="badge badge-xs badge-outline">Executive Tone</span>
+						<span class="badge badge-xs badge-outline">138 Words</span>
+					</div>
+				</div>
+
+				<!-- Deliverable 4: Pitch Deck Module -->
+				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
+					<div class="flex items-center justify-between border-b border-base-200 pb-3">
+						<div class="flex items-center gap-2">
+							<span class="font-bold text-sm text-base-content">Pitch & ROI Presentation</span>
+							<span class="badge badge-xs badge-neutral font-semibold">4 Slides</span>
+						</div>
+						<span class="badge badge-xs badge-success font-semibold">16:9 Deck Ready</span>
+					</div>
+					<div class="space-y-1">
+						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Executive Deck Core ROI:</span>
+						<div class="font-bold text-sm text-base-content">&lt; 60 Days Payback Horizon</div>
+						<p class="text-xs text-base-content/75 font-medium">Closing 1 extra enterprise deal pays for the $120k annual license.</p>
+					</div>
+					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
+						<span class="font-bold text-base-content">Deck Architecture:</span>
+						<p class="text-xs text-base-content/80 font-medium">
+							1. Executive Framing • 2. Status Quo • 3. Agentic Solution • 4. Commercial Terms
+						</p>
+					</div>
+					<div class="flex gap-2 text-[11px] pt-1">
+						<span class="badge badge-xs badge-outline">PowerPoint (.pptx)</span>
+						<span class="badge badge-xs badge-outline">Speaker Notes Attached</span>
+					</div>
+				</div>
+
+			</div>
+		</section>
+	</div>
+
+	<script>
+		const executeBtn = document.getElementById('btn-execute-command');
+		const execBtnText = document.getElementById('exec-btn-text');
+		const toggleReasoningBtn = document.getElementById('btn-toggle-reasoning');
+		const reasoningToggleText = document.getElementById('reasoning-toggle-text');
+		const reasoningPanel = document.getElementById('agent-reasoning-panel');
+		const commandInput = document.getElementById('command-input') as HTMLInputElement;
+		const traceLog = document.getElementById('agent-trace-log');
+		const statusIndicator = document.getElementById('command-status-badge');
+		const reasoningBadge = document.getElementById('reasoning-status-badge');
+		const chips = document.querySelectorAll('.command-chip');
+
+		// Command chips selection
+		chips.forEach((chip) => {
+			chip.addEventListener('click', () => {
+				const cmd = chip.getAttribute('data-cmd');
+				if (cmd && commandInput) {
+					commandInput.value = cmd;
+				}
+				chips.forEach((c) => {
+					c.classList.remove('btn-neutral');
+					c.classList.add('btn-outline');
+				});
+				chip.classList.add('btn-neutral');
+				chip.classList.remove('btn-outline');
+			});
+		});
+
+		// Toggle Agent Reasoning View
+		let isReasoningVisible = false;
+		toggleReasoningBtn?.addEventListener('click', () => {
+			isReasoningVisible = !isReasoningVisible;
+			if (reasoningPanel) {
+				reasoningPanel.classList.toggle('hidden', !isReasoningVisible);
+			}
+			if (reasoningToggleText) {
+				reasoningToggleText.textContent = isReasoningVisible
+					? 'Hide Agent Reasoning & Steps'
+					: 'Show Agent Reasoning & Steps';
+			}
+		});
+
+		// Execute Directive
+		executeBtn?.addEventListener('click', async () => {
+			const command = (commandInput?.value || '').trim();
+			if (!command) return;
+
+			if (executeBtn) (executeBtn as HTMLButtonElement).disabled = true;
+			if (execBtnText) execBtnText.textContent = 'Executing Directive...';
+			if (statusIndicator) statusIndicator.textContent = 'Directive Executing...';
+			if (reasoningBadge) reasoningBadge.textContent = 'Active Execution';
+			if (traceLog) {
+				traceLog.textContent = `[1/3] Parsing directive: ${command}...\n[2/3] Dispatching parallel generators (Battlecards, MAP, Email, Deck)...\n[3/3] Validating outputs...`;
 			}
 
-			healthBtn.addEventListener('click', async () => {
-				setStatus('Checking backend health...', 'loading');
-				outputBox.textContent = 'Calling ' + apiUrl + '/health ...';
-				try {
-					const res = await fetch(`${apiUrl}/health`);
-					const data = await res.json();
-					setStatus(`Health Check: HTTP ${res.status}`, res.ok ? 'success' : 'error');
-					outputBox.textContent = JSON.stringify(data, null, 2);
-				} catch (err) {
-					setStatus('Failed to connect to backend', 'error');
-					outputBox.textContent = `Error: ${err.message}\nEnsure FastAPI is running at ${apiUrl}`;
-				}
-			});
+			try {
+				const start = performance.now();
+				const res = await fetch('/api/test-llm', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ prompt: `Execute deal directive: ${command}` }),
+				});
+				const data = await res.json();
+				const duration = Math.round(performance.now() - start);
 
-			testLlmBtn.addEventListener('click', async () => {
-				setStatus('Sending LLM request...', 'loading');
-				outputBox.textContent = 'Calling ' + apiUrl + '/api/test-llm ...';
-				testLlmBtn.disabled = true;
-				try {
-					const res = await fetch(`${apiUrl}/api/test-llm`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ prompt: 'Say hello in one short sentence.' }),
-					});
-					const data = await res.json();
-					setStatus(`LLM Request: HTTP ${res.status}`, res.ok ? 'success' : 'error');
-					outputBox.textContent = JSON.stringify(data, null, 2);
-				} catch (err) {
-					setStatus('Error during request', 'error');
-					outputBox.textContent = `Error: ${err.message}\nEnsure backend is running at ${apiUrl}`;
-				} finally {
-					testLlmBtn.disabled = false;
+				if (res.ok) {
+					if (statusIndicator) statusIndicator.textContent = `Completed in ${duration}ms`;
+					if (reasoningBadge) reasoningBadge.textContent = 'Success';
+					if (traceLog) {
+						traceLog.textContent = `Directive completed successfully in ${duration}ms.\nDirective: ${command}\nModel: ${data.model}\nResponse: ${data.response}`;
+					}
+				} else {
+					if (statusIndicator) statusIndicator.textContent = 'Directive Error';
+					if (reasoningBadge) reasoningBadge.textContent = 'Error';
 				}
-			});
-		</script>
-	</body>
-</html>
+			} catch (err: any) {
+				if (statusIndicator) statusIndicator.textContent = 'Connection Error';
+				if (traceLog) traceLog.textContent = `Network error: ${err.message}`;
+			} finally {
+				if (executeBtn) (executeBtn as HTMLButtonElement).disabled = false;
+				if (execBtnText) execBtnText.textContent = 'Execute Directive';
+			}
+		});
+	</script>
+</Layout>

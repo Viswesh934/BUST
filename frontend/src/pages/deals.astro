@@ -1,0 +1,291 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Buyer Deal Rooms" description="Luxury Hotel Deal Suites & Digital Keycard Access">
+	<div class="space-y-6 w-full">
+		<!-- Standardized Header Toolbar -->
+		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
+			<div>
+				<div class="flex items-center gap-2.5">
+					<h1 class="text-xl font-bold tracking-tight text-base-content">Buyer Deal Suites & Hotel Rooms</h1>
+					<span class="badge badge-sm badge-neutral font-semibold">3 Occupied Suites</span>
+					<span class="badge badge-sm badge-success font-semibold">Digital Keycards Active</span>
+				</div>
+				<p class="text-xs text-base-content/85 mt-1 font-medium">
+					Exclusive private deal suites: generate encrypted digital keycards for prospective buyer champions and executives.
+				</p>
+			</div>
+			<!-- Consistent Top-Right Action Buttons -->
+			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+				<button id="btn-inspect-keycard" type="button" class="btn btn-sm btn-outline gap-1.5 font-medium">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+					<span>Inspect Digital Keycard</span>
+				</button>
+				<button id="btn-reserve-suite" type="button" class="btn btn-sm btn-neutral gap-1.5 font-bold shadow-sm">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+					<span>Reserve Deal Suite</span>
+				</button>
+			</div>
+		</div>
+
+		<!-- Hotel Concierge Directory Cards (Rooms styled like Luxury Suites) -->
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+			
+			<!-- ROOM 1: PENTHOUSE SUITE 1001 (ACME Corp) -->
+			<div class="card bg-base-100 border-2 border-primary/40 shadow-md overflow-hidden flex flex-col justify-between transition-all hover:shadow-lg">
+				<!-- Suite Door Header -->
+				<div class="p-5 bg-base-200 border-b border-base-300 flex items-center justify-between">
+					<div class="flex items-center gap-2.5">
+						<span class="w-8 h-8 rounded-lg bg-base-300 flex items-center justify-center font-bold text-sm text-base-content">
+							🏨
+						</span>
+						<div>
+							<div class="text-[11px] font-mono uppercase tracking-wider text-base-content/60 font-bold">Suite 1001 • Penthouse</div>
+							<h3 class="font-extrabold text-base text-base-content">ACME Corp</h3>
+						</div>
+					</div>
+					<span class="badge badge-xs badge-success font-bold">Occupied</span>
+				</div>
+
+				<!-- Suite Details -->
+				<div class="p-5 space-y-4 flex-1">
+					<!-- Hotel Keycard Badge -->
+					<div class="p-3.5 rounded-xl bg-base-200/80 border border-base-300 space-y-1">
+						<div class="flex items-center justify-between text-xs">
+							<span class="font-bold text-base-content flex items-center gap-1.5">
+								🔑 Digital Keycard
+							</span>
+							<span class="font-mono text-[11px] text-base-content/70">#ACME-8F2</span>
+						</div>
+						<p class="text-[11px] text-base-content/75 font-medium">Encrypted guest URL for executive board members</p>
+					</div>
+
+					<!-- Guest & Stay Metadata -->
+					<div class="space-y-1.5 text-xs">
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Registered Guest:</span>
+							<strong class="text-base-content">Sarah Jenkins (VP Sales Ops)</strong>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Contract ARR:</span>
+							<span class="font-mono font-bold text-base-content">$150,000 / year</span>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Target Check-out:</span>
+							<span class="font-mono text-base-content/80">Oct 28, 2026</span>
+						</div>
+					</div>
+
+					<!-- Room Deliverables / Amenities -->
+					<div class="space-y-1.5 pt-1">
+						<span class="text-[11px] font-bold uppercase tracking-wider text-base-content/60">Suite Deliverables:</span>
+						<div class="flex flex-wrap gap-1 text-[11px]">
+							<span class="badge badge-xs badge-neutral">Objection Cards</span>
+							<span class="badge badge-xs badge-neutral">6-Stage MAP</span>
+							<span class="badge badge-xs badge-neutral">Proposal Email</span>
+							<span class="badge badge-xs badge-neutral">ROI Deck</span>
+						</div>
+					</div>
+
+					<!-- Door Hanger / Status -->
+					<div class="p-2.5 rounded-lg bg-warning/10 border border-warning/30 flex items-center gap-2 text-xs">
+						<span>🚪</span>
+						<span class="text-warning font-semibold text-[11px]">Door Sign: Do Not Disturb — Active InfoSec Audit</span>
+					</div>
+				</div>
+
+				<!-- Suite Keycard Action Footer -->
+				<div class="p-4 bg-base-200/50 border-t border-base-300 flex items-center justify-between">
+					<span class="text-[11px] text-base-content/60">Master key issued</span>
+					<button class="btn btn-xs btn-neutral copy-keycard-btn font-semibold" data-key="https://bust.workspace/suite/acme-corp-1001">
+						Copy Guest Keycard
+					</button>
+				</div>
+			</div>
+
+			<!-- ROOM 2: CORNER SUITE 402 (Delta Logistics) -->
+			<div class="card bg-base-100 border-2 border-base-300 shadow-md overflow-hidden flex flex-col justify-between transition-all hover:shadow-lg">
+				<div class="p-5 bg-base-200 border-b border-base-300 flex items-center justify-between">
+					<div class="flex items-center gap-2.5">
+						<span class="w-8 h-8 rounded-lg bg-base-300 flex items-center justify-center font-bold text-sm text-base-content">
+							🏨
+						</span>
+						<div>
+							<div class="text-[11px] font-mono uppercase tracking-wider text-base-content/60 font-bold">Suite 402 • Executive Corner</div>
+							<h3 class="font-extrabold text-base text-base-content">Delta Logistics</h3>
+						</div>
+					</div>
+					<span class="badge badge-xs badge-neutral font-bold">Turn-Down Service</span>
+				</div>
+
+				<div class="p-5 space-y-4 flex-1">
+					<div class="p-3.5 rounded-xl bg-base-200/80 border border-base-300 space-y-1">
+						<div class="flex items-center justify-between text-xs">
+							<span class="font-bold text-base-content flex items-center gap-1.5">
+								🔑 Digital Keycard
+							</span>
+							<span class="font-mono text-[11px] text-base-content/70">#DELTA-4B9</span>
+						</div>
+						<p class="text-[11px] text-base-content/75 font-medium">Internal review link before buyer presentation</p>
+					</div>
+
+					<div class="space-y-1.5 text-xs">
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Registered Guest:</span>
+							<strong class="text-base-content">Marcus Vance (Revenue Lead)</strong>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Contract ARR:</span>
+							<span class="font-mono font-bold text-base-content">$220,000 / year</span>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Target Check-out:</span>
+							<span class="font-mono text-base-content/80">Nov 15, 2026</span>
+						</div>
+					</div>
+
+					<div class="space-y-1.5 pt-1">
+						<span class="text-[11px] font-bold uppercase tracking-wider text-base-content/60">Suite Deliverables:</span>
+						<div class="flex flex-wrap gap-1 text-[11px]">
+							<span class="badge badge-xs badge-outline">Battlecards</span>
+							<span class="badge badge-xs badge-outline">Closing MAP</span>
+						</div>
+					</div>
+
+					<div class="p-2.5 rounded-lg bg-base-200 border border-base-300 flex items-center gap-2 text-xs">
+						<span>🚪</span>
+						<span class="text-base-content/70 text-[11px]">Door Sign: Housekeeping — Drafting in Progress</span>
+					</div>
+				</div>
+
+				<div class="p-4 bg-base-200/50 border-t border-base-300 flex items-center justify-between">
+					<span class="text-[11px] text-base-content/60">Draft mode</span>
+					<button class="btn btn-xs btn-outline copy-keycard-btn font-semibold" data-key="https://bust.workspace/suite/delta-logistics-402">
+						Copy Guest Keycard
+					</button>
+				</div>
+			</div>
+
+			<!-- ROOM 3: SKYLINE SUITE 705 (FinTech Global) -->
+			<div class="card bg-base-100 border-2 border-base-300 shadow-md overflow-hidden flex flex-col justify-between transition-all hover:shadow-lg">
+				<div class="p-5 bg-base-200 border-b border-base-300 flex items-center justify-between">
+					<div class="flex items-center gap-2.5">
+						<span class="w-8 h-8 rounded-lg bg-base-300 flex items-center justify-center font-bold text-sm text-base-content">
+							🏨
+						</span>
+						<div>
+							<div class="text-[11px] font-mono uppercase tracking-wider text-base-content/60 font-bold">Suite 705 • Skyline Suite</div>
+							<h3 class="font-extrabold text-base text-base-content">FinTech Global</h3>
+						</div>
+					</div>
+					<span class="badge badge-xs badge-success font-bold">Occupied</span>
+				</div>
+
+				<div class="p-5 space-y-4 flex-1">
+					<div class="p-3.5 rounded-xl bg-base-200/80 border border-base-300 space-y-1">
+						<div class="flex items-center justify-between text-xs">
+							<span class="font-bold text-base-content flex items-center gap-1.5">
+								🔑 Digital Keycard
+							</span>
+							<span class="font-mono text-[11px] text-base-content/70">#FINTECH-7D1</span>
+						</div>
+						<p class="text-[11px] text-base-content/75 font-medium">Read-only link active for finance review</p>
+					</div>
+
+					<div class="space-y-1.5 text-xs">
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Registered Guest:</span>
+							<strong class="text-base-content">Elena Rostova (VP Success)</strong>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Contract ARR:</span>
+							<span class="font-mono font-bold text-base-content">$95,000 / year</span>
+						</div>
+						<div class="flex justify-between">
+							<span class="text-base-content/60">Target Check-out:</span>
+							<span class="font-mono text-base-content/80">Nov 02, 2026</span>
+						</div>
+					</div>
+
+					<div class="space-y-1.5 pt-1">
+						<span class="text-[11px] font-bold uppercase tracking-wider text-base-content/60">Suite Deliverables:</span>
+						<div class="flex flex-wrap gap-1 text-[11px]">
+							<span class="badge badge-xs badge-neutral">Executive Proposal</span>
+							<span class="badge badge-xs badge-neutral">Security Report</span>
+						</div>
+					</div>
+
+					<div class="p-2.5 rounded-lg bg-success/10 border border-success/30 flex items-center gap-2 text-xs">
+						<span>🚪</span>
+						<span class="text-success font-semibold text-[11px]">Door Sign: Welcome — Ready for Closing</span>
+					</div>
+				</div>
+
+				<div class="p-4 bg-base-200/50 border-t border-base-300 flex items-center justify-between">
+					<span class="text-[11px] text-base-content/60">Master key issued</span>
+					<button class="btn btn-xs btn-neutral copy-keycard-btn font-semibold" data-key="https://bust.workspace/suite/fintech-global-705">
+						Copy Guest Keycard
+					</button>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- Physical Hotel Door Keycard Access Inspector Modal / Drawer -->
+		<div id="keycard-inspector" class="card bg-base-200 border-2 border-base-300 p-6 space-y-4">
+			<div class="flex items-center justify-between border-b border-base-300 pb-3">
+				<div>
+					<h3 class="font-bold text-sm text-base-content flex items-center gap-2">
+						<span>💳</span>
+						RFID Digital Keycard Terminal: Suite 1001 (ACME Corp)
+					</h3>
+					<p class="text-xs text-base-content/70">Simulated contactless RFID keycard reader for prospect access</p>
+				</div>
+				<span class="badge badge-xs badge-success">Reader Active</span>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+				<div class="p-4 bg-base-100 rounded-xl border border-base-300 space-y-1">
+					<div class="font-bold text-base-content">1. Access Security</div>
+					<p class="text-[11px] text-base-content/75">Encrypted private keycard pass. View-only guest permissions enforced.</p>
+				</div>
+				<div class="p-4 bg-base-100 rounded-xl border border-base-300 space-y-1">
+					<div class="font-bold text-base-content">2. Concierge Audit Trail</div>
+					<p class="text-[11px] text-base-content/75">Logs keycard tap timestamp, duration, and viewed collateral.</p>
+				</div>
+				<div class="p-4 bg-base-100 rounded-xl border border-base-300 space-y-1">
+					<div class="font-bold text-base-content">3. Instant Revocation</div>
+					<p class="text-[11px] text-base-content/75">AEs can deactivate access or set an expiry date on the keycard.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const copyBtns = document.querySelectorAll('.copy-keycard-btn');
+		copyBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const key = btn.getAttribute('data-key') || window.location.href;
+				navigator.clipboard.writeText(key).then(() => {
+					const orig = btn.textContent;
+					btn.textContent = 'Keycard Copied! ✓';
+					setTimeout(() => {
+						btn.textContent = orig;
+					}, 2000);
+				});
+			});
+		});
+
+		const inspectBtn = document.getElementById('btn-inspect-keycard');
+		inspectBtn?.addEventListener('click', () => {
+			const inspector = document.getElementById('keycard-inspector');
+			inspector?.scrollIntoView({ behavior: 'smooth' });
+		});
+
+		const reserveBtn = document.getElementById('btn-reserve-suite');
+		reserveBtn?.addEventListener('click', () => {
+			alert('New Suite Reservation: Select enterprise account and issue digital keycard.');
+		});
+	</script>
+</Layout>

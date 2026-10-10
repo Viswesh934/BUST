@@ -30,7 +30,7 @@ flowchart TD
     ReadAPI --> PublicShare["Public Deal Room / Share Link (/share/:id)"]
     
     Entire["Entire CLI Workflow"] -.->|"Track Agent Sessions"| API
-    CFO["cfo.ai MCP (Runway / Financials)"] -.->|"Pricing & ARR Projections"| Planner
+    CFO["cfo.ai MCP (Financial Modeling & Projections)"] -.->|"Pricing & ARR Projections"| Planner
 ```
 
 ---
@@ -154,7 +154,7 @@ Every artifact in BUST has a unified envelope schema with a type-specific `conte
 - [x] Reusable LiteLLM client (`https://litellm.vision.aivar.app/v1`, `nova-pro`).
 - [x] NeatLogs tracing integration with regional ingest (`https://ingest.neatlogs.com`).
 - [x] Connect Entire CLI checkpointing (`entire enable --agent antigravity`).
-- [x] Connect cfo.ai MCP integration (`https://runway-api.cfo.ai/mcp`) for financial & pricing models.
+- [x] Connect cfo.ai MCP integration (`https://api.cfo.ai/mcp`) for financial & pricing models.
 - [x] Live end-to-end test verification (`/health` and `/api/test-llm`).
 
 ---

@@ -1,0 +1,260 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Deal Follow-Up Emails" description="Executive Proposals, Discovery Recaps & Champion Enablement">
+	<div class="space-y-6 w-full">
+		<!-- Standardized Header Toolbar -->
+		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
+			<div>
+				<div class="flex items-center gap-2.5">
+					<h1 class="text-xl font-bold tracking-tight text-base-content">Deal Follow-Up Emails</h1>
+					<span class="badge badge-sm badge-neutral">3 Templates</span>
+					<span class="badge badge-sm badge-success">ACME Corp ($150k ARR)</span>
+				</div>
+				<p class="text-xs text-base-content/70 mt-1">
+					Tailored executive email copy synthesizing meeting discovery notes, deliverables, and commercial terms.
+				</p>
+			</div>
+			<!-- Consistent Top-Right Action Buttons -->
+			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+				<button id="btn-copy-email" type="button" class="btn btn-sm btn-outline gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+					<span id="copy-btn-text">Copy Email</span>
+				</button>
+				<button id="btn-new-email" type="button" class="btn btn-sm btn-neutral gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+					<span>Draft Email</span>
+				</button>
+			</div>
+		</div>
+
+		<!-- Audience & Persona Tabs -->
+		<div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+			<button class="email-tab-btn btn btn-xs btn-neutral" data-template="exec">
+				Executive Proposal (VP Sales Ops)
+			</button>
+			<button class="email-tab-btn btn btn-xs btn-ghost text-base-content/70" data-template="recap">
+				Technical Discovery Recap (Sales Engineering)
+			</button>
+			<button class="email-tab-btn btn btn-xs btn-ghost text-base-content/70" data-template="cfo">
+				Financial ROI Justification (CFO / Finance)
+			</button>
+		</div>
+
+		<!-- Email Client Frame & Deal Summary (Full Width 2-Column) -->
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+			<!-- Main Email Editor / Viewer (2 Cols) -->
+			<div class="lg:col-span-2 card bg-base-100 border border-base-300 shadow-sm overflow-hidden flex flex-col justify-between">
+				<!-- Email Client Headers -->
+				<div class="p-5 border-b border-base-200 space-y-3 bg-base-200/40">
+					<div class="flex items-center justify-between text-xs">
+						<span class="text-base-content/60 font-semibold uppercase tracking-wider">Recipients & Routing</span>
+						<span class="badge badge-xs badge-neutral" id="email-tone-badge">Executive Persuasive</span>
+					</div>
+					<div class="space-y-2 text-xs">
+						<div class="flex items-center gap-2">
+							<span class="w-16 font-semibold text-base-content/60">To:</span>
+							<input id="email-to-input" class="input input-xs input-bordered w-full bg-base-100 font-sans" value="sarah.jenkins@acmecorp.com (VP Sales Ops)" />
+						</div>
+						<div class="flex items-center gap-2">
+							<span class="w-16 font-semibold text-base-content/60">Subject:</span>
+							<input id="email-subject-input" class="input input-xs input-bordered w-full bg-base-100 font-sans font-semibold text-base-content" value="Executive Summary & Next Steps — BUST x ACME Corp Partnership" />
+						</div>
+					</div>
+				</div>
+
+				<!-- Email Body Area -->
+				<div class="p-6 flex-1 bg-base-100">
+					<textarea
+						id="email-body-text"
+						rows="12"
+						class="w-full h-full min-h-[300px] bg-transparent text-xs text-base-content leading-relaxed font-sans resize-none border-none focus:outline-none"
+					>Hi Sarah,
+
+Thank you for the productive technical review this afternoon. As discussed, BUST will enable your 40-person enterprise sales team to eliminate 8+ hours/week of manual battlecard preparation and collateral synthesis.
+
+To keep momentum ahead of your month-end board review:
+1. Attached is our 6-step Mutual Action Plan (Security & SOC2 sign-off targeted for Thursday).
+2. The custom objection battlecards for your LegacyVendor renewals are ready for AE review.
+3. Pricing is confirmed at $120k/yr ($200/seat/mo), supported by our cfo.ai ROI analysis showing break-even in under 60 days.
+
+Looking forward to our sync with your VP of Finance next Tuesday.
+
+Best regards,
+Alex Morgan | Strategic Accounts Lead
+BUST Sales Planning Workspace</textarea>
+				</div>
+
+				<!-- Email Footer Toolbar -->
+				<div class="p-4 border-t border-base-200 bg-base-200/30 flex items-center justify-between text-xs">
+					<div class="flex items-center gap-2">
+						<button id="btn-open-client" class="btn btn-xs btn-outline">
+							Open in Mail Client
+						</button>
+						<span class="text-base-content/50">•</span>
+						<span class="text-[11px] text-base-content/60">Includes 3 deal collateral links</span>
+					</div>
+					<span class="text-[11px] text-base-content/50" id="word-count-indicator">138 words</span>
+				</div>
+			</div>
+
+			<!-- Attached Collateral & Deal Context Sidebar -->
+			<div class="space-y-4">
+				<div class="card bg-base-100 border border-base-300 p-5 space-y-3">
+					<h3 class="font-bold text-xs uppercase tracking-wider text-base-content/80">Referenced Collateral Items</h3>
+					
+					<div class="space-y-2 text-xs">
+						<div class="p-3 bg-base-200/80 rounded-lg border border-base-300 flex items-center justify-between">
+							<div>
+								<div class="font-bold text-base-content">Objection Battlecards</div>
+								<span class="text-[11px] text-base-content/70">4 talk-tracks referenced in copy</span>
+							</div>
+							<span class="badge badge-xs badge-success">Synced</span>
+						</div>
+
+						<div class="p-3 bg-base-200/80 rounded-lg border border-base-300 flex items-center justify-between">
+							<div>
+								<div class="font-bold text-base-content">Mutual Action Plan (MAP)</div>
+								<span class="text-[11px] text-base-content/70">Thursday InfoSec sign-off milestone</span>
+							</div>
+							<span class="badge badge-xs badge-success">Synced</span>
+						</div>
+
+						<div class="p-3 bg-base-200/80 rounded-lg border border-base-300 flex items-center justify-between">
+							<div>
+								<div class="font-bold text-base-content">Commercial ROI Projections</div>
+								<span class="text-[11px] text-base-content/70">$120k ARR / &lt;60d break-even</span>
+							</div>
+							<span class="badge badge-xs badge-success">Synced</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Deal Snapshot Card -->
+				<div class="card bg-base-200/60 border border-base-300 p-5 space-y-2 text-xs">
+					<span class="font-bold text-base-content">Deal Context</span>
+					<div class="space-y-1 text-base-content/75 text-[11px]">
+						<div><strong>Account:</strong> ACME Corp</div>
+						<div><strong>ARR Target:</strong> $150,000 / year</div>
+						<div><strong>Decision Maker:</strong> Sarah Jenkins</div>
+						<div><strong>Key Competitor:</strong> LegacyVendor</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const emailTemplates = {
+			exec: {
+				tone: 'Executive Persuasive',
+				to: 'sarah.jenkins@acmecorp.com (VP Sales Ops)',
+				subject: 'Executive Summary & Next Steps — BUST x ACME Corp Partnership',
+				body: `Hi Sarah,
+
+Thank you for the productive technical review this afternoon. As discussed, BUST will enable your 40-person enterprise sales team to eliminate 8+ hours/week of manual battlecard preparation and collateral synthesis.
+
+To keep momentum ahead of your month-end board review:
+1. Attached is our 6-step Mutual Action Plan (Security & SOC2 sign-off targeted for Thursday).
+2. The custom objection battlecards for your LegacyVendor renewals are ready for AE review.
+3. Pricing is confirmed at $120k/yr ($200/seat/mo), supported by our cfo.ai ROI analysis showing break-even in under 60 days.
+
+Looking forward to our sync with your VP of Finance next Tuesday.
+
+Best regards,
+Alex Morgan | Strategic Accounts Lead
+BUST Sales Planning Workspace`,
+			},
+			recap: {
+				tone: 'Technical Collaborative',
+				to: 'engineering-ops@acmecorp.com (Sales Engineering)',
+				subject: 'Technical Discovery Recap & Verification — ACME Corp Architecture',
+				body: `Hi Team,
+
+Following up on our architecture review session today. We verified the core integration boundaries for your 40 sales seats:
+
+• Zero retention ephemeral data pipeline verified.
+• SOC2 Type II audit report provided in trust center.
+• Single-prompt DAG collateral engine demonstrated.
+
+Next technical milestone: InfoSec sign-off on Thursday 5:00 PM EST. Please let me know if any additional security artifacts are needed.
+
+Best regards,
+Alex Morgan | BUST Enterprise Team`,
+			},
+			cfo: {
+				tone: 'Financial Justification',
+				to: 'marcus.vance@acmecorp.com (VP Finance)',
+				subject: 'Commercial Proposal & Financial ROI Model — ACME Corp',
+				body: `Hi Marcus,
+
+Sharing the financial justification model for the BUST sales planning workspace rollout for your team:
+
+• Contract Value: $120,000 / year (50 AE licenses).
+• Quantified Labor Savings: $140,000/yr in reduced collateral synthesis hours.
+• Break-Even Point: Closing 1 additional $150k enterprise deal achieves full payback in under 60 days (validated via cfo.ai model).
+
+Happy to walk through the complete sensitivity analysis on Tuesday.
+
+Best regards,
+Alex Morgan | Strategic Accounts Lead`,
+			},
+		};
+
+		const toInput = document.getElementById('email-to-input') as HTMLInputElement;
+		const subjectInput = document.getElementById('email-subject-input') as HTMLInputElement;
+		const bodyInput = document.getElementById('email-body-text') as HTMLTextAreaElement;
+		const toneBadge = document.getElementById('email-tone-badge');
+		const wordCount = document.getElementById('word-count-indicator');
+		const tabBtns = document.querySelectorAll('.email-tab-btn');
+		const copyBtn = document.getElementById('btn-copy-email');
+		const copyBtnText = document.getElementById('copy-btn-text');
+		const mailClientBtn = document.getElementById('btn-open-client');
+
+		function updateWordCount() {
+			if (!bodyInput || !wordCount) return;
+			const words = bodyInput.value.trim().split(/\s+/).filter(Boolean).length;
+			wordCount.textContent = `${words} words`;
+		}
+
+		tabBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const key = btn.getAttribute('data-template') as 'exec' | 'recap' | 'cfo';
+				const data = emailTemplates[key];
+				if (!data) return;
+
+				tabBtns.forEach((b) => {
+					b.classList.remove('btn-neutral');
+					b.classList.add('btn-ghost', 'text-base-content/70');
+				});
+				btn.classList.add('btn-neutral');
+				btn.classList.remove('btn-ghost', 'text-base-content/70');
+
+				if (toInput) toInput.value = data.to;
+				if (subjectInput) subjectInput.value = data.subject;
+				if (bodyInput) bodyInput.value = data.body;
+				if (toneBadge) toneBadge.textContent = data.tone;
+				updateWordCount();
+			});
+		});
+
+		copyBtn?.addEventListener('click', () => {
+			if (!bodyInput) return;
+			navigator.clipboard.writeText(bodyInput.value).then(() => {
+				if (copyBtnText) copyBtnText.textContent = 'Copied! ✓';
+				setTimeout(() => {
+					if (copyBtnText) copyBtnText.textContent = 'Copy Email';
+				}, 2000);
+			});
+		});
+
+		mailClientBtn?.addEventListener('click', () => {
+			if (!toInput || !subjectInput || !bodyInput) return;
+			const mailto = `mailto:${encodeURIComponent(toInput.value)}?subject=${encodeURIComponent(subjectInput.value)}&body=${encodeURIComponent(bodyInput.value)}`;
+			window.location.href = mailto;
+		});
+
+		bodyInput?.addEventListener('input', updateWordCount);
+	</script>
+</Layout>
