@@ -1,0 +1,197 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Mutual Action Plans" description="Deal Closing Roadmaps, MAPs & Visual Diagrams">
+	<div class="space-y-6 w-full">
+		<!-- Standardized Header Toolbar -->
+		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
+			<div>
+				<div class="flex items-center gap-2.5">
+					<h1 class="text-xl font-bold tracking-tight text-base-content">Mutual Action Plans (MAP)</h1>
+					<span class="badge badge-sm badge-neutral">6 Milestones</span>
+					<span class="badge badge-sm badge-warning">Stage 3 / 6 (In Progress)</span>
+				</div>
+				<p class="text-xs text-base-content/70 mt-1">
+					Visual closing roadmap aligning buyer milestones, legal reviews, and target signature dates.
+				</p>
+			</div>
+			<!-- Consistent Top-Right Action Buttons -->
+			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+				<button id="btn-export-map" type="button" class="btn btn-sm btn-outline gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+					<span>Export Roadmap</span>
+				</button>
+				<button id="btn-add-milestone" type="button" class="btn btn-sm btn-neutral gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+					<span>Add Milestone</span>
+				</button>
+			</div>
+		</div>
+
+		<!-- Progress Horizon Bar -->
+		<div class="card bg-base-200/60 border border-base-300 p-5 space-y-3">
+			<div class="flex items-center justify-between text-xs">
+				<span class="font-bold text-base-content">Deal Progress: ACME Corp ($150,000 ARR)</span>
+				<span class="font-mono text-base-content/70">33% Completed • Target Close: Oct 28, 2026</span>
+			</div>
+			<div class="w-full bg-base-300 rounded-full h-2.5 overflow-hidden">
+				<div class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: 33%"></div>
+			</div>
+		</div>
+
+		<!-- Interactive Milestone Pipeline Cards (Full Width) -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+			
+			<!-- Milestone 1 -->
+			<div class="card bg-base-100 border border-base-300 shadow-2xs hover:border-base-content/40 transition-all p-5 space-y-3">
+				<div class="flex items-center justify-between">
+					<span class="font-mono text-xs font-bold text-base-content/50">STAGE 01</span>
+					<span class="badge badge-xs badge-success gap-1">
+						<span>✓</span> Completed
+					</span>
+				</div>
+				<div>
+					<h3 class="font-bold text-sm text-base-content">Technical Discovery</h3>
+					<p class="text-xs text-base-content/70 mt-0.5">Define ACME sales ops requirements and seat sizing.</p>
+				</div>
+				<div class="p-3 bg-base-200/70 rounded-lg text-[11px] space-y-1">
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Owner:</span>
+						<strong class="text-base-content">Sarah Jenkins (Buyer) & AE</strong>
+					</div>
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Delivered:</span>
+						<span class="text-base-content/80">Use Case & Team Scope Deck</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Milestone 2 -->
+			<div class="card bg-base-100 border border-base-300 shadow-2xs hover:border-base-content/40 transition-all p-5 space-y-3">
+				<div class="flex items-center justify-between">
+					<span class="font-mono text-xs font-bold text-base-content/50">STAGE 02</span>
+					<span class="badge badge-xs badge-success gap-1">
+						<span>✓</span> Completed
+					</span>
+				</div>
+				<div>
+					<h3 class="font-bold text-sm text-base-content">Architecture Validation</h3>
+					<p class="text-xs text-base-content/70 mt-0.5">Confirm CRM sync and pipeline data flows.</p>
+				</div>
+				<div class="p-3 bg-base-200/70 rounded-lg text-[11px] space-y-1">
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Owner:</span>
+						<strong class="text-base-content">Sales Engineering Lead</strong>
+					</div>
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Delivered:</span>
+						<span class="text-base-content/80">Architecture Sign-off Doc</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Milestone 3: CURRENT -->
+			<div class="card bg-base-100 border-2 border-warning/60 shadow-sm p-5 space-y-3">
+				<div class="flex items-center justify-between">
+					<span class="font-mono text-xs font-bold text-warning">STAGE 03 • CURRENT</span>
+					<span class="badge badge-xs badge-warning font-semibold">Active Review</span>
+				</div>
+				<div>
+					<h3 class="font-bold text-sm text-base-content">Security & Compliance</h3>
+					<p class="text-xs text-base-content/70 mt-0.5">InfoSec audit of SOC2 Type II report and zero retention policy.</p>
+				</div>
+				<div class="p-3 bg-base-200/90 rounded-lg text-[11px] space-y-1">
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Target Date:</span>
+						<strong class="text-warning font-mono">This Thursday, 5:00 PM</strong>
+					</div>
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Owner:</span>
+						<strong class="text-base-content">ACME InfoSec Board</strong>
+					</div>
+				</div>
+			</div>
+
+			<!-- Milestone 4 -->
+			<div class="card bg-base-100 border border-base-300 shadow-2xs p-5 space-y-3 opacity-90">
+				<div class="flex items-center justify-between">
+					<span class="font-mono text-xs font-bold text-base-content/50">STAGE 04</span>
+					<span class="badge badge-xs badge-ghost">Upcoming</span>
+				</div>
+				<div>
+					<h3 class="font-bold text-sm text-base-content">Legal & Master Service Agreement</h3>
+					<p class="text-xs text-base-content/70 mt-0.5">Standard enterprise commercial agreement and redlines.</p>
+				</div>
+				<div class="p-3 bg-base-200/70 rounded-lg text-[11px] space-y-1">
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Target Date:</span>
+						<span class="font-mono text-base-content/80">Oct 19, 2026</span>
+					</div>
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Owner:</span>
+						<strong class="text-base-content">Legal Counsel</strong>
+					</div>
+				</div>
+			</div>
+
+			<!-- Milestone 5 -->
+			<div class="card bg-base-100 border border-base-300 shadow-2xs p-5 space-y-3 opacity-90">
+				<div class="flex items-center justify-between">
+					<span class="font-mono text-xs font-bold text-base-content/50">STAGE 05</span>
+					<span class="badge badge-xs badge-ghost">Upcoming</span>
+				</div>
+				<div>
+					<h3 class="font-bold text-sm text-base-content">CFO & Budget Authorization</h3>
+					<p class="text-xs text-base-content/70 mt-0.5">Approval of $120k ARR contract with 60-day break-even ROI.</p>
+				</div>
+				<div class="p-3 bg-base-200/70 rounded-lg text-[11px] space-y-1">
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Target Date:</span>
+						<span class="font-mono text-base-content/80">Oct 24, 2026</span>
+					</div>
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Owner:</span>
+						<strong class="text-base-content">VP Finance / cfo.ai Model</strong>
+					</div>
+				</div>
+			</div>
+
+			<!-- Milestone 6 -->
+			<div class="card bg-base-100 border border-base-300 shadow-2xs p-5 space-y-3 opacity-90">
+				<div class="flex items-center justify-between">
+					<span class="font-mono text-xs font-bold text-base-content/50">STAGE 06</span>
+					<span class="badge badge-xs badge-ghost">Goal</span>
+				</div>
+				<div>
+					<h3 class="font-bold text-sm text-base-content">Contract Execution & Kickoff</h3>
+					<p class="text-xs text-base-content/70 mt-0.5">DocuSign signature and rep enablement kickoff.</p>
+				</div>
+				<div class="p-3 bg-base-200/70 rounded-lg text-[11px] space-y-1">
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Target Date:</span>
+						<span class="font-mono text-base-content/80">Oct 28, 2026</span>
+					</div>
+					<div class="flex justify-between">
+						<span class="text-base-content/60">Owner:</span>
+						<strong class="text-base-content">All Stakeholders</strong>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<script>
+		const btnExport = document.getElementById('btn-export-map');
+		const btnAdd = document.getElementById('btn-add-milestone');
+
+		btnExport?.addEventListener('click', () => {
+			alert('Mutual Action Plan exported as shareable client PDF.');
+		});
+
+		btnAdd?.addEventListener('click', () => {
+			alert('Add new milestone to ACME Corp roadmap.');
+		});
+	</script>
+</Layout>
