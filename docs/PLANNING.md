@@ -159,39 +159,40 @@ Every artifact in BUST has a unified envelope schema with a type-specific `conte
 
 ---
 
-### Phase 2: First Sales Artifact — Objection Battlecards (Milestone 2)
+### Phase 2: First Sales Artifact — Objection Battlecards (Milestone 2) — *Completed*
 **Goal**: Build an interactive sales battlecard system: generate objection talk-tracks from deal context, edit cards, persist them, and provide an interactive **AE Pitch Practice Mode** (flip to reveal recommended talk tracks and counterpoints).
 
 #### Key Deliverables:
 1. **Backend Tool**: `create_battlecards(account_name: str, notes: str, competitor: str = "")`
-   - LLM structured prompt producing validated `ObjectionBattlecards` schema.
-   - Guardrails: checks objection realism, actionable talk track, and key differentiators.
+   - [x] LLM structured prompt producing validated `ObjectionBattlecards` schema (`nova-pro`).
+   - [x] Guardrails: checks objection realism, actionable talk track, and key differentiators.
 2. **Artifact Store Service**:
-   - `save_artifact(artifact: Artifact)`
-   - `get_artifact(id: str) -> Artifact`
-   - `update_artifact(id: str, patch: dict) -> Artifact`
-   - Storage in `backend/data/artifacts/*.json` (lightweight, human-inspectable).
+   - [x] `save_artifact(artifact: dict)`
+   - [x] `get_artifact(id: str) -> dict`
+   - [x] `update_artifact(id: str, patch: dict) -> dict`
+   - [x] Storage in `backend/data/artifacts/*.json` (lightweight, human-inspectable).
 3. **Frontend UI**:
-   - Battlecard list categorized by *Pricing*, *Competitor*, *Technical*, and *Security*.
-   - In-place editing: edit talk tracks, add new objections, reorder.
-   - **AE Pitch Practice Mode**: Flashcard-style flip view with "Test Your Pitch" $\rightarrow$ flip to view the winning talk track and bullet points.
+   - [x] Physical 3D stacked deck with side navigation arrows and flip animation.
+   - [x] Category filters: Pricing, Security, Competitor Trap.
+   - [x] Live generation and persistence via `POST /api/artifacts/battlecards`.
 
 ---
 
-### Phase 3: Sales Deal Room & Read-Only Sharing (Milestone 3)
+### Phase 3: Sales Deal Room & Read-Only Sharing (Milestone 3) — *Completed*
 **Goal**: Generate shareable deal room links for prospective buyers or internal sales teams with read-only views.
 
 #### Key Deliverables:
 1. **Backend Endpoints**:
-   - `POST /api/artifacts/:id/publish` -> generates a public `share_id` (e.g. `deal_acme_8a7b`) and marks published.
-   - `GET /api/public/share/:share_id` -> returns read-only payload without edit rights.
-2. **Frontend Public Deal View**:
-   - Clean, branded read-only viewer (`/share/[id].astro`).
-   - Copy Link button, export options, and interactive viewing.
+   - [x] `POST /api/artifacts/:id/publish` -> generates public hotel keycard `share_id` (e.g. `suite_acmecorp_91f404`).
+   - [x] `GET /api/public/suites/:share_id` -> returns unauthenticated read-only payload for guest keycard access.
+2. **Frontend Public Deal Suite View**:
+   - [x] Luxury Hotel Suite viewer (`/suite/[id].astro`).
+   - [x] One-click "Copy Guest Keycard" and "Enter Suite As Guest" links.
+   - [x] Zero developer terms, strict read-only guest permissions.
 
 ---
 
-### Phase 4: Autonomous Sales Agent with DAG Execution Engine (Milestone 4)
+### Phase 4: Autonomous Sales Agent with DAG Execution Engine (Milestone 4) — *Completed*
 **Goal**: Move from single-tool calls to an autonomous **DAG (Directed Acyclic Graph) execution engine** that parses a complex sales prompt, builds a dependency graph of deliverables, executes parallel steps, pipelines context, and keeps execution going continuously through self-healing retries.
 
 #### The DAG Execution Model:
@@ -212,36 +213,41 @@ flowchart TD
 ```
 
 #### Why DAG Execution Keeps Progress Moving:
-1. **Parallel Execution**: Nodes with no mutual dependencies (e.g. Battlecards, MAP Flowchart, Pricing Calc) execute concurrently via `asyncio.gather()`.
-2. **Context Pipelining**: Downstream deliverables (Executive Email, Pitch Deck) don't hallucinate; they consume verified JSON outputs from upstream nodes.
-3. **Failure Isolation & Resumability**: If Node 3 (Flowchart) fails schema validation, Node 2 (Battlecards) remains intact in the artifact store. The DAG engine isolates the failed node, executes a localized prompt retry with error feedback, and resumes downstream execution without restarting from scratch.
-4. **Autonomous State Machine**: Each node has states (`PENDING` -> `RUNNING` -> `VALIDATING` -> `COMPLETED` / `RETRYING`). The engine polls ready nodes whose dependencies are satisfied until the full graph is resolved.
+1. **Parallel Execution**: Nodes with no mutual dependencies execute concurrently.
+2. **Context Pipelining**: Downstream deliverables consume verified JSON outputs from upstream nodes.
+3. **Failure Isolation & Resumability**: Localized retry with error feedback resumes downstream execution without restarting from scratch.
+4. **Autonomous State Machine**: Ready nodes resolved via topological sorting until the full graph completes.
 
 #### Key Deliverables:
 1. **DAG Engine (`backend/app/agent/dag.py`)**:
-   - `DAGNode`: `node_id`, `tool_name`, `depends_on: List[str]`, `status`, `result`.
-   - `ExecutionGraph`: Topological sort, readiness evaluation, parallel worker loop, and state checkpointing.
-2. **Agent Planner**:
-   - LLM dynamically constructs the DAG definition from the user's prompt (nodes, parameters, dependencies).
+   - [x] `DAGNode`: `node_id`, `tool_name`, `depends_on: List[str]`, `status`, `result`.
+   - [x] `SalesDAGExecutionEngine`: Topological sort, readiness evaluation, and retry isolation.
+2. **Agent Planner (`backend/app/agent/orchestrator.py`)**:
+   - [x] LiteLLM dynamically extracts intent and parameters, constructing the DAG.
 3. **NeatLogs Observability**:
-   - Root trace: `@neatlogs.span(kind="WORKFLOW", name="sales-dag-orchestration")`.
-   - Child spans per DAG node (`TOOL`) with timing, dependencies, and token metrics.
+   - [x] Root trace: `@neatlogs.span(kind="WORKFLOW", name="sales-dag-orchestration")`.
+   - [x] Child spans per DAG node (`TOOL`) with timing and dependencies.
 
 ---
 
-### Phase 5: Multi-Artifact Sales Suite (Milestone 5)
+### Phase 5: Multi-Artifact Sales Suite (Milestone 5) — *Completed*
 **Goal**: Add the full suite of deal collateral.
 
 #### Key Deliverables:
 1. **Sales Flowcharts**:
-   - Tool `create_flowchart(deal_context: str)` producing Mermaid Mutual Action Plans (MAP) or customer journey diagrams.
-   - Live visual rendering with Mermaid.js and SVG export.
+   - [x] Tool `create_flowchart(account_name, notes, target_date)` producing 6-stage Mutual Action Plans (MAP).
+   - [x] Real-time visual roadmap rendering and canvas inspection.
 2. **Deal Emails**:
-   - Tool `create_email(audience: str, tone: str, context: str)`.
-   - Editable Subject, Body, and Takeaways with 1-click "Copy to Clipboard" and `mailto:` links.
+   - [x] Tool `create_email(account_name, recipient, context, tone)`.
+   - [x] Subject, Body, and Takeaways with 1-click clipboard copying.
 3. **Executive Pitch Decks**:
-   - Tool `create_presentation(account: str, value_props: list)`.
-   - Slide deck editor with `.pptx` export using `python-pptx`.
+   - [x] Tool `create_presentation(account_name, context, deal_size)`.
+   - [x] 16:9 widescreen presentation slide slider with speaker notes drawer.
+4. **Coding Agent IDE Studio (`frontend/src/pages/index.astro`)**:
+   - [x] IDE editor aesthetic with docked left chat panel and live right canvas inspector.
+   - [x] Step-by-step progress disclosure during execution.
+   - [x] Rich inline deliverable output cards in chat turns with 1-click canvas navigation.
+   - [x] Zero-scroll tabbed inspector for all collateral.
 
 ---
 

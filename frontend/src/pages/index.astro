@@ -2,336 +2,995 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Deal Command Director" description="Command-Driven Sales Planning & Execution Center">
-	<div class="space-y-6 w-full">
-		<!-- Standardized Header Toolbar -->
-		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
+<Layout title="Deal Orchestrator Studio" description="AI Agent-Driven Sales Planning & Execution Workspace">
+	<div class="space-y-4 w-full">
+		
+		<!-- IDE Editor Top Navigation Toolbar -->
+		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-base-300">
 			<div>
-				<div class="flex items-center gap-2.5">
-					<h1 class="text-xl font-bold tracking-tight text-base-content">Deal Command Director</h1>
-					<span class="badge badge-sm badge-neutral font-semibold">Directives Active</span>
-					<span class="badge badge-sm badge-success font-semibold">ACME Corp ($150k ARR)</span>
+				<div class="flex items-center gap-2">
+					<span class="text-xs font-mono font-semibold text-base-content/60">studio ›</span>
+					<span class="font-bold text-sm text-base-content" id="active-account-breadcrumb">ACME Corp</span>
+					<span class="text-xs font-mono text-base-content/50">/ deal_orchestration.dag</span>
+					<span class="badge badge-xs badge-success ml-2 font-semibold" id="agent-status-badge">● Engine Online</span>
 				</div>
-				<p class="text-xs text-base-content/85 mt-1 font-medium">
-					Command-driven sales execution: direct collateral generation, roadmaps, and closing assets via structured directives.
+				<p class="text-xs text-base-content/70 mt-0.5 font-medium">
+					Conversational AI sales engineer executing multi-tool DAG workflows with live deliverables.
 				</p>
 			</div>
-			<!-- Consistent Top-Right Action Buttons -->
+
+			<!-- Action Buttons -->
 			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-				<button id="btn-toggle-reasoning" type="button" class="btn btn-sm btn-outline gap-1.5 font-medium">
-					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-					<span id="reasoning-toggle-text">Show Agent Reasoning & Steps</span>
+				<button id="btn-toggle-steps" type="button" class="btn btn-xs btn-outline gap-1.5 font-medium">
+					<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+					<span id="steps-toggle-text">Toggle Step Logs</span>
 				</button>
-				<button id="btn-execute-command" type="button" class="btn btn-sm btn-neutral gap-1.5 font-bold shadow-sm">
-					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-					<span id="exec-btn-text">Execute Directive</span>
+				<button id="btn-clear-chat" type="button" class="btn btn-xs btn-outline gap-1.5">
+					<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+					<span>Reset Stream</span>
 				</button>
 			</div>
 		</div>
 
-		<!-- EXECUTIVE COMMAND DIRECTOR CONSOLE -->
-		<section class="card bg-base-200 border-2 border-base-300 shadow-md w-full">
-			<div class="card-body p-6 space-y-4">
-				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-base-300 pb-3">
-					<div>
-						<h2 class="text-xs font-bold text-base-content uppercase tracking-wider flex items-center gap-2">
-							<span class="w-2.5 h-2.5 rounded-full bg-success animate-pulse"></span>
-							Executive Command Console
-						</h2>
-						<p class="text-xs text-base-content/80 mt-0.5 font-medium">
-							Type a deal directive or select a quick-action command below to orchestrate collateral.
-						</p>
+		<!-- MAIN TWO-COLUMN CODING AGENT WORKSPACE -->
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-start">
+			
+			<!-- LEFT COLUMN: CODING AGENT CHAT & INLINE OUTPUTS (5 Cols) -->
+			<div class="lg:col-span-5 flex flex-col space-y-3">
+				<div class="card bg-base-100 border-2 border-base-300 shadow-md flex flex-col h-[680px] overflow-hidden rounded-2xl">
+					
+					<!-- Editor Terminal Header -->
+					<div class="px-4 py-2.5 bg-base-200 border-b border-base-300 flex items-center justify-between">
+						<div class="flex items-center gap-2">
+							<div class="w-6 h-6 rounded-md bg-neutral text-neutral-content flex items-center justify-center font-bold text-[11px]">
+								⚡
+							</div>
+							<div>
+								<span class="font-bold text-xs text-base-content">AI Deal Architect</span>
+								<span class="text-[10px] text-base-content/60 ml-1.5 font-mono">nova-pro</span>
+							</div>
+						</div>
+						<div class="flex items-center gap-1.5">
+							<span class="w-2 h-2 rounded-full bg-success"></span>
+							<span class="text-[10px] font-mono font-medium text-base-content/70" id="tool-count-badge">5 Tools Ready</span>
+						</div>
 					</div>
-					<div class="flex items-center gap-2">
-						<span id="command-status-badge" class="text-xs font-semibold text-base-content/80 bg-base-100 px-3 py-1 rounded-full border border-base-300">
-							Command Console Ready
+
+					<!-- Agent Messages & Inline Outputs Stream -->
+					<div id="chat-stream" class="flex-1 p-3.5 overflow-y-auto space-y-4 text-xs font-sans">
+						
+						<!-- Initial Welcome Turn -->
+						<div class="space-y-2">
+							<div class="flex items-center gap-2 text-[11px] font-semibold text-base-content/60">
+								<span class="w-5 h-5 rounded-full bg-base-300 flex items-center justify-center text-[10px]">🤖</span>
+								<span>AI Sales Assistant</span>
+								<span class="text-[10px] text-base-content/40 font-mono">now</span>
+							</div>
+							
+							<div class="p-3.5 bg-base-200/80 rounded-xl border border-base-300 space-y-2 text-xs leading-relaxed">
+								<p class="font-semibold text-base-content">
+									Welcome to the Deal Orchestrator. Direct me with your deal instructions.
+								</p>
+								<p class="text-base-content/85">
+									I plan the sales strategy, construct a dependency graph, execute deterministic tools, and display all results as inline outputs here in the stream and in the canvas on the right.
+								</p>
+								<div class="pt-2 border-t border-base-300/60 text-[11px] text-base-content/65">
+									Click a preset directive below or type your custom deal prompt:
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- Quick Directive Chips -->
+					<div class="px-3 py-2 bg-base-200/60 border-t border-base-300 flex items-center gap-1.5 overflow-x-auto text-[11px]">
+						<button class="chat-chip btn btn-xs btn-outline shrink-0 font-medium" data-prompt="We just finished technical discovery with ACME Corp for a $150k ARR deal replacing LegacyVendor. Generate our complete deal suite: battlecards, MAP roadmap, executive email to Sarah Jenkins, and pitch deck.">
+							⚡ Plan ACME Corp ($150k)
+						</button>
+						<button class="chat-chip btn btn-xs btn-outline shrink-0 font-medium" data-prompt="Generate competitive objection battlecards for Delta Logistics ($220k ARR) overcoming renewal objections against LegacyCRM.">
+							🛡️ Delta Logistics Battlecards
+						</button>
+						<button class="chat-chip btn btn-xs btn-outline shrink-0 font-medium" data-prompt="Publish our ACME Corp deal collateral to a private buyer deal room suite with keycard access.">
+							🔑 Issue Hotel Keycard
+						</button>
+					</div>
+
+					<!-- Coding Agent Input Bar -->
+					<div class="p-3 bg-base-100 border-t border-base-300">
+						<form id="chat-form" class="flex items-center gap-2">
+							<input
+								id="chat-input"
+								type="text"
+								class="input input-sm input-bordered flex-1 bg-base-100 text-xs text-base-content rounded-xl border-2 border-base-300 focus:border-primary focus:outline-none"
+								placeholder="Instruct the agent (e.g. 'Generate battlecards for ACME Corp...')"
+								autocomplete="off"
+							/>
+							<button id="btn-send-directive" type="submit" class="btn btn-sm btn-neutral px-3.5 font-semibold shadow-xs">
+								Run ⏎
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!-- RIGHT COLUMN: ACTIVE DELIVERABLE CANVAS & INSPECTOR (7 Cols) -->
+			<div class="lg:col-span-7 flex flex-col space-y-3">
+				<div class="card bg-base-100 border-2 border-base-300 shadow-md flex flex-col h-[680px] overflow-hidden rounded-2xl">
+					
+					<!-- Canvas Tabs Header -->
+					<div class="px-3 py-2 bg-base-200 border-b border-base-300 flex items-center justify-between">
+						<div class="flex items-center gap-1 text-xs" id="canvas-tab-container">
+							<button class="canvas-tab btn btn-xs btn-neutral font-semibold" data-target="tab-battlecards">
+								🎴 Battlecards
+							</button>
+							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-map">
+								🗺️ MAP Roadmap
+							</button>
+							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-email">
+								✉️ Proposal Email
+							</button>
+							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-deck">
+								📊 Pitch Deck
+							</button>
+							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-suite">
+								🏨 Deal Suite
+							</button>
+						</div>
+
+						<span id="canvas-sync-status" class="text-[10px] font-mono text-success flex items-center gap-1 font-semibold">
+							<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+							Canvas Synced
 						</span>
 					</div>
-				</div>
 
-				<!-- Command Bar Input -->
-				<div class="relative">
-					<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-base-content/50 font-mono font-bold text-sm">
-						&gt;
+					<!-- Canvas Content Views -->
+					<div class="flex-1 p-5 overflow-y-auto">
+						
+						<!-- TAB 1: BATTLECARDS -->
+						<div id="tab-battlecards" class="canvas-panel space-y-4">
+							<div class="flex items-center justify-between border-b border-base-200 pb-2">
+								<div>
+									<h3 class="font-bold text-sm text-base-content" id="canvas-bc-deck-name">Competitive Objection Battlecards</h3>
+									<p class="text-xs text-base-content/65" id="canvas-bc-subtitle">Target Competitor: LegacyVendor</p>
+								</div>
+								<div class="flex items-center gap-2">
+									<span class="text-xs font-mono text-base-content/70" id="bc-card-counter">Card 1 / 3</span>
+									<div class="flex items-center gap-1">
+										<button id="bc-btn-prev" class="btn btn-xs btn-outline">❮</button>
+										<button id="bc-btn-next" class="btn btn-xs btn-outline">❯</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- 3D Flippable Battlecard -->
+							<div class="card bg-base-200/80 border-2 border-base-300 p-5 rounded-2xl shadow-sm space-y-3.5 transition-all">
+								<div>
+									<span class="badge badge-xs badge-neutral uppercase font-bold tracking-wider" id="canvas-bc-category">Pricing Objection</span>
+									<h4 class="text-sm font-bold text-base-content mt-2" id="canvas-bc-objection">
+										"Your quote is 20% higher than our renewal price from LegacyVendor."
+									</h4>
+								</div>
+
+								<div class="p-3.5 bg-base-100 rounded-xl border border-base-300 space-y-1.5">
+									<span class="text-[11px] font-bold text-base-content/70 uppercase tracking-wider">Agent Winning Talk-Track:</span>
+									<p class="text-xs text-base-content font-medium leading-relaxed" id="canvas-bc-talktrack">
+										"Pivot to Total Cost of Ownership (TCO). While our upfront subscription is higher, LegacyVendor requires 2 dedicated FTEs just to maintain manual data sync. We automate that workflow entirely, delivering an $80k net savings in Year 1."
+									</p>
+								</div>
+
+								<div class="space-y-1">
+									<span class="text-[11px] font-bold text-base-content/70 uppercase tracking-wider">Key Differentiators & Proof Points:</span>
+									<div class="flex flex-wrap gap-1.5" id="canvas-bc-differentiators">
+										<span class="badge badge-xs badge-outline">TCO Comparison</span>
+										<span class="badge badge-xs badge-outline">$80k Net Savings</span>
+										<span class="badge badge-xs badge-outline">60-day break-even</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- TAB 2: MUTUAL ACTION PLAN (MAP) -->
+						<div id="tab-map" class="canvas-panel hidden space-y-4">
+							<div class="flex items-center justify-between border-b border-base-200 pb-2">
+								<div>
+									<h3 class="font-bold text-sm text-base-content" id="canvas-map-title">Mutual Action Plan (MAP) Roadmap</h3>
+									<p class="text-xs text-base-content/65" id="canvas-map-subtitle">Closing Timeline & Milestones</p>
+								</div>
+								<span class="badge badge-xs badge-warning font-semibold" id="canvas-map-close-date">Target Close: Oct 28, 2026</span>
+							</div>
+
+							<!-- 6-Stage Pipeline List -->
+							<div class="space-y-2.5" id="canvas-map-stages-list">
+								<!-- Rendered dynamically -->
+							</div>
+						</div>
+
+						<!-- TAB 3: PROPOSAL EMAIL -->
+						<div id="tab-email" class="canvas-panel hidden space-y-4">
+							<div class="flex items-center justify-between border-b border-base-200 pb-2">
+								<div>
+									<h3 class="font-bold text-sm text-base-content" id="canvas-email-title">Executive Proposal Email</h3>
+									<p class="text-xs text-base-content/65" id="canvas-email-recipient">To: Sarah Jenkins (VP Sales Ops)</p>
+								</div>
+								<button id="btn-copy-canvas-email" class="btn btn-xs btn-outline gap-1 font-semibold">
+									📋 Copy Email
+								</button>
+							</div>
+
+							<div class="space-y-2">
+								<div class="p-2.5 rounded-lg bg-base-200 border border-base-300 text-xs">
+									<span class="text-base-content/60 font-semibold">Subject: </span>
+									<span class="font-bold text-base-content" id="canvas-email-subject">Executive Summary & Next Steps — BUST x ACME Corp</span>
+								</div>
+
+								<pre id="canvas-email-body" class="p-4 rounded-xl bg-base-200/70 border border-base-300 font-sans text-xs text-base-content leading-relaxed whitespace-pre-wrap">Hi Sarah,
+
+Following our technical discovery, BUST will enable your enterprise sales team to automate battlecard preparation and collateral synthesis.
+
+Key next steps from our Mutual Action Plan:
+1. Security & Compliance: SOC2 Type II audit review targeted for completion this Thursday.
+2. Competitive Battlecards: Tailored objection talk-tracks prepared for your reps.
+3. Commercial Terms: $120k/yr annual contract with break-even achieved within 60 days.
+
+Looking forward to our sync next week.
+
+Best regards,
+Alex Morgan | Strategic Accounts</pre>
+							</div>
+						</div>
+
+						<!-- TAB 4: PITCH DECK -->
+						<div id="tab-deck" class="canvas-panel hidden space-y-4">
+							<div class="flex items-center justify-between border-b border-base-200 pb-2">
+								<div>
+									<h3 class="font-bold text-sm text-base-content" id="canvas-deck-title">Executive Pitch Presentation</h3>
+									<p class="text-xs text-base-content/65" id="canvas-deck-subtitle">Widescreen 16:9 Deck</p>
+								</div>
+								<div class="flex items-center gap-2">
+									<span class="text-xs font-mono text-base-content/70" id="deck-slide-counter">Slide 1 / 4</span>
+									<div class="flex items-center gap-1">
+										<button id="deck-btn-prev" class="btn btn-xs btn-outline">❮</button>
+										<button id="deck-btn-next" class="btn btn-xs btn-outline">❯</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- Presentation Slide Preview -->
+							<div class="card bg-base-200/90 border-2 border-base-300 p-6 rounded-2xl shadow-sm space-y-4">
+								<div class="space-y-1">
+									<span class="badge badge-xs badge-neutral" id="canvas-slide-tag">Executive Framing</span>
+									<h4 class="text-base font-bold text-base-content" id="canvas-slide-title">Unlocking Sales Velocity for ACME Corp</h4>
+									<p class="text-xs text-base-content/75" id="canvas-slide-subtitle">A Strategic Partnership Proposal</p>
+								</div>
+
+								<ul class="space-y-1.5 text-xs text-base-content list-disc list-inside font-medium" id="canvas-slide-bullets">
+									<li>Eliminate manual collateral synthesis</li>
+									<li>Shorten sales cycle by 40%</li>
+								</ul>
+
+								<div class="pt-3 border-t border-base-300 text-[11px] text-base-content/70 bg-base-100 p-3 rounded-xl border border-base-300">
+									<span class="font-bold text-base-content">Speaker Note: </span>
+									<span id="canvas-slide-notes">Open by framing the problem around rep productivity and quota attainment.</span>
+								</div>
+							</div>
+						</div>
+
+						<!-- TAB 5: BUYER DEAL SUITE -->
+						<div id="tab-suite" class="canvas-panel hidden space-y-4">
+							<div class="flex items-center justify-between border-b border-base-200 pb-2">
+								<div>
+									<h3 class="font-bold text-sm text-base-content">Buyer Deal Suite & Digital Keycard</h3>
+									<p class="text-xs text-base-content/65">Private Guest Room Portal</p>
+								</div>
+								<span class="badge badge-xs badge-success font-semibold">Access Active</span>
+							</div>
+
+							<div class="card bg-base-200/80 border-2 border-base-300 p-5 rounded-2xl space-y-4">
+								<div class="flex items-center gap-3">
+									<div class="w-12 h-12 rounded-xl bg-neutral text-neutral-content flex items-center justify-center text-xl font-bold">
+										🏨
+									</div>
+									<div>
+										<h4 class="font-bold text-sm text-base-content" id="canvas-suite-name">Penthouse Suite: ACME Corp</h4>
+										<p class="text-xs font-mono text-base-content/70" id="canvas-suite-token">Keycard Pass: suite_acmecorp_91f404</p>
+									</div>
+								</div>
+
+								<div class="p-3.5 bg-base-100 rounded-xl border border-base-300 text-xs text-base-content/85 space-y-1">
+									<span class="font-bold text-base-content">Guest Room Permissions:</span>
+									<p>Read-only access granted for all buyer decision-makers. No developer credentials or technical setup required.</p>
+								</div>
+
+								<div class="flex items-center gap-2">
+									<a id="btn-canvas-enter-suite" href="/suite/suite_acmecorp_91f404" target="_blank" class="btn btn-sm btn-neutral flex-1 font-semibold">
+										Enter Deal Room As Guest 🚪
+									</a>
+									<button id="btn-copy-suite-link" class="btn btn-sm btn-outline">
+										Copy Pass Token
+									</button>
+								</div>
+							</div>
+						</div>
+
 					</div>
-					<input
-						id="command-input"
-						type="text"
-						class="input input-bordered w-full pl-8 bg-base-100 text-xs font-mono font-semibold text-base-content border-2 border-base-300 focus:border-primary focus:outline-none rounded-xl"
-						value="/dispatch-all --account 'ACME Corp' --arr '$150k' --competitor 'LegacyVendor'"
-					/>
-				</div>
 
-				<!-- Fast Executable Command Chips -->
-				<div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
-					<span class="text-[11px] font-bold uppercase tracking-wider text-base-content/60 mr-1">Directives:</span>
-					<button class="command-chip btn btn-xs btn-neutral" data-cmd="/dispatch-all --account 'ACME Corp' --arr '$150k' --competitor 'LegacyVendor'">
-						⚡ /dispatch-all
-					</button>
-					<button class="command-chip btn btn-xs btn-outline" data-cmd="/battlecards --account 'ACME Corp' --competitor 'LegacyVendor'">
-						🎴 /battlecards
-					</button>
-					<button class="command-chip btn btn-xs btn-outline" data-cmd="/map --account 'ACME Corp' --target-date 'Oct 28'">
-						🗺️ /map
-					</button>
-					<button class="command-chip btn btn-xs btn-outline" data-cmd="/email --to 'Sarah Jenkins' --stage 'Proposal'">
-						✉️ /email
-					</button>
-					<button class="command-chip btn btn-xs btn-outline" data-cmd="/deck --slides 4 --theme 'Executive'">
-						📽️ /deck
-					</button>
-					<button class="command-chip btn btn-xs btn-outline" data-cmd="/suite --room 1001 --guest 'Sarah Jenkins'">
-						🏨 /suite
-					</button>
 				</div>
 			</div>
-		</section>
 
-		<!-- Agent Reasoning & Plan Steps (Hidden by default, shown on demand) -->
-		<section id="agent-reasoning-panel" class="hidden card bg-base-100 border-2 border-base-300 shadow-md w-full">
-			<div class="card-body p-6 space-y-4">
-				<div class="flex items-center justify-between border-b border-base-200 pb-3">
-					<div>
-						<h3 class="font-bold text-sm text-base-content">Agent Execution Plan & Directive Steps</h3>
-						<p class="text-xs text-base-content/70">Topological breakdown of active deal directives</p>
-					</div>
-					<span id="reasoning-status-badge" class="badge badge-xs badge-neutral">Standby</span>
-				</div>
+		</div>
 
-				<!-- Step Breakdown Cards -->
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-					<div class="p-4 bg-base-200/90 rounded-xl border border-base-300 space-y-1">
-						<div class="font-bold text-base-content">1. Directive Parse & Context</div>
-						<p class="text-[11px] text-base-content/80">
-							Extracts account size ($150k ARR), incumbent (LegacyVendor), and target sponsor (Sarah Jenkins).
-						</p>
-					</div>
-					<div class="p-4 bg-base-200/90 rounded-xl border border-base-300 space-y-1">
-						<div class="font-bold text-base-content">2. Concurrent Tool Dispatch</div>
-						<p class="text-[11px] text-base-content/80">
-							Triggers parallel generators: Objection Battlecards, MAP closing roadmap, and cfo.ai financial model.
-						</p>
-					</div>
-					<div class="p-4 bg-base-200/90 rounded-xl border border-base-300 space-y-1">
-						<div class="font-bold text-base-content">3. Output Validation</div>
-						<p class="text-[11px] text-base-content/80">
-							Validates complete deliverable suite against enterprise schema and confirms alignment.
-						</p>
-					</div>
+		<!-- Optional Detailed Step Log Drawer (shown on toggle) -->
+		<div id="full-step-log-panel" class="hidden card bg-base-100 border-2 border-base-300 shadow-md p-5 rounded-2xl space-y-3">
+			<div class="flex items-center justify-between border-b border-base-200 pb-2">
+				<div class="flex items-center gap-2">
+					<span class="font-bold text-xs text-base-content">DAG Engine Telemetry & Node Steps</span>
+					<span class="badge badge-xs badge-neutral" id="telemetry-node-count">6 Nodes Resolved</span>
 				</div>
-
-				<!-- Execution Trace Log -->
-				<div class="space-y-1.5 pt-1">
-					<span class="text-xs font-bold text-base-content/80">Directive Execution Log:</span>
-					<pre id="agent-trace-log" class="p-4 rounded-xl bg-base-200 border border-base-300 font-mono text-xs overflow-x-auto whitespace-pre-wrap min-h-16 text-base-content font-semibold">Click "Execute Directive" to observe real-time agent execution steps.</pre>
-				</div>
+				<span class="text-xs font-mono text-base-content/60" id="telemetry-total-ms">Execution Latency: 1.2s</span>
 			</div>
-		</section>
-
-		<!-- Active Deliverables Suite (Self-Contained Content, No Outbound Links) -->
-		<section id="deliverables-preview-panel" class="space-y-4 w-full">
-			<div class="flex items-center justify-between">
-				<h3 class="text-xs font-bold uppercase tracking-wider text-base-content/70">
-					Active Deliverables Portfolio
-				</h3>
-				<span class="text-xs font-semibold text-base-content/80 bg-base-200 px-2.5 py-0.5 rounded-full border border-base-300">
-					4 Modules Synced
-				</span>
+			<div id="telemetry-steps-list" class="space-y-1.5 font-mono text-[11px] text-base-content/85">
+				<!-- Dynamically filled -->
 			</div>
+		</div>
 
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
-				
-				<!-- Deliverable 1: Battlecards Module -->
-				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
-					<div class="flex items-center justify-between border-b border-base-200 pb-3">
-						<div class="flex items-center gap-2">
-							<span class="font-bold text-sm text-base-content">Objection Battlecards</span>
-							<span class="badge badge-xs badge-neutral font-semibold">4 Cards</span>
-						</div>
-						<span class="badge badge-xs badge-success font-semibold">Active Deck</span>
-					</div>
-					<div class="space-y-2">
-						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Top Objection:</span>
-						<p class="text-sm font-bold text-base-content">
-							"Your quote is 20% higher than our renewal price from LegacyVendor."
-						</p>
-					</div>
-					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
-						<span class="font-bold text-base-content">Winning Response:</span>
-						<p class="text-xs text-base-content/90 font-medium" id="preview-battlecard-text">
-							"Pivot to TCO. Highlight $80k/yr labor savings by eliminating LegacyVendor's manual data maintenance."
-						</p>
-					</div>
-					<div class="flex gap-2 text-[11px] pt-1">
-						<span class="badge badge-xs badge-outline">TCO Comparison</span>
-						<span class="badge badge-xs badge-outline">$80k Net Savings</span>
-					</div>
-				</div>
-
-				<!-- Deliverable 2: Mutual Action Plan Module -->
-				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
-					<div class="flex items-center justify-between border-b border-base-200 pb-3">
-						<div class="flex items-center gap-2">
-							<span class="font-bold text-sm text-base-content">Mutual Action Plan (MAP)</span>
-							<span class="badge badge-xs badge-warning font-semibold">Stage 3 / 6</span>
-						</div>
-						<span class="text-xs font-mono font-semibold text-base-content/70">Target: Oct 28 Close</span>
-					</div>
-					<div class="space-y-1">
-						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Current Milestone:</span>
-						<div class="font-bold text-sm text-base-content">Security & Compliance Review</div>
-						<p class="text-xs text-base-content/75 font-medium">InfoSec review of SOC2 Type II compliance and dedicated cloud isolation.</p>
-					</div>
-					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
-						<div class="flex justify-between">
-							<span class="font-bold text-base-content">Next Milestone:</span>
-							<span class="font-mono text-warning font-bold">This Thursday, 5:00 PM</span>
-						</div>
-						<p class="text-xs text-base-content/80 font-medium">Legal MSA review & CFO budget sign-off.</p>
-					</div>
-					<div class="flex gap-2 text-[11px] pt-1">
-						<span class="badge badge-xs badge-outline">Stage 01-02 Done</span>
-						<span class="badge badge-xs badge-outline">Stage 03 Active</span>
-					</div>
-				</div>
-
-				<!-- Deliverable 3: Follow-Up Email Module -->
-				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
-					<div class="flex items-center justify-between border-b border-base-200 pb-3">
-						<div class="flex items-center gap-2">
-							<span class="font-bold text-sm text-base-content">Executive Proposal Email</span>
-							<span class="badge badge-xs badge-neutral font-semibold">VP Sales Ops</span>
-						</div>
-						<span class="badge badge-xs badge-success font-semibold">Draft Ready</span>
-					</div>
-					<div class="space-y-1">
-						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Target Recipient:</span>
-						<div class="font-bold text-xs text-base-content">sarah.jenkins@acmecorp.com (VP Sales Ops)</div>
-					</div>
-					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
-						<span class="font-bold text-base-content">Subject Line:</span>
-						<p class="text-xs text-base-content/90 font-medium" id="preview-email-subject">
-							Executive Summary & Next Steps — BUST x ACME Corp Partnership
-						</p>
-					</div>
-					<div class="flex gap-2 text-[11px] pt-1">
-						<span class="badge badge-xs badge-outline">Executive Tone</span>
-						<span class="badge badge-xs badge-outline">138 Words</span>
-					</div>
-				</div>
-
-				<!-- Deliverable 4: Pitch Deck Module -->
-				<div class="card bg-base-100 border-2 border-base-300 shadow-sm p-6 space-y-3.5">
-					<div class="flex items-center justify-between border-b border-base-200 pb-3">
-						<div class="flex items-center gap-2">
-							<span class="font-bold text-sm text-base-content">Pitch & ROI Presentation</span>
-							<span class="badge badge-xs badge-neutral font-semibold">4 Slides</span>
-						</div>
-						<span class="badge badge-xs badge-success font-semibold">16:9 Deck Ready</span>
-					</div>
-					<div class="space-y-1">
-						<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Executive Deck Core ROI:</span>
-						<div class="font-bold text-sm text-base-content">&lt; 60 Days Payback Horizon</div>
-						<p class="text-xs text-base-content/75 font-medium">Closing 1 extra enterprise deal pays for the $120k annual license.</p>
-					</div>
-					<div class="p-3.5 bg-base-200 rounded-xl text-xs space-y-1 border border-base-300">
-						<span class="font-bold text-base-content">Deck Architecture:</span>
-						<p class="text-xs text-base-content/80 font-medium">
-							1. Executive Framing • 2. Status Quo • 3. Agentic Solution • 4. Commercial Terms
-						</p>
-					</div>
-					<div class="flex gap-2 text-[11px] pt-1">
-						<span class="badge badge-xs badge-outline">PowerPoint (.pptx)</span>
-						<span class="badge badge-xs badge-outline">Speaker Notes Attached</span>
-					</div>
-				</div>
-
-			</div>
-		</section>
 	</div>
 
 	<script>
-		const executeBtn = document.getElementById('btn-execute-command');
-		const execBtnText = document.getElementById('exec-btn-text');
-		const toggleReasoningBtn = document.getElementById('btn-toggle-reasoning');
-		const reasoningToggleText = document.getElementById('reasoning-toggle-text');
-		const reasoningPanel = document.getElementById('agent-reasoning-panel');
-		const commandInput = document.getElementById('command-input') as HTMLInputElement;
-		const traceLog = document.getElementById('agent-trace-log');
-		const statusIndicator = document.getElementById('command-status-badge');
-		const reasoningBadge = document.getElementById('reasoning-status-badge');
-		const chips = document.querySelectorAll('.command-chip');
+		// ==========================================
+		// Deal State & Memory
+		// ==========================================
+		let dealContext = {
+			account_name: 'ACME Corp',
+			deal_size: '$150,000 ARR',
+			competitor: 'LegacyVendor',
+			recipient: 'Sarah Jenkins (VP Sales Ops)',
+		};
 
-		// Command chips selection
-		chips.forEach((chip) => {
-			chip.addEventListener('click', () => {
-				const cmd = chip.getAttribute('data-cmd');
-				if (cmd && commandInput) {
-					commandInput.value = cmd;
+		let currentBattlecards: any[] = [
+			{
+				category: 'Pricing Objection',
+				objection_quote: 'Your quote is 20% higher than our renewal price from LegacyVendor.',
+				winning_response: 'Pivot to Total Cost of Ownership (TCO). While our upfront subscription is higher, LegacyVendor requires 2 dedicated FTEs just to maintain manual data sync. We automate that workflow entirely, delivering an $80k net savings in Year 1.',
+				tags: ['TCO Comparison', '$80k Net Savings', '60-day break-even'],
+			},
+			{
+				category: 'Security & Compliance',
+				objection_quote: 'Our enterprise requires SOC2 Type II certification and regional zero retention.',
+				winning_response: 'Confirm full SOC2 Type II audit compliance and explain our dedicated regional private cloud deployment with zero data retention outside their tenant.',
+				tags: ['SOC2 Type II', 'Zero Retention', 'InfoSec Approved'],
+			},
+			{
+				category: 'Implementation Friction',
+				objection_quote: 'We do not have the engineering bandwidth to handle a 3-month migration.',
+				winning_response: 'Our turnkey sales workspace requires zero custom coding. Complete onboarding and collateral ingestion takes less than 7 business days with white-glove migration assistance.',
+				tags: ['7-Day Setup', 'Zero Coding', 'White-Glove Support'],
+			},
+		];
+		let currentBcIndex = 0;
+
+		let currentMapStages: any[] = [
+			{ stage_number: 1, name: 'Technical Discovery', status: 'completed', target_date: 'Oct 12', description: 'Align on sales workflows & rep pain points' },
+			{ stage_number: 2, name: 'Architecture Review', status: 'completed', target_date: 'Oct 16', description: 'Evaluate tool dispatch & integrations' },
+			{ stage_number: 3, name: 'Security & InfoSec Compliance', status: 'current', target_date: 'Oct 20', description: 'SOC2 Type II audit review & zero retention verification' },
+			{ stage_number: 4, name: 'Commercial & Legal Review', status: 'upcoming', target_date: 'Oct 24', description: 'MSA terms and annual enterprise subscription' },
+			{ stage_number: 5, name: 'CFO Budget Authorization', status: 'upcoming', target_date: 'Oct 26', description: 'Review runway model and verified 60-day ROI' },
+			{ stage_number: 6, name: 'Contract Signature & Kickoff', status: 'upcoming', target_date: 'Oct 28', description: 'Final execution and workspace deployment' },
+		];
+
+		let currentSlides: any[] = [
+			{
+				slide_number: 1,
+				tag: 'Executive Framing',
+				title: 'Accelerating Deal Velocity for ACME Corp',
+				subtitle: 'A Strategic Partnership Proposal',
+				bullets: ['Eliminate manual collateral synthesis for 40+ sales reps', 'Shorten sales cycle by 40% across mid-market & enterprise tiers'],
+				speaker_note: 'Open by framing the problem around rep productivity and quota attainment.',
+			},
+			{
+				slide_number: 2,
+				tag: 'The Challenge',
+				title: 'The Hidden Cost of Manual Preparation',
+				subtitle: 'Current Operational Bottlenecks',
+				bullets: ['35% of selling time lost to manual slide & battlecard prep', '14-day turnaround lag for post-discovery executive proposals'],
+				speaker_note: 'Highlight how rep delay directly causes deal slippage against competitors.',
+			},
+			{
+				slide_number: 3,
+				tag: 'The Solution',
+				title: 'Autonomous Sales DAG Architecture',
+				subtitle: 'Deterministic Collateral Generation',
+				bullets: ['Instant generation of battlecards, MAP roadmaps, and emails', 'Buyer deal room suites with guest keycards'],
+				speaker_note: 'Demonstrate how one prompt generates the entire sales collateral suite.',
+			},
+			{
+				slide_number: 4,
+				tag: 'Commercial Terms',
+				title: 'Investment & Verified Payback',
+				subtitle: 'Commercial Framework',
+				bullets: ['$150,000 ARR annual agreement covering all enterprise reps', 'Break-even horizon within 60 days of deployment'],
+				speaker_note: 'Walk through the ROI calculation and align on the Oct 28 contract signature.',
+			},
+		];
+		let currentSlideIndex = 0;
+
+		let currentSuite = {
+			share_id: 'suite_acmecorp_91f404',
+			suite_name: 'Penthouse Suite: ACME Corp',
+			access_url: '/suite/suite_acmecorp_91f404',
+		};
+
+		// ==========================================
+		// DOM Elements
+		// ==========================================
+		const chatStream = document.getElementById('chat-stream');
+		const chatForm = document.getElementById('chat-form');
+		const chatInput = document.getElementById('chat-input') as HTMLInputElement;
+		const sendBtn = document.getElementById('btn-send-directive');
+		const clearBtn = document.getElementById('btn-clear-chat');
+		const stepsToggleBtn = document.getElementById('btn-toggle-steps');
+		const fullStepPanel = document.getElementById('full-step-log-panel');
+		const chips = document.querySelectorAll('.chat-chip');
+		const agentStatusBadge = document.getElementById('agent-status-badge');
+		const breadcrumbAccount = document.getElementById('active-account-breadcrumb');
+
+		// Canvas Tabs & Panels
+		const canvasTabs = document.querySelectorAll('.canvas-tab');
+		const canvasPanels = document.querySelectorAll('.canvas-panel');
+
+		// Battlecards elements
+		const bcCardCounter = document.getElementById('bc-card-counter');
+		const canvasBcCategory = document.getElementById('canvas-bc-category');
+		const canvasBcObjection = document.getElementById('canvas-bc-objection');
+		const canvasBcTalktrack = document.getElementById('canvas-bc-talktrack');
+		const canvasBcDiffs = document.getElementById('canvas-bc-differentiators');
+		const bcBtnPrev = document.getElementById('bc-btn-prev');
+		const bcBtnNext = document.getElementById('bc-btn-next');
+
+		// MAP elements
+		const canvasMapStagesList = document.getElementById('canvas-map-stages-list');
+		const canvasMapCloseDate = document.getElementById('canvas-map-close-date');
+
+		// Email elements
+		const canvasEmailSubject = document.getElementById('canvas-email-subject');
+		const canvasEmailBody = document.getElementById('canvas-email-body');
+		const canvasEmailRecipient = document.getElementById('canvas-email-recipient');
+		const copyCanvasEmailBtn = document.getElementById('btn-copy-canvas-email');
+
+		// Deck elements
+		const deckSlideCounter = document.getElementById('deck-slide-counter');
+		const canvasSlideTag = document.getElementById('canvas-slide-tag');
+		const canvasSlideTitle = document.getElementById('canvas-slide-title');
+		const canvasSlideSubtitle = document.getElementById('canvas-slide-subtitle');
+		const canvasSlideBullets = document.getElementById('canvas-slide-bullets');
+		const canvasSlideNotes = document.getElementById('canvas-slide-notes');
+		const deckBtnPrev = document.getElementById('deck-btn-prev');
+		const deckBtnNext = document.getElementById('deck-btn-next');
+
+		// Suite elements
+		const canvasSuiteName = document.getElementById('canvas-suite-name');
+		const canvasSuiteToken = document.getElementById('canvas-suite-token');
+		const btnCanvasEnterSuite = document.getElementById('btn-canvas-enter-suite') as HTMLAnchorElement;
+		const btnCopySuiteLink = document.getElementById('btn-copy-suite-link');
+
+		// ==========================================
+		// Tab Switching Helper
+		// ==========================================
+		function switchCanvasTab(targetId: string) {
+			canvasTabs.forEach((tab) => {
+				const isTarget = tab.getAttribute('data-target') === targetId;
+				if (isTarget) {
+					tab.classList.remove('btn-ghost', 'text-base-content/75');
+					tab.classList.add('btn-neutral');
+				} else {
+					tab.classList.remove('btn-neutral');
+					tab.classList.add('btn-ghost', 'text-base-content/75');
 				}
-				chips.forEach((c) => {
-					c.classList.remove('btn-neutral');
-					c.classList.add('btn-outline');
-				});
-				chip.classList.add('btn-neutral');
-				chip.classList.remove('btn-outline');
+			});
+
+			canvasPanels.forEach((panel) => {
+				if (panel.id === targetId) {
+					panel.classList.remove('hidden');
+				} else {
+					panel.classList.add('hidden');
+				}
+			});
+		}
+
+		canvasTabs.forEach((tab) => {
+			tab.addEventListener('click', () => {
+				const target = tab.getAttribute('data-target');
+				if (target) switchCanvasTab(target);
 			});
 		});
 
-		// Toggle Agent Reasoning View
-		let isReasoningVisible = false;
-		toggleReasoningBtn?.addEventListener('click', () => {
-			isReasoningVisible = !isReasoningVisible;
-			if (reasoningPanel) {
-				reasoningPanel.classList.toggle('hidden', !isReasoningVisible);
+		// ==========================================
+		// Render Functions for Canvas Tabs
+		// ==========================================
+		function renderBattlecard() {
+			if (!currentBattlecards.length) return;
+			const card = currentBattlecards[currentBcIndex];
+			if (bcCardCounter) bcCardCounter.textContent = `Card ${currentBcIndex + 1} / ${currentBattlecards.length}`;
+			if (canvasBcCategory) canvasBcCategory.textContent = card.category || 'Objection Talk-Track';
+			if (canvasBcObjection) canvasBcObjection.textContent = `"${card.objection_quote || card.objection || ''}"`;
+			if (canvasBcTalktrack) canvasBcTalktrack.textContent = card.winning_response || card.talk_track || '';
+			if (canvasBcDiffs) {
+				const tags = card.tags || card.key_differentiators || ['Verified Talk-Track'];
+				canvasBcDiffs.innerHTML = tags.map((t: string) => `<span class="badge badge-xs badge-outline">${t}</span>`).join('');
 			}
-			if (reasoningToggleText) {
-				reasoningToggleText.textContent = isReasoningVisible
-					? 'Hide Agent Reasoning & Steps'
-					: 'Show Agent Reasoning & Steps';
+		}
+
+		bcBtnPrev?.addEventListener('click', () => {
+			if (currentBcIndex > 0) {
+				currentBcIndex--;
+				renderBattlecard();
 			}
 		});
 
-		// Execute Directive
-		executeBtn?.addEventListener('click', async () => {
-			const command = (commandInput?.value || '').trim();
-			if (!command) return;
-
-			if (executeBtn) (executeBtn as HTMLButtonElement).disabled = true;
-			if (execBtnText) execBtnText.textContent = 'Executing Directive...';
-			if (statusIndicator) statusIndicator.textContent = 'Directive Executing...';
-			if (reasoningBadge) reasoningBadge.textContent = 'Active Execution';
-			if (traceLog) {
-				traceLog.textContent = `[1/3] Parsing directive: ${command}...\n[2/3] Dispatching parallel generators (Battlecards, MAP, Email, Deck)...\n[3/3] Validating outputs...`;
+		bcBtnNext?.addEventListener('click', () => {
+			if (currentBcIndex < currentBattlecards.length - 1) {
+				currentBcIndex++;
+				renderBattlecard();
 			}
+		});
+
+		function renderMap() {
+			if (!canvasMapStagesList) return;
+			canvasMapStagesList.innerHTML = currentMapStages
+				.map((st) => {
+					const isDone = st.status === 'completed';
+					const isCurr = st.status === 'current';
+					const badgeClass = isDone ? 'badge-success' : isCurr ? 'badge-warning' : 'badge-neutral';
+					const badgeText = isDone ? 'Done ✓' : isCurr ? 'Active Stage' : 'Upcoming';
+					const borderClass = isCurr ? 'border-primary/50 bg-primary/5' : 'border-base-300 bg-base-200/60';
+
+					return `
+						<div class="p-3 rounded-xl border-2 ${borderClass} flex items-center justify-between text-xs transition-all">
+							<div class="space-y-0.5">
+								<div class="flex items-center gap-2">
+									<span class="font-mono text-[10px] text-base-content/60">0${st.stage_number}</span>
+									<span class="font-bold text-base-content">${st.name}</span>
+									<span class="badge badge-xs ${badgeClass} font-semibold">${badgeText}</span>
+								</div>
+								<p class="text-[11px] text-base-content/75">${st.description || ''}</p>
+							</div>
+							<span class="font-mono text-[11px] text-base-content/70 shrink-0 ml-2">${st.target_date || ''}</span>
+						</div>
+					`;
+				})
+				.join('');
+		}
+
+		function renderDeck() {
+			if (!currentSlides.length) return;
+			const slide = currentSlides[currentSlideIndex];
+			if (deckSlideCounter) deckSlideCounter.textContent = `Slide ${currentSlideIndex + 1} / ${currentSlides.length}`;
+			if (canvasSlideTag) canvasSlideTag.textContent = slide.tag || `Slide ${slide.slide_number}`;
+			if (canvasSlideTitle) canvasSlideTitle.textContent = slide.title || '';
+			if (canvasSlideSubtitle) canvasSlideSubtitle.textContent = slide.subtitle || '';
+			if (canvasSlideNotes) canvasSlideNotes.textContent = slide.speaker_note || '';
+			if (canvasSlideBullets) {
+				const bullets = slide.bullets || [];
+				canvasSlideBullets.innerHTML = bullets.map((b: string) => `<li>${b}</li>`).join('');
+			}
+		}
+
+		deckBtnPrev?.addEventListener('click', () => {
+			if (currentSlideIndex > 0) {
+				currentSlideIndex--;
+				renderDeck();
+			}
+		});
+
+		deckBtnNext?.addEventListener('click', () => {
+			if (currentSlideIndex < currentSlides.length - 1) {
+				currentSlideIndex++;
+				renderDeck();
+			}
+		});
+
+		// Initial Canvas Render
+		renderBattlecard();
+		renderMap();
+		renderDeck();
+
+		// ==========================================
+		// Chat Stream & Inline Deliverable Rendering
+		// ==========================================
+		function appendUserMessage(text: string) {
+			if (!chatStream) return;
+			const turnDiv = document.createElement('div');
+			turnDiv.className = 'space-y-1.5';
+			turnDiv.innerHTML = `
+				<div class="flex items-center justify-end gap-2 text-[11px] font-semibold text-base-content/60">
+					<span>You (Sales AE)</span>
+					<span class="w-5 h-5 rounded-full bg-neutral text-neutral-content flex items-center justify-center text-[10px]">AE</span>
+				</div>
+				<div class="p-3 bg-neutral text-neutral-content rounded-xl text-xs font-medium leading-relaxed max-w-[90%] ml-auto shadow-xs">
+					${text}
+				</div>
+			`;
+			chatStream.appendChild(turnDiv);
+			chatStream.scrollTop = chatStream.scrollHeight;
+		}
+
+		function appendProgressBlock(): HTMLDivElement | null {
+			if (!chatStream) return null;
+			const progDiv = document.createElement('div');
+			progDiv.className = 'space-y-2 p-3 bg-base-200/90 rounded-xl border border-base-300 animate-pulse text-xs';
+			progDiv.innerHTML = `
+				<div class="flex items-center gap-2 font-bold text-base-content">
+					<span class="loading loading-spinner loading-xs text-primary"></span>
+					<span>Executing Autonomous Sales DAG Plan...</span>
+				</div>
+				<div class="space-y-1 text-[11px] text-base-content/75 font-mono">
+					<div>● Parsing deal context & accounts...</div>
+					<div>● Formulating dependency graph...</div>
+					<div>● Dispatching tools in topological sequence...</div>
+				</div>
+			`;
+			chatStream.appendChild(progDiv);
+			chatStream.scrollTop = chatStream.scrollHeight;
+			return progDiv;
+		}
+
+		function appendAgentTurn(data: any) {
+			if (!chatStream) return;
+			const turnDiv = document.createElement('div');
+			turnDiv.className = 'space-y-2.5';
+
+			// 1. Progress Steps Disclosure
+			const steps = data.steps || [];
+			const totalMs = data.total_duration_ms || 1200;
+			let stepsHtml = '';
+			if (steps.length > 0) {
+				stepsHtml = `
+					<details class="group bg-base-200/70 border border-base-300 rounded-xl p-2.5 text-[11px] cursor-pointer">
+						<summary class="font-bold text-base-content/85 flex items-center justify-between list-none">
+							<span class="flex items-center gap-1.5">
+								<span class="text-success">✓</span>
+								<span>DAG Execution Resolved (${steps.length} steps in ${totalMs}ms)</span>
+							</span>
+							<span class="text-xs group-open:rotate-180 transition-transform">▾</span>
+						</summary>
+						<div class="mt-2 pt-2 border-t border-base-300 space-y-1 font-mono text-[10px] text-base-content/75">
+							${steps
+								.map(
+									(s: any) => `
+								<div class="flex items-center justify-between">
+									<span>✓ ${s.name} ${s.output_summary ? `— ${s.output_summary}` : ''}</span>
+									<span class="text-base-content/50">${s.duration_ms}ms</span>
+								</div>
+							`
+								)
+								.join('')}
+						</div>
+					</details>
+				`;
+			}
+
+			// 2. Inline Output Deliverables Cards
+			const arts = data.artifacts || {};
+			let inlineDeliverablesHtml = '';
+
+			// Battlecards Pill
+			if (arts.battlecards?.content?.cards?.[0]) {
+				const bc = arts.battlecards.content.cards[0];
+				inlineDeliverablesHtml += `
+					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
+						<div class="flex items-center justify-between">
+							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+								<span>🎴</span>
+								<span>Objection Battlecard</span>
+							</span>
+							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-battlecards">
+								Open in Canvas →
+							</button>
+						</div>
+						<p class="text-xs font-semibold text-base-content">"${bc.objection_quote || bc.objection}"</p>
+						<p class="text-[11px] text-base-content/80 font-medium line-clamp-2">${bc.winning_response || bc.talk_track}</p>
+					</div>
+				`;
+			}
+
+			// MAP Pill
+			if (arts.flowchart?.content) {
+				const fc = arts.flowchart.content;
+				inlineDeliverablesHtml += `
+					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
+						<div class="flex items-center justify-between">
+							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+								<span>🗺️</span>
+								<span>Mutual Action Plan (MAP)</span>
+							</span>
+							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-map">
+								Open in Canvas →
+							</button>
+						</div>
+						<div class="flex items-center justify-between text-xs">
+							<span class="font-medium text-base-content">6-Stage Closing Roadmap</span>
+							<span class="badge badge-xs badge-warning font-semibold">Target: ${fc.target_close_date || 'Oct 28'}</span>
+						</div>
+					</div>
+				`;
+			}
+
+			// Email Pill
+			if (arts.email?.content) {
+				const em = arts.email.content;
+				inlineDeliverablesHtml += `
+					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
+						<div class="flex items-center justify-between">
+							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+								<span>✉️</span>
+								<span>Executive Proposal Email</span>
+							</span>
+							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-email">
+								Open in Canvas →
+							</button>
+						</div>
+						<div class="text-xs font-semibold text-base-content line-clamp-1">Subject: ${em.subject}</div>
+					</div>
+				`;
+			}
+
+			// Deck Pill
+			if (arts.presentation?.content) {
+				inlineDeliverablesHtml += `
+					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
+						<div class="flex items-center justify-between">
+							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+								<span>📊</span>
+								<span>Pitch & ROI Presentation</span>
+							</span>
+							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-deck">
+								Open in Canvas →
+							</button>
+						</div>
+						<div class="text-xs font-medium text-base-content">4-Slide Executive Briefing Deck</div>
+					</div>
+				`;
+			}
+
+			// Suite Pill
+			if (arts.suite) {
+				inlineDeliverablesHtml += `
+					<div class="p-3 bg-base-100 rounded-xl border-2 border-primary/50 shadow-2xs space-y-2">
+						<div class="flex items-center justify-between">
+							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
+								<span>🏨</span>
+								<span>Buyer Deal Suite Keycard</span>
+							</span>
+							<span class="badge badge-xs badge-success font-semibold">Pass Active</span>
+						</div>
+						<div class="flex items-center justify-between text-xs">
+							<span class="font-mono text-base-content/70">${arts.suite.share_id}</span>
+							<a href="${arts.suite.access_url}" target="_blank" class="btn btn-xs btn-neutral font-semibold">
+								Enter Deal Room 🚪
+							</a>
+						</div>
+					</div>
+				`;
+			}
+
+			turnDiv.innerHTML = `
+				<div class="flex items-center gap-2 text-[11px] font-semibold text-base-content/60">
+					<span class="w-5 h-5 rounded-full bg-base-300 flex items-center justify-center text-[10px]">🤖</span>
+					<span>AI Deal Architect</span>
+					<span class="text-[10px] text-base-content/40 font-mono">just now</span>
+				</div>
+
+				${stepsHtml}
+
+				<div class="p-3.5 bg-base-200/90 rounded-xl border border-base-300 text-xs text-base-content leading-relaxed font-medium">
+					${data.agent_reply}
+				</div>
+
+				<div class="space-y-2 pt-1">
+					<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Generated Output Deliverables:</div>
+					${inlineDeliverablesHtml}
+				</div>
+			`;
+
+			chatStream.appendChild(turnDiv);
+			chatStream.scrollTop = chatStream.scrollHeight;
+
+			// Attach Canvas Link buttons inside the chat message
+			turnDiv.querySelectorAll('.open-canvas-btn').forEach((btn) => {
+				btn.addEventListener('click', () => {
+					const target = btn.getAttribute('data-target');
+					if (target) switchCanvasTab(target);
+				});
+			});
+		}
+
+		// ==========================================
+		// Send Directive Logic
+		// ==========================================
+		async function sendDirective(promptText: string) {
+			if (!promptText) return;
+			appendUserMessage(promptText);
+
+			if (sendBtn) (sendBtn as HTMLButtonElement).disabled = true;
+			if (agentStatusBadge) {
+				agentStatusBadge.className = 'badge badge-xs badge-warning ml-2 font-semibold animate-pulse';
+				agentStatusBadge.textContent = '● Executing DAG...';
+			}
+
+			const progressBlock = appendProgressBlock();
 
 			try {
-				const start = performance.now();
-				const res = await fetch('/api/test-llm', {
+				const res = await fetch('/api/agent/chat', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ prompt: `Execute deal directive: ${command}` }),
+					body: JSON.stringify({
+						message: promptText,
+						deal_context: dealContext,
+					}),
 				});
-				const data = await res.json();
-				const duration = Math.round(performance.now() - start);
 
-				if (res.ok) {
-					if (statusIndicator) statusIndicator.textContent = `Completed in ${duration}ms`;
-					if (reasoningBadge) reasoningBadge.textContent = 'Success';
-					if (traceLog) {
-						traceLog.textContent = `Directive completed successfully in ${duration}ms.\nDirective: ${command}\nModel: ${data.model}\nResponse: ${data.response}`;
+				const data = await res.json();
+				if (progressBlock) progressBlock.remove();
+
+				if (res.ok && data.status === 'success') {
+					appendAgentTurn(data);
+
+					// Update memory
+					if (data.deal_context) {
+						dealContext = { ...dealContext, ...data.deal_context };
+						if (breadcrumbAccount) {
+							breadcrumbAccount.textContent = dealContext.account_name;
+						}
 					}
+
+					// Update Canvas Deliverables
+					const arts = data.artifacts || {};
+
+					// Update Battlecards
+					if (arts.battlecards?.content?.cards?.length) {
+						currentBattlecards = arts.battlecards.content.cards;
+						currentBcIndex = 0;
+						renderBattlecard();
+					}
+
+					// Update MAP
+					if (arts.flowchart?.content?.stages?.length) {
+						currentMapStages = arts.flowchart.content.stages;
+						if (canvasMapCloseDate) {
+							canvasMapCloseDate.textContent = `Target Close: ${arts.flowchart.content.target_close_date || 'Oct 28, 2026'}`;
+						}
+						renderMap();
+					}
+
+					// Update Email
+					if (arts.email?.content) {
+						const em = arts.email.content;
+						if (canvasEmailSubject) canvasEmailSubject.textContent = em.subject;
+						if (canvasEmailBody) canvasEmailBody.textContent = em.body;
+						if (canvasEmailRecipient) canvasEmailRecipient.textContent = `To: ${em.to || dealContext.recipient}`;
+					}
+
+					// Update Presentation
+					if (arts.presentation?.content?.slides?.length) {
+						currentSlides = arts.presentation.content.slides;
+						currentSlideIndex = 0;
+						renderDeck();
+					}
+
+					// Update Suite Keycard
+					if (arts.suite) {
+						currentSuite = arts.suite;
+						if (canvasSuiteName) canvasSuiteName.textContent = arts.suite.suite_name;
+						if (canvasSuiteToken) canvasSuiteToken.textContent = `Keycard Pass: ${arts.suite.share_id}`;
+						if (btnCanvasEnterSuite) btnCanvasEnterSuite.href = arts.suite.access_url;
+					}
+
+					// Update Telemetry Panel
+					updateTelemetryPanel(data.steps || [], data.total_duration_ms || 1200);
+
 				} else {
-					if (statusIndicator) statusIndicator.textContent = 'Directive Error';
-					if (reasoningBadge) reasoningBadge.textContent = 'Error';
+					appendAgentTurn({
+						agent_reply: `Encountered an issue executing that directive: ${data.detail || 'Internal pipeline error'}`,
+						steps: [],
+						artifacts: {},
+					});
 				}
 			} catch (err: any) {
-				if (statusIndicator) statusIndicator.textContent = 'Connection Error';
-				if (traceLog) traceLog.textContent = `Network error: ${err.message}`;
+				if (progressBlock) progressBlock.remove();
+				appendAgentTurn({
+					agent_reply: `Connection error: ${err.message}`,
+					steps: [],
+					artifacts: {},
+				});
 			} finally {
-				if (executeBtn) (executeBtn as HTMLButtonElement).disabled = false;
-				if (execBtnText) execBtnText.textContent = 'Execute Directive';
+				if (sendBtn) (sendBtn as HTMLButtonElement).disabled = false;
+				if (agentStatusBadge) {
+					agentStatusBadge.className = 'badge badge-xs badge-success ml-2 font-semibold';
+					agentStatusBadge.textContent = '● Engine Online';
+				}
 			}
+		}
+
+		function updateTelemetryPanel(steps: any[], totalMs: number) {
+			const nodeCount = document.getElementById('telemetry-node-count');
+			const totalMsEl = document.getElementById('telemetry-total-ms');
+			const stepsList = document.getElementById('telemetry-steps-list');
+
+			if (nodeCount) nodeCount.textContent = `${steps.length} Nodes Resolved`;
+			if (totalMsEl) totalMsEl.textContent = `Execution Latency: ${(totalMs / 1000).toFixed(2)}s`;
+
+			if (stepsList) {
+				stepsList.innerHTML = steps
+					.map(
+						(s: any) => `
+					<div class="flex items-center justify-between p-2 rounded-lg bg-base-200 border border-base-300">
+						<div>
+							<span class="text-success font-bold">✓</span>
+							<span class="font-bold text-base-content ml-1">${s.name}</span>
+							${s.detail ? `<span class="text-base-content/60 ml-2">(${s.detail})</span>` : ''}
+						</div>
+						<span class="font-semibold text-primary">${s.duration_ms}ms</span>
+					</div>
+				`
+					)
+					.join('');
+			}
+		}
+
+		// ==========================================
+		// Event Listeners
+		// ==========================================
+		chatForm?.addEventListener('submit', (e) => {
+			e.preventDefault();
+			const val = (chatInput?.value || '').trim();
+			if (!val) return;
+			chatInput.value = '';
+			sendDirective(val);
+		});
+
+		chips.forEach((chip) => {
+			chip.addEventListener('click', () => {
+				const p = chip.getAttribute('data-prompt');
+				if (p) sendDirective(p);
+			});
+		});
+
+		clearBtn?.addEventListener('click', () => {
+			if (chatStream) {
+				chatStream.innerHTML = `
+					<div class="space-y-2">
+						<div class="flex items-center gap-2 text-[11px] font-semibold text-base-content/60">
+							<span class="w-5 h-5 rounded-full bg-base-300 flex items-center justify-center text-[10px]">🤖</span>
+							<span>AI Sales Assistant</span>
+							<span class="text-[10px] text-base-content/40 font-mono">reset</span>
+						</div>
+						<div class="p-3.5 bg-base-200/80 rounded-xl border border-base-300 space-y-1 text-xs">
+							<p class="font-semibold text-base-content">Agent stream reset.</p>
+							<p class="text-base-content/85">Tell me what deal you would like to work on.</p>
+						</div>
+					</div>
+				`;
+			}
+		});
+
+		stepsToggleBtn?.addEventListener('click', () => {
+			if (fullStepPanel) fullStepPanel.classList.toggle('hidden');
+		});
+
+		copyCanvasEmailBtn?.addEventListener('click', () => {
+			if (!canvasEmailBody) return;
+			navigator.clipboard.writeText(canvasEmailBody.textContent || '').then(() => {
+				const orig = copyCanvasEmailBtn.innerHTML;
+				copyCanvasEmailBtn.innerHTML = 'Copied! ✓';
+				setTimeout(() => (copyCanvasEmailBtn.innerHTML = orig), 2000);
+			});
+		});
+
+		btnCopySuiteLink?.addEventListener('click', () => {
+			navigator.clipboard.writeText(currentSuite.share_id).then(() => {
+				const orig = btnCopySuiteLink.textContent;
+				btnCopySuiteLink.textContent = 'Copied! ✓';
+				setTimeout(() => (btnCopySuiteLink.textContent = orig), 2000);
+			});
 		});
 	</script>
 </Layout>

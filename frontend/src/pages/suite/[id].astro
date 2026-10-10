@@ -1,0 +1,155 @@
+---
+export function getStaticPaths() {
+	return [
+		{ params: { id: 'acme-corp-1001' } },
+		{ params: { id: 'suite_acmecorp_91f404' } },
+		{ params: { id: 'delta-logistics-402' } },
+		{ params: { id: 'fintech-global-705' } },
+	];
+}
+
+const { id } = Astro.params;
+---
+
+<!doctype html>
+<html lang="en" data-theme="caramellatte">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Executive Deal Suite — {id}</title>
+		<meta name="description" content="Private Buyer Deal Suite & Digital Keycard Portal" />
+		<link rel="stylesheet" href="/src/styles/global.css" />
+	</head>
+	<body class="min-h-screen bg-base-100 text-base-content antialiased flex flex-col justify-between">
+		
+		<!-- TOP SUITE CONCIERGE BAR -->
+		<header class="h-16 border-b-2 border-base-300 px-6 md:px-12 flex items-center justify-between bg-base-200">
+			<div class="flex items-center gap-3">
+				<span class="text-xl font-bold tracking-tight text-base-content">BUST</span>
+				<span class="text-base-content/30">•</span>
+				<div class="flex items-center gap-2">
+					<span class="badge badge-sm badge-neutral font-mono font-bold">Suite Keycard: {id}</span>
+					<span class="badge badge-sm badge-success font-semibold">Guest View Active</span>
+				</div>
+			</div>
+			<div class="flex items-center gap-2">
+				<a href="/" class="btn btn-xs btn-outline">
+					Workspace Console
+				</a>
+			</div>
+		</header>
+
+		<!-- MAIN GUEST SUITE CANVASES -->
+		<main class="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10 space-y-8">
+			
+			<!-- Suite Welcome Plaque -->
+			<div class="card bg-base-200 border-2 border-base-300 p-6 md:p-8 space-y-3 rounded-2xl shadow-sm">
+				<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-base-300 pb-3">
+					<div>
+						<div class="text-[11px] font-mono uppercase tracking-widest text-base-content/60 font-bold">
+							Executive Deal Suite • Private Guest Access
+						</div>
+						<h1 class="text-2xl font-black text-base-content mt-1">
+							ACME Corp Partnership Suite
+						</h1>
+					</div>
+					<div class="flex items-center gap-2">
+						<span class="badge badge-sm badge-neutral font-semibold">Target ARR: $150,000</span>
+						<span class="badge badge-sm badge-warning font-semibold">Closing: Oct 28, 2026</span>
+					</div>
+				</div>
+				<p class="text-xs text-base-content/85 leading-relaxed font-medium">
+					Welcome Sarah Jenkins and executive stakeholders. This private portal contains your complete deal review collateral: competitive objection battlecards, technical discovery roadmap, and commercial ROI terms.
+				</p>
+			</div>
+
+			<!-- In-Suite Deliverables Tabs -->
+			<div class="space-y-4">
+				<div class="flex items-center justify-between border-b border-base-300 pb-2">
+					<h2 class="text-xs font-bold uppercase tracking-wider text-base-content/70">
+						In-Suite Verified Collateral
+					</h2>
+					<span class="text-[11px] text-base-content/60">Read-Only Privileges</span>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+					<!-- Deliverable 1: Battlecards -->
+					<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+						<div class="flex items-center justify-between border-b border-base-200 pb-2">
+							<span class="font-bold text-sm text-base-content">1. Objection Battlecards</span>
+							<span class="badge badge-xs badge-success">3 Talk-Tracks</span>
+						</div>
+						<p class="text-xs text-base-content/75 font-medium">
+							Pricing resistance vs LegacyVendor, zero data retention security verification, and TCO delta ($80k Year 1 labor savings).
+						</p>
+						<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+							<strong class="text-base-content">Primary Talk-Track:</strong>
+							<p class="text-[11px] text-base-content/85">
+								"Highlight $80k labor savings by eliminating LegacyVendor manual curation."
+							</p>
+						</div>
+					</div>
+
+					<!-- Deliverable 2: Mutual Action Plan -->
+					<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+						<div class="flex items-center justify-between border-b border-base-200 pb-2">
+							<span class="font-bold text-sm text-base-content">2. Mutual Action Plan</span>
+							<span class="badge badge-xs badge-warning">Stage 3 / 6 Active</span>
+						</div>
+						<p class="text-xs text-base-content/75 font-medium">
+							6-step closing roadmap leading to contract execution and team onboarding kickoff.
+						</p>
+						<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+							<strong class="text-base-content">Current Stage:</strong>
+							<p class="text-[11px] text-base-content/85">
+								Security Review: SOC2 Type II audit report under InfoSec review (Target: Thursday).
+							</p>
+						</div>
+					</div>
+
+					<!-- Deliverable 3: Follow-Up Email -->
+					<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+						<div class="flex items-center justify-between border-b border-base-200 pb-2">
+							<span class="font-bold text-sm text-base-content">3. Executive Proposal Memo</span>
+							<span class="badge badge-xs badge-neutral">VP Sales Ops</span>
+						</div>
+						<p class="text-xs text-base-content/75 font-medium">
+							Formal proposal summarizing team licensing, operational savings, and milestones.
+						</p>
+						<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+							<strong class="text-base-content">Subject:</strong>
+							<p class="text-[11px] text-base-content/85">
+								Executive Summary & Next Steps — BUST x ACME Corp Partnership
+							</p>
+						</div>
+					</div>
+
+					<!-- Deliverable 4: ROI Deck -->
+					<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+						<div class="flex items-center justify-between border-b border-base-200 pb-2">
+							<span class="font-bold text-sm text-base-content">4. Commercial ROI Deck</span>
+							<span class="badge badge-xs badge-success">&lt; 60 Days Payback</span>
+						</div>
+						<p class="text-xs text-base-content/75 font-medium">
+							Executive slide outline highlighting 40% shorter sales cycle and fast break-even.
+						</p>
+						<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+							<strong class="text-base-content">Contract Value:</strong>
+							<p class="text-[11px] text-base-content/85">
+								$120,000 / year (50 AE seats with full collateral generation).
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</main>
+
+		<!-- SUITE FOOTER -->
+		<footer class="border-t border-base-300 p-6 text-center text-xs text-base-content/60 bg-base-200">
+			<span>Confidential Deal Suite • Powered by BUST Enterprise Workspace</span>
+		</footer>
+
+	</body>
+</html>
