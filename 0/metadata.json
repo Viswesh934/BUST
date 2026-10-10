@@ -1,0 +1,149 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4JWAHXY14ZHKT82HAVM813F",
+  "session_id": "77ad5304-ab6c-4459-bb55-06cdea62fa7f",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-10T12:24:14.392589808Z",
+  "branch": "main",
+  "checkpoints_count": 7,
+  "save_step_count": 7,
+  "files_touched": [
+    "README.md",
+    "backend/app/config.py",
+    "backend/app/llm.py",
+    "backend/app/main.py",
+    "backend/requirements.txt",
+    "docs/PLANNING.md"
+  ],
+  "agent": "Antigravity",
+  "model": "",
+  "turn_id": "13de9ef0fde7",
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-10T12:24:14.340905419Z",
+    "agent_lines": 238,
+    "agent_removed": 0,
+    "human_added": 161,
+    "human_modified": 7,
+    "human_removed": 0,
+    "total_committed": 406,
+    "total_lines_changed": 406,
+    "agent_percentage": 58.620689655172406,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 4483,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".agents/hooks.json": 28,
+        ".gitignore": 51,
+        "README.md": 119,
+        "backend/.env.example": 4,
+        "backend/app/__init__.py": 1,
+        "backend/app/config.py": 35,
+        "backend/app/llm.py": 47,
+        "backend/app/main.py": 95,
+        "backend/requirements.txt": 6,
+        "frontend/.env.example": 1,
+        "frontend/.gitignore": 24,
+        "frontend/.vscode/extensions.json": 4,
+        "frontend/.vscode/launch.json": 11,
+        "frontend/AGENTS.md": 22,
+        "frontend/README.md": 43,
+        "frontend/astro.config.mjs": 5,
+        "frontend/package-lock.json": 3757,
+        "frontend/package.json": 17,
+        "frontend/public/favicon.svg": 9,
+        "frontend/src/pages/index.astro": 199,
+        "frontend/tsconfig.json": 5
+      },
+      "user_removed_per_file": {
+        "README.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 28,
+      "user_lines_removed": 1,
+      "agent_lines_added": 4456,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".agents/hooks.json": 28
+      },
+      "user_removed_per_file": {
+        "frontend/CLAUDE.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 28,
+      "user_lines_removed": 1,
+      "agent_lines_added": 4456,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".agents/hooks.json": 28
+      },
+      "user_removed_per_file": {
+        "frontend/CLAUDE.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 28,
+      "user_lines_removed": 1,
+      "agent_lines_added": 4457,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".agents/hooks.json": 28
+      },
+      "user_removed_per_file": {
+        "frontend/CLAUDE.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 28,
+      "user_lines_removed": 1,
+      "agent_lines_added": 4460,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".agents/hooks.json": 28
+      },
+      "user_removed_per_file": {
+        "frontend/CLAUDE.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 28,
+      "user_lines_removed": 1,
+      "agent_lines_added": 4685,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".agents/hooks.json": 28
+      },
+      "user_removed_per_file": {
+        "frontend/CLAUDE.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 28,
+      "user_lines_removed": 1,
+      "agent_lines_added": 4679,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".agents/hooks.json": 28
+      },
+      "user_removed_per_file": {
+        "frontend/CLAUDE.md": 1
+      }
+    }
+  ]
+}
