@@ -1,0 +1,199 @@
+---
+const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>BUST — Minimal Setup</title>
+		<style>
+			:root {
+				--bg: #0f172a;
+				--card-bg: #1e293b;
+				--text: #f8fafc;
+				--text-muted: #94a3b8;
+				--primary: #3b82f6;
+				--primary-hover: #2563eb;
+				--border: #334155;
+				--success: #10b981;
+				--error: #ef4444;
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+				background-color: var(--bg);
+				color: var(--text);
+				padding: 2rem;
+				display: flex;
+				justify-content: center;
+				min-height: 100vh;
+			}
+			.container {
+				width: 100%;
+				max-width: 680px;
+			}
+			header {
+				margin-bottom: 2rem;
+			}
+			h1 {
+				font-size: 2rem;
+				font-weight: 700;
+				letter-spacing: -0.025em;
+			}
+			.subtitle {
+				color: var(--text-muted);
+				margin-top: 0.5rem;
+				font-size: 0.95rem;
+			}
+			.card {
+				background: var(--card-bg);
+				border: 1px solid var(--border);
+				border-radius: 0.75rem;
+				padding: 1.5rem;
+				margin-bottom: 1.5rem;
+			}
+			.info-row {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding-bottom: 1rem;
+				margin-bottom: 1rem;
+				border-bottom: 1px solid var(--border);
+				font-size: 0.875rem;
+			}
+			.badge {
+				background: #0284c7;
+				padding: 0.2rem 0.6rem;
+				border-radius: 9999px;
+				font-size: 0.75rem;
+				font-weight: 600;
+			}
+			.btn-group {
+				display: flex;
+				gap: 0.75rem;
+				margin-bottom: 1rem;
+			}
+			button {
+				background-color: var(--primary);
+				color: white;
+				border: none;
+				border-radius: 0.5rem;
+				padding: 0.625rem 1.25rem;
+				font-size: 0.875rem;
+				font-weight: 600;
+				cursor: pointer;
+				transition: background-color 0.15s ease;
+			}
+			button:hover {
+				background-color: var(--primary-hover);
+			}
+			button:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+			}
+			.btn-secondary {
+				background-color: #334155;
+			}
+			.btn-secondary:hover {
+				background-color: #475569;
+			}
+			.output-box {
+				background-color: #0b1120;
+				border: 1px solid var(--border);
+				border-radius: 0.5rem;
+				padding: 1rem;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				font-size: 0.875rem;
+				color: #e2e8f0;
+				white-space: pre-wrap;
+				word-break: break-all;
+				min-height: 80px;
+			}
+			.status {
+				margin-bottom: 0.5rem;
+				font-size: 0.8rem;
+				font-weight: 600;
+			}
+			.status.success { color: var(--success); }
+			.status.error { color: var(--error); }
+			.status.loading { color: #f59e0b; }
+		</style>
+	</head>
+	<body>
+		<main class="container">
+			<header>
+				<h1>BUST — Minimal Setup</h1>
+				<p class="subtitle">Astro + FastAPI + LiteLLM + NeatLogs</p>
+			</header>
+
+			<section class="card">
+				<div class="info-row">
+					<span>FastAPI Backend URL:</span>
+					<span id="api-url-display" class="badge">{apiUrl}</span>
+				</div>
+
+				<div class="btn-group">
+					<button id="btn-health" class="btn-secondary" type="button">Check /health</button>
+					<button id="btn-test-llm" type="button">Test LLM (/api/test-llm)</button>
+				</div>
+
+				<div id="status-label" class="status"></div>
+				<pre id="output-box" class="output-box">Click "Check /health" or "Test LLM" to initiate a request.</pre>
+			</section>
+		</main>
+
+		<script define:vars={{ apiUrl }}>
+			const healthBtn = document.getElementById('btn-health');
+			const testLlmBtn = document.getElementById('btn-test-llm');
+			const outputBox = document.getElementById('output-box');
+			const statusLabel = document.getElementById('status-label');
+
+			function setStatus(text, type) {
+				statusLabel.textContent = text;
+				statusLabel.className = 'status ' + type;
+			}
+
+			healthBtn.addEventListener('click', async () => {
+				setStatus('Checking backend health...', 'loading');
+				outputBox.textContent = 'Calling ' + apiUrl + '/health ...';
+				try {
+					const res = await fetch(`${apiUrl}/health`);
+					const data = await res.json();
+					setStatus(`Health Check: HTTP ${res.status}`, res.ok ? 'success' : 'error');
+					outputBox.textContent = JSON.stringify(data, null, 2);
+				} catch (err) {
+					setStatus('Failed to connect to backend', 'error');
+					outputBox.textContent = `Error: ${err.message}\nEnsure FastAPI is running at ${apiUrl}`;
+				}
+			});
+
+			testLlmBtn.addEventListener('click', async () => {
+				setStatus('Sending LLM request...', 'loading');
+				outputBox.textContent = 'Calling ' + apiUrl + '/api/test-llm ...';
+				testLlmBtn.disabled = true;
+				try {
+					const res = await fetch(`${apiUrl}/api/test-llm`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ prompt: 'Say hello in one short sentence.' }),
+					});
+					const data = await res.json();
+					setStatus(`LLM Request: HTTP ${res.status}`, res.ok ? 'success' : 'error');
+					outputBox.textContent = JSON.stringify(data, null, 2);
+				} catch (err) {
+					setStatus('Error during request', 'error');
+					outputBox.textContent = `Error: ${err.message}\nEnsure backend is running at ${apiUrl}`;
+				} finally {
+					testLlmBtn.disabled = false;
+				}
+			});
+		</script>
+	</body>
+</html>
