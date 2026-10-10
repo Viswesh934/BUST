@@ -1,0 +1,29 @@
+how to run the backend
+
+---
+
+use proxy for backend we are in code spaces, also use daisy ui with a light weight theme to get this running no bright colors anywhere please  use this theme caramellatte, after this we will start with other mile stones
+
+---
+
+https://api.cfo.ai/mcp  use this for cfo.ai to connect you are using runway one which is wrong, also in frontend make a side bar with what's needed make individually accessed routes, which will make differentiation easy
+
+---
+
+hey strict rule no tech stuff in the ui like codespaces proxy, this is a serious product, you can show the agent reasoning and steps if users want with a separate button
+
+---
+
+how many mile stones we have and estimated time it can take
+
+---
+
+can the ui be consistent buttons being in the same place everytime and content taking full width, cards can be like flippable and can be visually cool some animations, I want the intent of side bar visible in the content, like ppt can look like a real ppt slider
+
+---
+
+we don't need navigation to other items from one's content, cards can be stacked on top of each other, pipeline can look like a real pipe line, use arrows for presentation the options under are not visible, dashboard can be more vibrant instead of something this blur, we need a landing page to show off, deal rooms can be like real rooms in a hotel
+
+---
+
+Sha-256 encrypted room token. Read-only permissions enforced. see no tech terms instead prev and next use arrows in cards like ppt does, all of these are driven by commands so need an interface to direct these, not the one in over view, keep it strictly for landing

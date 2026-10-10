@@ -1,0 +1,104 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4KFZN1GMJWZYVKQVKPGZTG6",
+  "session_id": "77ad5304-ab6c-4459-bb55-06cdea62fa7f",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-10T18:07:47.14311225Z",
+  "branch": "feat/integrations",
+  "checkpoints_count": 8,
+  "save_step_count": 7,
+  "files_touched": [
+    "docs/PLANNING.md",
+    "frontend/astro.config.mjs",
+    "frontend/package-lock.json",
+    "frontend/package.json",
+    "frontend/src/layouts/Layout.astro",
+    "frontend/src/pages/agent.astro",
+    "frontend/src/pages/battlecards.astro",
+    "frontend/src/pages/deals.astro",
+    "frontend/src/pages/emails.astro",
+    "frontend/src/pages/flowcharts.astro",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/landing.astro",
+    "frontend/src/pages/presentations.astro",
+    "frontend/src/styles/global.css"
+  ],
+  "agent": "Antigravity",
+  "model": "",
+  "turn_id": "d6de78374bd7",
+  "checkpoint_transcript_start": 442,
+  "transcript_lines_at_start": 442,
+  "token_usage": {
+    "input_tokens": 174586,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 37166760,
+    "output_tokens": 130883,
+    "api_call_count": 253
+  },
+  "session_metrics": {
+    "turn_count": 15
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-10T18:07:47.007967485Z",
+    "agent_lines": 3336,
+    "agent_removed": 188,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 3336,
+    "total_lines_changed": 3524,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 827,
+      "agent_lines_removed": 161
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1527,
+      "agent_lines_removed": 187
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1547,
+      "agent_lines_removed": 189
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1547,
+      "agent_lines_removed": 189
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2727,
+      "agent_lines_removed": 189
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3238,
+      "agent_lines_removed": 189
+    }
+  ]
+}
