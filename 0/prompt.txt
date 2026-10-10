@@ -1,0 +1,9 @@
+we have five phases left, we will 2 at at time today
+
+---
+
+we need something like a chat bot that drives this and we can see what's happening there showing it in UI all the mock stuff is pointless, landing page can be just one overall and product show case does the same, we need to show we are making the agent do it for us, not the other way around
+
+---
+
+can the chat bot be like the editor ones we have because it is ugly it will be to the left results can be shown as outputs in the chat itself, in between we will show progress similar to how a coding agent shows up, I want the visibility part more without much scroll, also remove product show case it's pointless

@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4KH4AS00SB74ZRZX8FKMA9P",
+  "strategy": "manual-commit",
+  "branch": "feat/ui-mock",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "backend/app/agent/dag.py",
+    "backend/app/agent/orchestrator.py",
+    "backend/app/main.py",
+    "backend/app/schemas/battlecards.py",
+    "backend/app/services/artifact_store.py",
+    "backend/app/tools/battlecards.py",
+    "backend/app/tools/email.py",
+    "backend/app/tools/flowchart.py",
+    "backend/app/tools/presentation.py",
+    "docs/PLANNING.md",
+    "frontend/src/layouts/Layout.astro",
+    "frontend/src/pages/deals.astro",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/landing.astro",
+    "frontend/src/pages/suite/[id].astro"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 68223,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 20333934,
+    "output_tokens": 76781,
+    "api_call_count": 133
+  }
+}
