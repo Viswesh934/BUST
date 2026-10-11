@@ -2,322 +2,134 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Pitch & ROI Decks" description="Executive Briefings, Solution Outlines & PPTX Export">
-	<div class="space-y-5 w-full">
-		<!-- Standardized Header Toolbar -->
+<Layout title="Pitch & ROI Decks" description="Executive Presentations & Widescreen Slide Briefings">
+	<div class="space-y-6 w-full">
+		<!-- Header Toolbar -->
 		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
 			<div>
 				<div class="flex items-center gap-2.5">
-					<h1 class="text-xl font-bold tracking-tight text-base-content">Pitch & ROI Presentations</h1>
-					<span class="badge badge-sm badge-neutral">4 Slides</span>
-					<span class="badge badge-sm badge-success">ACME Corp ($150k ARR)</span>
+					<h1 class="text-xl font-bold tracking-tight text-base-content">Pitch & ROI Decks</h1>
+					<span class="badge badge-sm badge-neutral" id="deck-counter-badge">Active Repository</span>
 				</div>
 				<p class="text-xs text-base-content/80 mt-1">
-					Interactive 16:9 executive presentation slider: use side navigation arrows or keyboard to advance.
+					16:9 executive briefing presentations synthesized autonomously by the AI Sales Agent.
 				</p>
 			</div>
-			<!-- Consistent Top-Right Action Buttons -->
+			<!-- Top-Right Actions -->
 			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-				<button id="btn-toggle-present" type="button" class="btn btn-sm btn-outline gap-1.5">
-					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-					<span>Present Mode</span>
-				</button>
-				<button id="btn-export-pptx" type="button" class="btn btn-sm btn-neutral gap-1.5 font-semibold">
-					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-					<span>Export .PPTX</span>
-				</button>
+				<a href="/" class="btn btn-sm btn-neutral gap-1.5 font-semibold">
+					<span>← Back to Plan</span>
+				</a>
 			</div>
 		</div>
 
-		<!-- Real Interactive PowerPoint Canvas with Large Side Arrows -->
-		<div id="presentation-container" class="card bg-base-200/50 border-2 border-base-300 shadow-sm overflow-hidden">
-			<!-- Slide Top Info Strip -->
-			<div class="px-5 py-2.5 border-b border-base-300 flex items-center justify-between bg-base-200">
-				<div class="flex items-center gap-3">
-					<span class="text-xs font-semibold uppercase tracking-wider text-base-content/80">Widescreen 16:9 Deck</span>
-					<span class="text-base-content/30">•</span>
-					<span id="slide-indicator" class="text-xs font-mono font-bold text-base-content">Slide 1 of 4</span>
-				</div>
-				<div class="flex items-center gap-2">
-					<span class="text-[11px] text-base-content/60">Press Left / Right arrows</span>
-				</div>
+		<!-- LOADING STATE -->
+		<div id="loading-state" class="py-16 text-center space-y-3">
+			<span class="loading loading-spinner loading-md text-primary"></span>
+			<p class="text-xs text-base-content/60 font-mono">Loading presentations from agent artifact store...</p>
+		</div>
+
+		<!-- EMPTY STATE (Zero mock data) -->
+		<div id="empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center space-y-4">
+			<div class="w-16 h-16 rounded-2xl bg-base-200 border-2 border-base-300 flex items-center justify-center text-3xl shadow-xs">
+				📊
 			</div>
-
-			<!-- Main Slide Viewing Area with PROMINENT SIDE NAVIGATION ARROWS -->
-			<div class="p-4 md:p-6 flex items-center justify-center bg-base-300/40 relative">
-				
-				<!-- FLOATING LEFT ARROW -->
-				<button
-					id="btn-floating-prev"
-					type="button"
-					class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 md:w-14 md:h-14 rounded-full bg-base-100 hover:bg-base-200 border-2 border-base-300 shadow-xl flex items-center justify-center font-black text-xl text-base-content hover:scale-110 active:scale-95 transition-all z-20 cursor-pointer"
-					title="Previous Slide (Left Arrow)"
-					aria-label="Previous Slide"
-				>
-					❮
-				</button>
-
-				<!-- FLOATING RIGHT ARROW -->
-				<button
-					id="btn-floating-next"
-					type="button"
-					class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 md:w-14 md:h-14 rounded-full bg-base-100 hover:bg-base-200 border-2 border-base-300 shadow-xl flex items-center justify-center font-black text-xl text-base-content hover:scale-110 active:scale-95 transition-all z-20 cursor-pointer"
-					title="Next Slide (Right Arrow)"
-					aria-label="Next Slide"
-				>
-					❯
-				</button>
-
-				<!-- The 16:9 Slide Canvas -->
-				<div
-					id="slide-viewport"
-					class="w-full max-w-4xl min-h-[340px] md:min-h-[400px] bg-base-100 rounded-2xl border-2 border-base-300 shadow-lg p-6 md:p-10 flex flex-col justify-between relative overflow-hidden transition-all duration-300"
-				>
-					<!-- Header on Slide -->
-					<div class="flex items-center justify-between border-b border-base-200 pb-2.5">
-						<div class="flex items-center gap-2">
-							<span class="w-3 h-3 rounded-full bg-primary"></span>
-							<span class="text-xs font-bold tracking-widest uppercase text-base-content/70" id="slide-tag">Executive Framing</span>
-						</div>
-						<span class="text-xs font-mono text-base-content/50">BUST × ACME Corp</span>
-					</div>
-
-					<!-- Dynamic Slide Body Content -->
-					<div id="slide-content-area" class="my-auto py-3 space-y-3">
-						<!-- Content populated by JS -->
-					</div>
-
-					<!-- Slide Footer -->
-					<div class="flex items-center justify-between border-t border-base-200 pt-2.5 text-[11px] text-base-content/60">
-						<span>Confidential • Prepared for Sarah Jenkins (VP Sales Ops)</span>
-						<span id="slide-page-number" class="font-mono font-bold">1 / 4</span>
-					</div>
-				</div>
-			</div>
-
-			<!-- Clearly Visible Speaker Notes Section -->
-			<div class="px-6 py-3.5 bg-base-100 border-t-2 border-base-300">
-				<div class="flex items-center justify-between mb-1">
-					<span class="text-xs font-bold text-base-content flex items-center gap-1.5">
-						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-						Executive Speaker Talking Points:
-					</span>
-					<span class="text-[11px] text-base-content/50">Synchronized with active slide</span>
-				</div>
-				<p id="speaker-note-text" class="text-xs text-base-content/85 italic leading-relaxed">
-					"Open the briefing by addressing the bottleneck in deal prep. Highlight that reps spend 35% of their working hours manually stitching together slides and battlecards."
+			<div class="max-w-md space-y-1.5">
+				<h3 class="font-bold text-base text-base-content">No Pitch Decks Generated Yet</h3>
+				<p class="text-xs text-base-content/75 leading-relaxed">
+					Executive presentations are generated dynamically from your deal directives. Instruct the AI agent to build a presentation for your active opportunity.
 				</p>
 			</div>
+			<a href="/" class="btn btn-sm btn-neutral font-semibold">
+				Go to Plan ⚡
+			</a>
+		</div>
 
-			<!-- Clearly Visible Bottom Thumbnail Selector Strip -->
-			<div class="p-3 bg-base-200 border-t border-base-300 flex items-center gap-2.5 overflow-x-auto">
-				<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60 shrink-0 mr-1">Slides:</span>
-				<button class="slide-thumb btn btn-xs btn-outline border-base-content/50 bg-base-100 font-medium shrink-0" data-slide="0">
-					1. Title & Executive Framing
-				</button>
-				<button class="slide-thumb btn btn-xs btn-ghost text-base-content/75 hover:bg-base-100 font-medium shrink-0" data-slide="1">
-					2. The Status Quo Challenge
-				</button>
-				<button class="slide-thumb btn btn-xs btn-ghost text-base-content/75 hover:bg-base-100 font-medium shrink-0" data-slide="2">
-					3. Agentic Solution & Velocity
-				</button>
-				<button class="slide-thumb btn btn-xs btn-ghost text-base-content/75 hover:bg-base-100 font-medium shrink-0" data-slide="3">
-					4. Commercial Terms & Payback
-				</button>
-			</div>
+		<!-- REAL DECKS CONTAINER (Populated dynamically) -->
+		<div id="decks-container" class="hidden space-y-8">
+			<!-- Dynamically injected -->
 		</div>
 	</div>
 
 	<script>
-		const slides = [
-			{
-				tag: 'Executive Framing',
-				title: 'Accelerating Enterprise Deal Velocity',
-				subtitle: 'A Strategic Partnership Proposal for ACME Corp',
-				bodyHtml: `
-					<div class="space-y-3.5 max-w-2xl">
-						<h2 class="text-2xl md:text-3xl font-extrabold text-base-content tracking-tight">
-							Accelerating Enterprise Deal Velocity
-						</h2>
-						<p class="text-sm md:text-base text-base-content/85 leading-relaxed">
-							How ACME Corp's sales organization can eliminate manual deal collateral prep, standardize objection handling, and shorten the enterprise sales cycle by 40%.
-						</p>
-						<div class="pt-1.5 flex flex-wrap gap-2 text-xs">
-							<span class="badge badge-neutral font-semibold">Target Deal: $150k ARR</span>
-							<span class="badge badge-outline">Sponsor: VP Sales Ops</span>
-							<span class="badge badge-outline">Timeline: Q4 Rollout</span>
-						</div>
-					</div>
-				`,
-				notes: "Open the briefing by addressing the bottleneck in deal prep. Highlight that reps spend 35% of their working hours manually stitching together slides and battlecards.",
-			},
-			{
-				tag: 'The Challenge',
-				title: 'The Cost of Legacy Manual Collateral Prep',
-				subtitle: 'Operational Bottlenecks in ACME Corp Sales Engineering',
-				bodyHtml: `
-					<div class="space-y-3.5">
-						<h2 class="text-xl md:text-2xl font-bold text-base-content">The Status Quo Bottleneck</h2>
-						<div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-							<div class="p-3.5 bg-base-200/90 rounded-xl border border-base-300">
-								<div class="text-2xl font-black text-error">35%</div>
-								<div class="text-xs font-bold mt-1 text-base-content">Lost Selling Time</div>
-								<p class="text-[11px] text-base-content/75 mt-0.5">Hours spent tailoring custom battlecards and proposals.</p>
-							</div>
-							<div class="p-3.5 bg-base-200/90 rounded-xl border border-base-300">
-								<div class="text-2xl font-black text-warning">14 Days</div>
-								<div class="text-xs font-bold mt-1 text-base-content">Follow-Up Delay</div>
-								<p class="text-[11px] text-base-content/75 mt-0.5">Average lag between technical discovery and MAP delivery.</p>
-							</div>
-							<div class="p-3.5 bg-base-200/90 rounded-xl border border-base-300">
-								<div class="text-2xl font-black text-base-content/80">$140k/yr</div>
-								<div class="text-xs font-bold mt-1 text-base-content">Maintenance OpEx</div>
-								<p class="text-[11px] text-base-content/75 mt-0.5">LegacyVendor licensing and manual curation overhead.</p>
-							</div>
-						</div>
-					</div>
-				`,
-				notes: "Anchor the room around the 35% productivity drain. Emphasize that every day of delay in follow-up increases competitor poaching risk from LegacyVendor.",
-			},
-			{
-				tag: 'The Solution',
-				title: 'Autonomous Sales Collateral Engine',
-				subtitle: 'One Instruction → Four Specialized Deliverables',
-				bodyHtml: `
-					<div class="space-y-3.5">
-						<h2 class="text-xl md:text-2xl font-bold text-base-content">Agentic Deal Pipeline</h2>
-						<p class="text-xs text-base-content/80">From raw meeting notes, our orchestrating agent generates unified sales collateral simultaneously:</p>
-						<div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 pt-1 text-xs">
-							<div class="p-3 bg-base-200/80 rounded-xl border border-base-300 space-y-1">
-								<div class="font-bold text-base-content">1. Battlecards</div>
-								<p class="text-[11px] text-base-content/75">SOC2 & pricing counterpoints.</p>
-							</div>
-							<div class="p-3 bg-base-200/80 rounded-xl border border-base-300 space-y-1">
-								<div class="font-bold text-base-content">2. MAP Flowcharts</div>
-								<p class="text-[11px] text-base-content/75">6-step closing roadmap.</p>
-							</div>
-							<div class="p-3 bg-base-200/80 rounded-xl border border-base-300 space-y-1">
-								<div class="font-bold text-base-content">3. Follow-Up Emails</div>
-								<p class="text-[11px] text-base-content/75">Executive proposal copy.</p>
-							</div>
-							<div class="p-3 bg-base-200/80 rounded-xl border border-base-300 space-y-1">
-								<div class="font-bold text-base-content">4. ROI Decks</div>
-								<p class="text-[11px] text-base-content/75">CFO-ready business cases.</p>
-							</div>
-						</div>
-					</div>
-				`,
-				notes: "Walk through the four deliverables. Mention that downstream deliverables consume the same verified context, eliminating hallucinations.",
-			},
-			{
-				tag: 'Commercial Terms',
-				title: 'Investment & Verified Payback Horizon',
-				subtitle: 'cfo.ai Projections & Implementation Milestones',
-				bodyHtml: `
-					<div class="space-y-3.5">
-						<h2 class="text-xl md:text-2xl font-bold text-base-content">Commercial Proposal & ROI</h2>
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-							<div class="p-4 bg-base-200/80 rounded-xl border border-base-300 space-y-2 text-xs">
-								<span class="font-bold text-sm text-base-content">Annual Enterprise License</span>
-								<div class="text-2xl font-black text-base-content">$120,000 <span class="text-xs font-normal text-base-content/60">/ year</span></div>
-								<ul class="space-y-1 text-base-content/85 text-[11px] list-disc list-inside">
-									<li>50 AE seats with full collateral generation</li>
-									<li>Dedicated SOC2 Type II regional tenancy</li>
-									<li>Custom CRM & cfo.ai financial modeling sync</li>
-								</ul>
-							</div>
-							<div class="p-4 bg-base-200/80 rounded-xl border border-base-300 space-y-2 text-xs">
-								<span class="font-bold text-sm text-base-content">Break-Even & Acceleration</span>
-								<div class="text-2xl font-black text-success">&lt; 60 Days <span class="text-xs font-normal text-base-content/60">Payback</span></div>
-								<ul class="space-y-1 text-base-content/85 text-[11px] list-disc list-inside">
-									<li>Closing 1 extra enterprise deal achieves break-even</li>
-									<li>Estimated $185k annual savings on collateral synthesis</li>
-									<li>Go-live completed within 7 business days</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				`,
-				notes: "Close on commercial terms. Stress that with an average deal size of $150k ARR, closing even 1 extra deal pays for the entire software cost within the first 60 days.",
-			},
-		];
+		const loadingState = document.getElementById('loading-state');
+		const emptyState = document.getElementById('empty-state');
+		const decksContainer = document.getElementById('decks-container');
+		const counterBadge = document.getElementById('deck-counter-badge');
 
-		let currentSlideIndex = 0;
-		const slideViewport = document.getElementById('slide-viewport');
-		const slideContentArea = document.getElementById('slide-content-area');
-		const slideTag = document.getElementById('slide-tag');
-		const slideIndicator = document.getElementById('slide-indicator');
-		const slidePageNumber = document.getElementById('slide-page-number');
-		const speakerNoteText = document.getElementById('speaker-note-text');
-		const btnFloatingPrev = document.getElementById('btn-floating-prev');
-		const btnFloatingNext = document.getElementById('btn-floating-next');
-		const btnPresent = document.getElementById('btn-toggle-present');
-		const btnExport = document.getElementById('btn-export-pptx');
-		const thumbs = document.querySelectorAll('.slide-thumb');
+		async function loadPresentations() {
+			try {
+				const res = await fetch('/api/artifacts');
+				if (!res.ok) throw new Error('Failed to fetch artifacts');
+				const artifacts = await res.json();
+				const deckArtifacts = artifacts.filter((a: any) => a.type === 'presentation');
 
-		function renderSlide(index) {
-			if (index < 0) index = 0;
-			if (index >= slides.length) index = slides.length - 1;
-			currentSlideIndex = index;
+				if (loadingState) loadingState.classList.add('hidden');
 
-			const slide = slides[index];
-			if (slideTag) slideTag.textContent = slide.tag;
-			if (slideIndicator) slideIndicator.textContent = `Slide ${index + 1} of ${slides.length}`;
-			if (slidePageNumber) slidePageNumber.textContent = `${index + 1} / ${slides.length}`;
-			if (speakerNoteText) speakerNoteText.textContent = `"${slide.notes}"`;
-
-			if (slideContentArea) {
-				slideContentArea.innerHTML = slide.bodyHtml;
-			}
-
-			// Update thumbnails active state
-			thumbs.forEach((thumb, i) => {
-				if (i === index) {
-					thumb.classList.remove('btn-ghost', 'text-base-content/75');
-					thumb.classList.add('btn-outline', 'border-base-content/50', 'bg-base-100');
-				} else {
-					thumb.classList.add('btn-ghost', 'text-base-content/75');
-					thumb.classList.remove('btn-outline', 'border-base-content/50', 'bg-base-100');
+				if (!deckArtifacts.length) {
+					if (emptyState) emptyState.classList.remove('hidden');
+					return;
 				}
-			});
 
-			// Disable buttons at bounds
-			if (btnFloatingPrev) (btnFloatingPrev as HTMLButtonElement).disabled = index === 0;
-			if (btnFloatingNext) (btnFloatingNext as HTMLButtonElement).disabled = index === slides.length - 1;
+				if (decksContainer) decksContainer.classList.remove('hidden');
+				if (counterBadge) counterBadge.textContent = `${deckArtifacts.length} Active Decks`;
+
+				let html = '';
+				deckArtifacts.forEach((art: any) => {
+					const slides = art.content?.slides || [];
+					html += `
+						<div class="card bg-base-100 border-2 border-base-300 p-6 rounded-2xl shadow-sm space-y-5">
+							<div class="flex items-center justify-between border-b border-base-200 pb-3">
+								<div>
+									<h3 class="font-bold text-base text-base-content">${art.title || 'Executive Presentation'}</h3>
+									<span class="text-xs text-base-content/60 font-mono">Account: ${art.deal_context?.account_name || 'Enterprise'} (${slides.length} Slides)</span>
+								</div>
+								<span class="badge badge-xs badge-success font-semibold">Ready</span>
+							</div>
+
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								${slides
+									.map(
+										(s: any) => `
+									<div class="p-5 bg-base-200/80 rounded-xl border border-base-300 space-y-3 flex flex-col justify-between">
+										<div class="space-y-1.5">
+											<div class="flex items-center justify-between">
+												<span class="badge badge-xs badge-neutral font-semibold">${s.tag || `Slide ${s.slide_number}`}</span>
+												<span class="text-[10px] font-mono text-base-content/50">#${s.slide_number}</span>
+											</div>
+											<h4 class="font-bold text-sm text-base-content">${s.title}</h4>
+											${s.subtitle ? `<p class="text-xs text-base-content/75">${s.subtitle}</p>` : ''}
+										</div>
+
+										<ul class="text-xs text-base-content/90 list-disc list-inside space-y-1 font-medium">
+											${(s.bullets || []).map((b: string) => `<li>${b}</li>`).join('')}
+										</ul>
+
+										${
+											s.speaker_note
+												? `
+											<div class="p-2.5 bg-base-100 rounded-lg text-[11px] text-base-content/70 border border-base-300/80">
+												<span class="font-semibold text-base-content">Speaker Note:</span> ${s.speaker_note}
+											</div>
+										`
+												: ''
+										}
+									</div>
+								`
+									)
+									.join('')}
+							</div>
+						</div>
+					`;
+				});
+
+				if (decksContainer) decksContainer.innerHTML = html;
+			} catch (err) {
+				if (loadingState) loadingState.classList.add('hidden');
+				if (emptyState) emptyState.classList.remove('hidden');
+			}
 		}
 
-		// Floating Arrows navigation
-		btnFloatingPrev?.addEventListener('click', () => renderSlide(currentSlideIndex - 1));
-		btnFloatingNext?.addEventListener('click', () => renderSlide(currentSlideIndex + 1));
-
-		thumbs.forEach((thumb) => {
-			thumb.addEventListener('click', () => {
-				const idx = parseInt(thumb.getAttribute('data-slide') || '0', 10);
-				renderSlide(idx);
-			});
-		});
-
-		// Keyboard Left / Right arrow navigation
-		window.addEventListener('keydown', (e) => {
-			if (e.key === 'ArrowLeft') renderSlide(currentSlideIndex - 1);
-			if (e.key === 'ArrowRight') renderSlide(currentSlideIndex + 1);
-		});
-
-		// Fullscreen / Present mode toggle
-		btnPresent?.addEventListener('click', () => {
-			const container = document.getElementById('presentation-container');
-			if (!document.fullscreenElement) {
-				container?.requestFullscreen().catch(() => {});
-			} else {
-				document.exitFullscreen().catch(() => {});
-			}
-		});
-
-		btnExport?.addEventListener('click', () => {
-			alert('PowerPoint presentation (.pptx) generated and prepared for export.');
-		});
-
-		// Initial render
-		renderSlide(0);
+		loadPresentations();
 	</script>
 </Layout>

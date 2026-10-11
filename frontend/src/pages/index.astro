@@ -2,610 +2,736 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Deal Orchestrator Studio" description="AI Agent-Driven Sales Planning & Execution Workspace">
-	<div class="space-y-4 w-full">
+<Layout title="BUST — Plan" description="AI Deal Planning & Execution" fullHeight={true}>
+	<!-- MAIN WORKSPACE: ROCK-SOLID CHAT + FLOATING SLIDE-OVER DELIVERABLES + STICKY APP DOCK -->
+	<div class="relative flex flex-1 w-full h-full min-h-0 overflow-hidden">
 		
-		<!-- IDE Editor Top Navigation Toolbar -->
-		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-base-300">
-			<div>
-				<div class="flex items-center gap-2">
-					<span class="text-xs font-mono font-semibold text-base-content/60">studio ›</span>
-					<span class="font-bold text-sm text-base-content" id="active-account-breadcrumb">ACME Corp</span>
-					<span class="text-xs font-mono text-base-content/50">/ deal_orchestration.dag</span>
-					<span class="badge badge-xs badge-success ml-2 font-semibold" id="agent-status-badge">● Engine Online</span>
-				</div>
-				<p class="text-xs text-base-content/70 mt-0.5 font-medium">
-					Conversational AI sales engineer executing multi-tool DAG workflows with live deliverables.
-				</p>
-			</div>
+		<!-- 1. LEFT BALANCE SPACER: Matches the right dock (w-12) to ensure optical centering -->
+		<div class="w-12 shrink-0 hidden md:block select-none pointer-events-none"></div>
 
-			<!-- Action Buttons -->
-			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-				<button id="btn-toggle-steps" type="button" class="btn btn-xs btn-outline gap-1.5 font-medium">
-					<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-					<span id="steps-toggle-text">Toggle Step Logs</span>
-				</button>
-				<button id="btn-clear-chat" type="button" class="btn btn-xs btn-outline gap-1.5">
-					<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-					<span>Reset Stream</span>
-				</button>
-			</div>
-		</div>
-
-		<!-- MAIN TWO-COLUMN CODING AGENT WORKSPACE -->
-		<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-start">
+		<!-- 2. CENTER: EXPANSIVE, ROCK-SOLID PLANNER CHAT WINDOW (NEVER MOVES) -->
+		<div class="flex-1 min-h-0 flex flex-col h-full overflow-hidden">
 			
-			<!-- LEFT COLUMN: CODING AGENT CHAT & INLINE OUTPUTS (5 Cols) -->
-			<div class="lg:col-span-5 flex flex-col space-y-3">
-				<div class="card bg-base-100 border-2 border-base-300 shadow-md flex flex-col h-[680px] overflow-hidden rounded-2xl">
-					
-					<!-- Editor Terminal Header -->
-					<div class="px-4 py-2.5 bg-base-200 border-b border-base-300 flex items-center justify-between">
-						<div class="flex items-center gap-2">
-							<div class="w-6 h-6 rounded-md bg-neutral text-neutral-content flex items-center justify-center font-bold text-[11px]">
-								⚡
-							</div>
-							<div>
-								<span class="font-bold text-xs text-base-content">AI Deal Architect</span>
-								<span class="text-[10px] text-base-content/60 ml-1.5 font-mono">nova-pro</span>
-							</div>
-						</div>
-						<div class="flex items-center gap-1.5">
-							<span class="w-2 h-2 rounded-full bg-success"></span>
-							<span class="text-[10px] font-mono font-medium text-base-content/70" id="tool-count-badge">5 Tools Ready</span>
-						</div>
-					</div>
+			<!-- TOP CHAT BAR (Centered and aligned with conversation & input) -->
+			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto flex items-center justify-between pb-2.5 border-b border-base-300 gap-2 shrink-0 px-2 sm:px-4">
+				<div class="flex items-center gap-2">
+					<h1 class="text-base font-bold text-base-content">Plan</h1>
+					<span class="text-xs text-base-content/50">•</span>
+					<span class="text-xs font-mono text-base-content/70" id="deal-title-badge">New Opportunity</span>
+				</div>
 
-					<!-- Agent Messages & Inline Outputs Stream -->
-					<div id="chat-stream" class="flex-1 p-3.5 overflow-y-auto space-y-4 text-xs font-sans">
-						
-						<!-- Initial Welcome Turn -->
-						<div class="space-y-2">
-							<div class="flex items-center gap-2 text-[11px] font-semibold text-base-content/60">
-								<span class="w-5 h-5 rounded-full bg-base-300 flex items-center justify-center text-[10px]">🤖</span>
-								<span>AI Sales Assistant</span>
-								<span class="text-[10px] text-base-content/40 font-mono">now</span>
-							</div>
-							
-							<div class="p-3.5 bg-base-200/80 rounded-xl border border-base-300 space-y-2 text-xs leading-relaxed">
-								<p class="font-semibold text-base-content">
-									Welcome to the Deal Orchestrator. Direct me with your deal instructions.
-								</p>
-								<p class="text-base-content/85">
-									I plan the sales strategy, construct a dependency graph, execute deterministic tools, and display all results as inline outputs here in the stream and in the canvas on the right.
-								</p>
-								<div class="pt-2 border-t border-base-300/60 text-[11px] text-base-content/65">
-									Click a preset directive below or type your custom deal prompt:
-								</div>
-							</div>
-						</div>
-
-					</div>
-
-					<!-- Quick Directive Chips -->
-					<div class="px-3 py-2 bg-base-200/60 border-t border-base-300 flex items-center gap-1.5 overflow-x-auto text-[11px]">
-						<button class="chat-chip btn btn-xs btn-outline shrink-0 font-medium" data-prompt="We just finished technical discovery with ACME Corp for a $150k ARR deal replacing LegacyVendor. Generate our complete deal suite: battlecards, MAP roadmap, executive email to Sarah Jenkins, and pitch deck.">
-							⚡ Plan ACME Corp ($150k)
-						</button>
-						<button class="chat-chip btn btn-xs btn-outline shrink-0 font-medium" data-prompt="Generate competitive objection battlecards for Delta Logistics ($220k ARR) overcoming renewal objections against LegacyCRM.">
-							🛡️ Delta Logistics Battlecards
-						</button>
-						<button class="chat-chip btn btn-xs btn-outline shrink-0 font-medium" data-prompt="Publish our ACME Corp deal collateral to a private buyer deal room suite with keycard access.">
-							🔑 Issue Hotel Keycard
-						</button>
-					</div>
-
-					<!-- Coding Agent Input Bar -->
-					<div class="p-3 bg-base-100 border-t border-base-300">
-						<form id="chat-form" class="flex items-center gap-2">
-							<input
-								id="chat-input"
-								type="text"
-								class="input input-sm input-bordered flex-1 bg-base-100 text-xs text-base-content rounded-xl border-2 border-base-300 focus:border-primary focus:outline-none"
-								placeholder="Instruct the agent (e.g. 'Generate battlecards for ACME Corp...')"
-								autocomplete="off"
-							/>
-							<button id="btn-send-directive" type="submit" class="btn btn-sm btn-neutral px-3.5 font-semibold shadow-xs">
-								Run ⏎
-							</button>
-						</form>
-					</div>
+				<div class="flex items-center gap-2">
+					<!-- Reset Session -->
+					<button id="btn-reset-session" type="button" class="btn btn-xs btn-ghost text-base-content/60 hover:text-base-content gap-1">
+						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+						<span>Reset</span>
+					</button>
 				</div>
 			</div>
 
-			<!-- RIGHT COLUMN: ACTIVE DELIVERABLE CANVAS & INSPECTOR (7 Cols) -->
-			<div class="lg:col-span-7 flex flex-col space-y-3">
-				<div class="card bg-base-100 border-2 border-base-300 shadow-md flex flex-col h-[680px] overflow-hidden rounded-2xl">
-					
-					<!-- Canvas Tabs Header -->
-					<div class="px-3 py-2 bg-base-200 border-b border-base-300 flex items-center justify-between">
-						<div class="flex items-center gap-1 text-xs" id="canvas-tab-container">
-							<button class="canvas-tab btn btn-xs btn-neutral font-semibold" data-target="tab-battlecards">
-								🎴 Battlecards
-							</button>
-							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-map">
-								🗺️ MAP Roadmap
-							</button>
-							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-email">
-								✉️ Proposal Email
-							</button>
-							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-deck">
-								📊 Pitch Deck
-							</button>
-							<button class="canvas-tab btn btn-xs btn-ghost text-base-content/75 font-semibold" data-target="tab-suite">
-								🏨 Deal Suite
-							</button>
-						</div>
-
-						<span id="canvas-sync-status" class="text-[10px] font-mono text-success flex items-center gap-1 font-semibold">
-							<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
-							Canvas Synced
-						</span>
+			<!-- EXPANSIVE CONVERSATION STREAM (Rock-solid centered position, scrolls internally) -->
+			<div id="chat-stream" class="flex-1 min-h-0 overflow-y-auto space-y-6 text-xs sm:text-sm p-2 sm:p-4 pb-6 font-sans w-full max-w-4xl xl:max-w-5xl mx-auto">
+				
+				<!-- Clean Welcome Turn -->
+				<div id="welcome-turn" class="py-14 sm:py-20 text-center space-y-4 max-w-2xl mx-auto">
+					<div class="w-12 h-12 rounded-2xl bg-base-200 border border-base-300 mx-auto flex items-center justify-center text-xl font-bold shadow-xs">
+						⚡
+					</div>
+					<div class="space-y-1.5">
+						<h2 class="text-xl sm:text-2xl font-bold text-base-content tracking-tight">
+							Plan your next enterprise deal
+						</h2>
+						<p class="text-xs sm:text-sm text-base-content/75 leading-relaxed">
+							Drop raw discovery notes, customer objections, or deal parameters. The agent analyzes strategy, asks follow-up questions, and synthesizes full sales deliverables to the side.
+						</p>
 					</div>
 
-					<!-- Canvas Content Views -->
-					<div class="flex-1 p-5 overflow-y-auto">
-						
-						<!-- TAB 1: BATTLECARDS -->
-						<div id="tab-battlecards" class="canvas-panel space-y-4">
-							<div class="flex items-center justify-between border-b border-base-200 pb-2">
-								<div>
-									<h3 class="font-bold text-sm text-base-content" id="canvas-bc-deck-name">Competitive Objection Battlecards</h3>
-									<p class="text-xs text-base-content/65" id="canvas-bc-subtitle">Target Competitor: LegacyVendor</p>
-								</div>
-								<div class="flex items-center gap-2">
-									<span class="text-xs font-mono text-base-content/70" id="bc-card-counter">Card 1 / 3</span>
-									<div class="flex items-center gap-1">
-										<button id="bc-btn-prev" class="btn btn-xs btn-outline">❮</button>
-										<button id="bc-btn-next" class="btn btn-xs btn-outline">❯</button>
-									</div>
-								</div>
-							</div>
-
-							<!-- 3D Flippable Battlecard -->
-							<div class="card bg-base-200/80 border-2 border-base-300 p-5 rounded-2xl shadow-sm space-y-3.5 transition-all">
-								<div>
-									<span class="badge badge-xs badge-neutral uppercase font-bold tracking-wider" id="canvas-bc-category">Pricing Objection</span>
-									<h4 class="text-sm font-bold text-base-content mt-2" id="canvas-bc-objection">
-										"Your quote is 20% higher than our renewal price from LegacyVendor."
-									</h4>
-								</div>
-
-								<div class="p-3.5 bg-base-100 rounded-xl border border-base-300 space-y-1.5">
-									<span class="text-[11px] font-bold text-base-content/70 uppercase tracking-wider">Agent Winning Talk-Track:</span>
-									<p class="text-xs text-base-content font-medium leading-relaxed" id="canvas-bc-talktrack">
-										"Pivot to Total Cost of Ownership (TCO). While our upfront subscription is higher, LegacyVendor requires 2 dedicated FTEs just to maintain manual data sync. We automate that workflow entirely, delivering an $80k net savings in Year 1."
-									</p>
-								</div>
-
-								<div class="space-y-1">
-									<span class="text-[11px] font-bold text-base-content/70 uppercase tracking-wider">Key Differentiators & Proof Points:</span>
-									<div class="flex flex-wrap gap-1.5" id="canvas-bc-differentiators">
-										<span class="badge badge-xs badge-outline">TCO Comparison</span>
-										<span class="badge badge-xs badge-outline">$80k Net Savings</span>
-										<span class="badge badge-xs badge-outline">60-day break-even</span>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- TAB 2: MUTUAL ACTION PLAN (MAP) -->
-						<div id="tab-map" class="canvas-panel hidden space-y-4">
-							<div class="flex items-center justify-between border-b border-base-200 pb-2">
-								<div>
-									<h3 class="font-bold text-sm text-base-content" id="canvas-map-title">Mutual Action Plan (MAP) Roadmap</h3>
-									<p class="text-xs text-base-content/65" id="canvas-map-subtitle">Closing Timeline & Milestones</p>
-								</div>
-								<span class="badge badge-xs badge-warning font-semibold" id="canvas-map-close-date">Target Close: Oct 28, 2026</span>
-							</div>
-
-							<!-- 6-Stage Pipeline List -->
-							<div class="space-y-2.5" id="canvas-map-stages-list">
-								<!-- Rendered dynamically -->
-							</div>
-						</div>
-
-						<!-- TAB 3: PROPOSAL EMAIL -->
-						<div id="tab-email" class="canvas-panel hidden space-y-4">
-							<div class="flex items-center justify-between border-b border-base-200 pb-2">
-								<div>
-									<h3 class="font-bold text-sm text-base-content" id="canvas-email-title">Executive Proposal Email</h3>
-									<p class="text-xs text-base-content/65" id="canvas-email-recipient">To: Sarah Jenkins (VP Sales Ops)</p>
-								</div>
-								<button id="btn-copy-canvas-email" class="btn btn-xs btn-outline gap-1 font-semibold">
-									📋 Copy Email
-								</button>
-							</div>
-
-							<div class="space-y-2">
-								<div class="p-2.5 rounded-lg bg-base-200 border border-base-300 text-xs">
-									<span class="text-base-content/60 font-semibold">Subject: </span>
-									<span class="font-bold text-base-content" id="canvas-email-subject">Executive Summary & Next Steps — BUST x ACME Corp</span>
-								</div>
-
-								<pre id="canvas-email-body" class="p-4 rounded-xl bg-base-200/70 border border-base-300 font-sans text-xs text-base-content leading-relaxed whitespace-pre-wrap">Hi Sarah,
-
-Following our technical discovery, BUST will enable your enterprise sales team to automate battlecard preparation and collateral synthesis.
-
-Key next steps from our Mutual Action Plan:
-1. Security & Compliance: SOC2 Type II audit review targeted for completion this Thursday.
-2. Competitive Battlecards: Tailored objection talk-tracks prepared for your reps.
-3. Commercial Terms: $120k/yr annual contract with break-even achieved within 60 days.
-
-Looking forward to our sync next week.
-
-Best regards,
-Alex Morgan | Strategic Accounts</pre>
-							</div>
-						</div>
-
-						<!-- TAB 4: PITCH DECK -->
-						<div id="tab-deck" class="canvas-panel hidden space-y-4">
-							<div class="flex items-center justify-between border-b border-base-200 pb-2">
-								<div>
-									<h3 class="font-bold text-sm text-base-content" id="canvas-deck-title">Executive Pitch Presentation</h3>
-									<p class="text-xs text-base-content/65" id="canvas-deck-subtitle">Widescreen 16:9 Deck</p>
-								</div>
-								<div class="flex items-center gap-2">
-									<span class="text-xs font-mono text-base-content/70" id="deck-slide-counter">Slide 1 / 4</span>
-									<div class="flex items-center gap-1">
-										<button id="deck-btn-prev" class="btn btn-xs btn-outline">❮</button>
-										<button id="deck-btn-next" class="btn btn-xs btn-outline">❯</button>
-									</div>
-								</div>
-							</div>
-
-							<!-- Presentation Slide Preview -->
-							<div class="card bg-base-200/90 border-2 border-base-300 p-6 rounded-2xl shadow-sm space-y-4">
-								<div class="space-y-1">
-									<span class="badge badge-xs badge-neutral" id="canvas-slide-tag">Executive Framing</span>
-									<h4 class="text-base font-bold text-base-content" id="canvas-slide-title">Unlocking Sales Velocity for ACME Corp</h4>
-									<p class="text-xs text-base-content/75" id="canvas-slide-subtitle">A Strategic Partnership Proposal</p>
-								</div>
-
-								<ul class="space-y-1.5 text-xs text-base-content list-disc list-inside font-medium" id="canvas-slide-bullets">
-									<li>Eliminate manual collateral synthesis</li>
-									<li>Shorten sales cycle by 40%</li>
-								</ul>
-
-								<div class="pt-3 border-t border-base-300 text-[11px] text-base-content/70 bg-base-100 p-3 rounded-xl border border-base-300">
-									<span class="font-bold text-base-content">Speaker Note: </span>
-									<span id="canvas-slide-notes">Open by framing the problem around rep productivity and quota attainment.</span>
-								</div>
-							</div>
-						</div>
-
-						<!-- TAB 5: BUYER DEAL SUITE -->
-						<div id="tab-suite" class="canvas-panel hidden space-y-4">
-							<div class="flex items-center justify-between border-b border-base-200 pb-2">
-								<div>
-									<h3 class="font-bold text-sm text-base-content">Buyer Deal Suite & Digital Keycard</h3>
-									<p class="text-xs text-base-content/65">Private Guest Room Portal</p>
-								</div>
-								<span class="badge badge-xs badge-success font-semibold">Access Active</span>
-							</div>
-
-							<div class="card bg-base-200/80 border-2 border-base-300 p-5 rounded-2xl space-y-4">
-								<div class="flex items-center gap-3">
-									<div class="w-12 h-12 rounded-xl bg-neutral text-neutral-content flex items-center justify-center text-xl font-bold">
-										🏨
-									</div>
-									<div>
-										<h4 class="font-bold text-sm text-base-content" id="canvas-suite-name">Penthouse Suite: ACME Corp</h4>
-										<p class="text-xs font-mono text-base-content/70" id="canvas-suite-token">Keycard Pass: suite_acmecorp_91f404</p>
-									</div>
-								</div>
-
-								<div class="p-3.5 bg-base-100 rounded-xl border border-base-300 text-xs text-base-content/85 space-y-1">
-									<span class="font-bold text-base-content">Guest Room Permissions:</span>
-									<p>Read-only access granted for all buyer decision-makers. No developer credentials or technical setup required.</p>
-								</div>
-
-								<div class="flex items-center gap-2">
-									<a id="btn-canvas-enter-suite" href="/suite/suite_acmecorp_91f404" target="_blank" class="btn btn-sm btn-neutral flex-1 font-semibold">
-										Enter Deal Room As Guest 🚪
-									</a>
-									<button id="btn-copy-suite-link" class="btn btn-sm btn-outline">
-										Copy Pass Token
-									</button>
-								</div>
-							</div>
-						</div>
-
+					<!-- Starter Opportunity Chips -->
+					<div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-[11px] sm:text-xs">
+						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="We just wrapped discovery with Datadog ($320k ARR) facing aggressive competitor pricing. Generate competitive battlecards and an executive pitch deck.">
+							⚡ Datadog ($320k): Battlecards + Deck
+						</button>
+						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="We have a $450k ARR deal with Snowflake evaluating us against LegacyCRM. What collateral should we prepare?">
+							❄️ Snowflake ($450k): Strategy & Needs
+						</button>
+						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="Create competitive objection handling battlecards for Stripe ($280k ARR) overcoming renewal objections regarding data security.">
+							🛡️ Stripe ($280k): Security Battlecards
+						</button>
 					</div>
-
 				</div>
+
+			</div>
+
+			<!-- EXPANSIVE BOTTOM PROMPT BAR (Permanently sticky at bottom, never moves with messages) -->
+			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto shrink-0 pt-2 pb-1 px-2 sm:px-4 bg-base-100">
+				<form id="chat-form" class="card bg-base-200/80 border border-base-300 p-2 sm:p-2.5 rounded-2xl shadow-xs flex flex-row items-center gap-2">
+					<input
+						id="chat-input"
+						type="text"
+						class="input input-sm sm:input-md flex-1 bg-transparent border-0 text-xs sm:text-sm text-base-content focus:outline-none"
+						placeholder="Plan a deal (e.g. 'Discovery with Snowflake for $400k ARR, prepare pitch deck and talk-tracks...')"
+						autocomplete="off"
+					/>
+					<button id="btn-send-directive" type="submit" class="btn btn-sm btn-neutral px-4 font-semibold shadow-xs rounded-xl">
+						Plan ⏎
+					</button>
+				</form>
 			</div>
 
 		</div>
 
-		<!-- Optional Detailed Step Log Drawer (shown on toggle) -->
-		<div id="full-step-log-panel" class="hidden card bg-base-100 border-2 border-base-300 shadow-md p-5 rounded-2xl space-y-3">
-			<div class="flex items-center justify-between border-b border-base-200 pb-2">
+		<!-- 2. FLOATING SLIDE-OVER DELIVERABLES PANEL (Anchored to the right, DOES NOT move the chat) -->
+		<div
+			id="side-panel"
+			class="absolute top-0 right-13 bottom-0 w-[470px] max-w-[calc(100vw-4.5rem)] z-40 bg-base-100/98 backdrop-blur-xl border-l border-base-300 shadow-2xl flex flex-col rounded-l-2xl transition-all duration-300 ease-out transform translate-x-[110%] opacity-0 pointer-events-none"
+		>
+			
+			<!-- STICKY SIDE PANEL HEADER -->
+			<div class="sticky top-0 z-30 bg-base-100/95 backdrop-blur-md flex items-center justify-between p-3.5 border-b border-base-200 gap-2 shrink-0">
 				<div class="flex items-center gap-2">
-					<span class="font-bold text-xs text-base-content">DAG Engine Telemetry & Node Steps</span>
-					<span class="badge badge-xs badge-neutral" id="telemetry-node-count">6 Nodes Resolved</span>
+					<span class="text-sm font-bold text-base-content" id="side-panel-title">🎴 Objection Battlecards</span>
+					<span class="badge badge-xs badge-neutral font-mono" id="side-active-account">Active</span>
 				</div>
-				<span class="text-xs font-mono text-base-content/60" id="telemetry-total-ms">Execution Latency: 1.2s</span>
+				
+				<div class="flex items-center gap-2">
+					<!-- Prominent "Open Full View ↗" Redirect Link -->
+					<a id="btn-open-full-page" href="/battlecards" class="btn btn-xs btn-neutral gap-1 font-semibold">
+						<span id="full-page-btn-text">Open Full Deck ↗</span>
+					</a>
+					<button id="btn-close-side" type="button" class="btn btn-xs btn-circle btn-ghost text-base-content/70 hover:text-base-content" title="Close Side Panel">
+						✕
+					</button>
+				</div>
 			</div>
-			<div id="telemetry-steps-list" class="space-y-1.5 font-mono text-[11px] text-base-content/85">
-				<!-- Dynamically filled -->
+
+			<!-- SIDE CONTENT VIEWPORT (Scrollable) -->
+			<div class="flex-1 overflow-y-auto p-4 space-y-4" id="side-content-area">
+				
+				<!-- Empty Placeholder -->
+				<div id="side-empty-state" class="py-16 text-center space-y-3">
+					<div class="w-12 h-12 rounded-2xl bg-base-200 border border-base-300 mx-auto flex items-center justify-center text-2xl shadow-xs">
+						📑
+					</div>
+					<div class="space-y-1">
+						<h4 class="font-bold text-sm text-base-content" id="side-empty-title">Select an App Icon</h4>
+						<p class="text-xs text-base-content/70 max-w-xs mx-auto leading-relaxed" id="side-empty-desc">
+							Click any app icon on the side dock to inspect generated battlecards, slide decks, proposals, or action plans.
+						</p>
+					</div>
+				</div>
+
+				<!-- Dynamic Content Container -->
+				<div id="side-deliverable-view" class="hidden space-y-4">
+					<!-- Injected via JS -->
+				</div>
+
 			</div>
+
+		</div>
+
+		<!-- 3. STICKY VERTICAL APP ICONS DOCK (Anchored on the far right edge) -->
+		<div class="self-start w-12 flex flex-col items-center py-2.5 px-1 border-l border-base-300 bg-base-200/50 shrink-0 gap-3 z-50 select-none rounded-xl ml-auto">
+			
+			<!-- 🎴 Battlecards App Icon -->
+			<div class="tooltip tooltip-left" data-tip="Objection Battlecards">
+				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="battlecards" id="app-icon-bc">
+					<span>🎴</span>
+					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-bc">0</span>
+				</button>
+			</div>
+
+			<!-- 📊 Pitch Deck App Icon -->
+			<div class="tooltip tooltip-left" data-tip="Pitch & Presentation Decks">
+				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="presentation" id="app-icon-deck">
+					<span>📊</span>
+					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-deck">0</span>
+				</button>
+			</div>
+
+			<!-- ✉️ Proposal Email App Icon -->
+			<div class="tooltip tooltip-left" data-tip="Deal Follow-Up Emails">
+				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="email" id="app-icon-email">
+					<span>✉️</span>
+					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-email">0</span>
+				</button>
+			</div>
+
+			<!-- 🗺️ Mutual Action Plan App Icon -->
+			<div class="tooltip tooltip-left" data-tip="Mutual Action Plans (MAP)">
+				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="flowchart" id="app-icon-map">
+					<span>🗺️</span>
+					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-map">0</span>
+				</button>
+			</div>
+
+			<!-- 🏨 Buyer Deal Room App Icon -->
+			<div class="tooltip tooltip-left" data-tip="Buyer Deal Suites">
+				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="suite" id="app-icon-suite">
+					<span>🏨</span>
+					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-suite">0</span>
+				</button>
+			</div>
+
+			<div class="w-6 h-px bg-base-300 my-1 opacity-50"></div>
+
+			<!-- Toggle / Collapse Button -->
+			<div class="tooltip tooltip-left" data-tip="Toggle Deliverables Panel">
+				<button type="button" class="w-8 h-8 rounded-lg text-base-content/60 hover:text-base-content hover:bg-base-200 flex items-center justify-center text-xs transition-all cursor-pointer" id="app-dock-toggle">
+					<span id="app-dock-toggle-icon">◀</span>
+				</button>
+			</div>
+
 		</div>
 
 	</div>
 
+	<!-- 3D FLIP CARD & CAROUSEL STYLES -->
+	<style is:global>
+		.perspective-1000 {
+			perspective: 1000px;
+		}
+		.flip-card {
+			perspective: 1000px;
+		}
+		.flip-card-inner {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+			transform-style: preserve-3d;
+		}
+		.flip-card-inner.is-flipped {
+			transform: rotateY(180deg);
+		}
+		.backface-hidden {
+			backface-visibility: hidden;
+			-webkit-backface-visibility: hidden;
+		}
+		.rotate-y-180 {
+			transform: rotateY(180deg);
+		}
+	</style>
+
 	<script>
-		// ==========================================
-		// Deal State & Memory
-		// ==========================================
-		let dealContext = {
-			account_name: 'ACME Corp',
-			deal_size: '$150,000 ARR',
-			competitor: 'LegacyVendor',
-			recipient: 'Sarah Jenkins (VP Sales Ops)',
-		};
+		let dealContext: any = {};
+		let storedArtifacts: any = {};
+		let activeTab: string = 'battlecards';
+		let sidePanelOpen: boolean = false;
 
-		let currentBattlecards: any[] = [
-			{
-				category: 'Pricing Objection',
-				objection_quote: 'Your quote is 20% higher than our renewal price from LegacyVendor.',
-				winning_response: 'Pivot to Total Cost of Ownership (TCO). While our upfront subscription is higher, LegacyVendor requires 2 dedicated FTEs just to maintain manual data sync. We automate that workflow entirely, delivering an $80k net savings in Year 1.',
-				tags: ['TCO Comparison', '$80k Net Savings', '60-day break-even'],
-			},
-			{
-				category: 'Security & Compliance',
-				objection_quote: 'Our enterprise requires SOC2 Type II certification and regional zero retention.',
-				winning_response: 'Confirm full SOC2 Type II audit compliance and explain our dedicated regional private cloud deployment with zero data retention outside their tenant.',
-				tags: ['SOC2 Type II', 'Zero Retention', 'InfoSec Approved'],
-			},
-			{
-				category: 'Implementation Friction',
-				objection_quote: 'We do not have the engineering bandwidth to handle a 3-month migration.',
-				winning_response: 'Our turnkey sales workspace requires zero custom coding. Complete onboarding and collateral ingestion takes less than 7 business days with white-glove migration assistance.',
-				tags: ['7-Day Setup', 'Zero Coding', 'White-Glove Support'],
-			},
-		];
-		let currentBcIndex = 0;
+		// Stacked Deck state for side panel
+		let sideCards: any[] = [];
+		let sideCardOrder: number[] = [];
 
-		let currentMapStages: any[] = [
-			{ stage_number: 1, name: 'Technical Discovery', status: 'completed', target_date: 'Oct 12', description: 'Align on sales workflows & rep pain points' },
-			{ stage_number: 2, name: 'Architecture Review', status: 'completed', target_date: 'Oct 16', description: 'Evaluate tool dispatch & integrations' },
-			{ stage_number: 3, name: 'Security & InfoSec Compliance', status: 'current', target_date: 'Oct 20', description: 'SOC2 Type II audit review & zero retention verification' },
-			{ stage_number: 4, name: 'Commercial & Legal Review', status: 'upcoming', target_date: 'Oct 24', description: 'MSA terms and annual enterprise subscription' },
-			{ stage_number: 5, name: 'CFO Budget Authorization', status: 'upcoming', target_date: 'Oct 26', description: 'Review runway model and verified 60-day ROI' },
-			{ stage_number: 6, name: 'Contract Signature & Kickoff', status: 'upcoming', target_date: 'Oct 28', description: 'Final execution and workspace deployment' },
-		];
-
-		let currentSlides: any[] = [
-			{
-				slide_number: 1,
-				tag: 'Executive Framing',
-				title: 'Accelerating Deal Velocity for ACME Corp',
-				subtitle: 'A Strategic Partnership Proposal',
-				bullets: ['Eliminate manual collateral synthesis for 40+ sales reps', 'Shorten sales cycle by 40% across mid-market & enterprise tiers'],
-				speaker_note: 'Open by framing the problem around rep productivity and quota attainment.',
-			},
-			{
-				slide_number: 2,
-				tag: 'The Challenge',
-				title: 'The Hidden Cost of Manual Preparation',
-				subtitle: 'Current Operational Bottlenecks',
-				bullets: ['35% of selling time lost to manual slide & battlecard prep', '14-day turnaround lag for post-discovery executive proposals'],
-				speaker_note: 'Highlight how rep delay directly causes deal slippage against competitors.',
-			},
-			{
-				slide_number: 3,
-				tag: 'The Solution',
-				title: 'Autonomous Sales DAG Architecture',
-				subtitle: 'Deterministic Collateral Generation',
-				bullets: ['Instant generation of battlecards, MAP roadmaps, and emails', 'Buyer deal room suites with guest keycards'],
-				speaker_note: 'Demonstrate how one prompt generates the entire sales collateral suite.',
-			},
-			{
-				slide_number: 4,
-				tag: 'Commercial Terms',
-				title: 'Investment & Verified Payback',
-				subtitle: 'Commercial Framework',
-				bullets: ['$150,000 ARR annual agreement covering all enterprise reps', 'Break-even horizon within 60 days of deployment'],
-				speaker_note: 'Walk through the ROI calculation and align on the Oct 28 contract signature.',
-			},
-		];
-		let currentSlideIndex = 0;
-
-		let currentSuite = {
-			share_id: 'suite_acmecorp_91f404',
-			suite_name: 'Penthouse Suite: ACME Corp',
-			access_url: '/suite/suite_acmecorp_91f404',
-		};
-
-		// ==========================================
-		// DOM Elements
-		// ==========================================
 		const chatStream = document.getElementById('chat-stream');
 		const chatForm = document.getElementById('chat-form');
 		const chatInput = document.getElementById('chat-input') as HTMLInputElement;
 		const sendBtn = document.getElementById('btn-send-directive');
-		const clearBtn = document.getElementById('btn-clear-chat');
-		const stepsToggleBtn = document.getElementById('btn-toggle-steps');
-		const fullStepPanel = document.getElementById('full-step-log-panel');
+		const resetBtn = document.getElementById('btn-reset-session');
+		const welcomeTurn = document.getElementById('welcome-turn');
 		const chips = document.querySelectorAll('.chat-chip');
-		const agentStatusBadge = document.getElementById('agent-status-badge');
-		const breadcrumbAccount = document.getElementById('active-account-breadcrumb');
+		const dealTitleBadge = document.getElementById('deal-title-badge');
 
-		// Canvas Tabs & Panels
-		const canvasTabs = document.querySelectorAll('.canvas-tab');
-		const canvasPanels = document.querySelectorAll('.canvas-panel');
+		// Side Panel elements
+		const sidePanel = document.getElementById('side-panel');
+		const btnCloseSide = document.getElementById('btn-close-side');
+		const sidePanelTitle = document.getElementById('side-panel-title');
+		const sideActiveAccount = document.getElementById('side-active-account');
+		const btnOpenFullPage = document.getElementById('btn-open-full-page') as HTMLAnchorElement;
+		const fullPageBtnText = document.getElementById('full-page-btn-text');
+		const sideEmptyState = document.getElementById('side-empty-state');
+		const sideDeliverableView = document.getElementById('side-deliverable-view');
 
-		// Battlecards elements
-		const bcCardCounter = document.getElementById('bc-card-counter');
-		const canvasBcCategory = document.getElementById('canvas-bc-category');
-		const canvasBcObjection = document.getElementById('canvas-bc-objection');
-		const canvasBcTalktrack = document.getElementById('canvas-bc-talktrack');
-		const canvasBcDiffs = document.getElementById('canvas-bc-differentiators');
-		const bcBtnPrev = document.getElementById('bc-btn-prev');
-		const bcBtnNext = document.getElementById('bc-btn-next');
+		// App Dock elements
+		const sideAppBtns = document.querySelectorAll('.side-app-btn');
+		const appDockToggle = document.getElementById('app-dock-toggle');
+		const appDockToggleIcon = document.getElementById('app-dock-toggle-icon');
+		const appBadgeBc = document.getElementById('app-badge-bc');
+		const appBadgeDeck = document.getElementById('app-badge-deck');
+		const appBadgeEmail = document.getElementById('app-badge-email');
+		const appBadgeMap = document.getElementById('app-badge-map');
+		const appBadgeSuite = document.getElementById('app-badge-suite');
 
-		// MAP elements
-		const canvasMapStagesList = document.getElementById('canvas-map-stages-list');
-		const canvasMapCloseDate = document.getElementById('canvas-map-close-date');
-
-		// Email elements
-		const canvasEmailSubject = document.getElementById('canvas-email-subject');
-		const canvasEmailBody = document.getElementById('canvas-email-body');
-		const canvasEmailRecipient = document.getElementById('canvas-email-recipient');
-		const copyCanvasEmailBtn = document.getElementById('btn-copy-canvas-email');
-
-		// Deck elements
-		const deckSlideCounter = document.getElementById('deck-slide-counter');
-		const canvasSlideTag = document.getElementById('canvas-slide-tag');
-		const canvasSlideTitle = document.getElementById('canvas-slide-title');
-		const canvasSlideSubtitle = document.getElementById('canvas-slide-subtitle');
-		const canvasSlideBullets = document.getElementById('canvas-slide-bullets');
-		const canvasSlideNotes = document.getElementById('canvas-slide-notes');
-		const deckBtnPrev = document.getElementById('deck-btn-prev');
-		const deckBtnNext = document.getElementById('deck-btn-next');
-
-		// Suite elements
-		const canvasSuiteName = document.getElementById('canvas-suite-name');
-		const canvasSuiteToken = document.getElementById('canvas-suite-token');
-		const btnCanvasEnterSuite = document.getElementById('btn-canvas-enter-suite') as HTMLAnchorElement;
-		const btnCopySuiteLink = document.getElementById('btn-copy-suite-link');
-
-		// ==========================================
-		// Tab Switching Helper
-		// ==========================================
-		function switchCanvasTab(targetId: string) {
-			canvasTabs.forEach((tab) => {
-				const isTarget = tab.getAttribute('data-target') === targetId;
-				if (isTarget) {
-					tab.classList.remove('btn-ghost', 'text-base-content/75');
-					tab.classList.add('btn-neutral');
-				} else {
-					tab.classList.remove('btn-neutral');
-					tab.classList.add('btn-ghost', 'text-base-content/75');
-				}
-			});
-
-			canvasPanels.forEach((panel) => {
-				if (panel.id === targetId) {
-					panel.classList.remove('hidden');
-				} else {
-					panel.classList.add('hidden');
-				}
-			});
-		}
-
-		canvasTabs.forEach((tab) => {
-			tab.addEventListener('click', () => {
-				const target = tab.getAttribute('data-target');
-				if (target) switchCanvasTab(target);
-			});
-		});
-
-		// ==========================================
-		// Render Functions for Canvas Tabs
-		// ==========================================
-		function renderBattlecard() {
-			if (!currentBattlecards.length) return;
-			const card = currentBattlecards[currentBcIndex];
-			if (bcCardCounter) bcCardCounter.textContent = `Card ${currentBcIndex + 1} / ${currentBattlecards.length}`;
-			if (canvasBcCategory) canvasBcCategory.textContent = card.category || 'Objection Talk-Track';
-			if (canvasBcObjection) canvasBcObjection.textContent = `"${card.objection_quote || card.objection || ''}"`;
-			if (canvasBcTalktrack) canvasBcTalktrack.textContent = card.winning_response || card.talk_track || '';
-			if (canvasBcDiffs) {
-				const tags = card.tags || card.key_differentiators || ['Verified Talk-Track'];
-				canvasBcDiffs.innerHTML = tags.map((t: string) => `<span class="badge badge-xs badge-outline">${t}</span>`).join('');
+		// Toggle Side Panel State (Floats over without moving the chat)
+		function setSidePanelState(open: boolean) {
+			sidePanelOpen = open;
+			if (!sidePanel) return;
+			if (open) {
+				sidePanel.classList.remove('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
+				sidePanel.classList.add('translate-x-0', 'opacity-100', 'pointer-events-auto');
+				if (appDockToggleIcon) appDockToggleIcon.textContent = '▶';
+			} else {
+				sidePanel.classList.add('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
+				sidePanel.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+				if (appDockToggleIcon) appDockToggleIcon.textContent = '◀';
+				// Clean reset button highlight
+				sideAppBtns.forEach((b) => {
+					b.classList.remove('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
+					b.classList.add('bg-base-100');
+				});
 			}
 		}
 
-		bcBtnPrev?.addEventListener('click', () => {
-			if (currentBcIndex > 0) {
-				currentBcIndex--;
-				renderBattlecard();
-			}
+		appDockToggle?.addEventListener('click', () => {
+			setSidePanelState(!sidePanelOpen);
 		});
 
-		bcBtnNext?.addEventListener('click', () => {
-			if (currentBcIndex < currentBattlecards.length - 1) {
-				currentBcIndex++;
-				renderBattlecard();
-			}
+		btnCloseSide?.addEventListener('click', () => {
+			setSidePanelState(false);
 		});
 
-		function renderMap() {
-			if (!canvasMapStagesList) return;
-			canvasMapStagesList.innerHTML = currentMapStages
-				.map((st) => {
-					const isDone = st.status === 'completed';
-					const isCurr = st.status === 'current';
-					const badgeClass = isDone ? 'badge-success' : isCurr ? 'badge-warning' : 'badge-neutral';
-					const badgeText = isDone ? 'Done ✓' : isCurr ? 'Active Stage' : 'Upcoming';
-					const borderClass = isCurr ? 'border-primary/50 bg-primary/5' : 'border-base-300 bg-base-200/60';
+		// Switch Active App Tab (Sticky when clicked)
+		function switchAppTab(tabKey: string) {
+			if (sidePanelOpen && activeTab === tabKey) {
+				// Sticky toggle: clicking active icon again collapses panel smoothly
+				setSidePanelState(false);
+				return;
+			}
 
-					return `
-						<div class="p-3 rounded-xl border-2 ${borderClass} flex items-center justify-between text-xs transition-all">
-							<div class="space-y-0.5">
-								<div class="flex items-center gap-2">
-									<span class="font-mono text-[10px] text-base-content/60">0${st.stage_number}</span>
-									<span class="font-bold text-base-content">${st.name}</span>
-									<span class="badge badge-xs ${badgeClass} font-semibold">${badgeText}</span>
-								</div>
-								<p class="text-[11px] text-base-content/75">${st.description || ''}</p>
-							</div>
-							<span class="font-mono text-[11px] text-base-content/70 shrink-0 ml-2">${st.target_date || ''}</span>
+			activeTab = tabKey;
+			setSidePanelState(true);
+
+			// Highlight active app button with clean, sticky active styling
+			sideAppBtns.forEach((btn) => {
+				const key = btn.getAttribute('data-tab');
+				if (key === tabKey) {
+					btn.classList.add('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
+					btn.classList.remove('bg-base-100', 'hover:bg-base-200');
+				} else {
+					btn.classList.remove('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
+					btn.classList.add('bg-base-100', 'hover:bg-base-200');
+				}
+			});
+
+			renderActiveDeliverable();
+		}
+
+		sideAppBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const key = btn.getAttribute('data-tab') || 'battlecards';
+				switchAppTab(key);
+			});
+		});
+
+		// Render Active Deliverable
+		function renderActiveDeliverable() {
+			if (!sideDeliverableView) return;
+
+			const titles: Record<string, string> = {
+				battlecards: '🎴 Objection Battlecards',
+				presentation: '📊 Pitch Presentation Deck',
+				email: '✉️ Executive Proposal Email',
+				flowchart: '🗺️ Mutual Action Plan (MAP)',
+				suite: '🏨 Buyer Deal Room Suite'
+			};
+
+			if (sidePanelTitle) {
+				sidePanelTitle.textContent = titles[activeTab] || 'Deliverables Preview';
+			}
+
+			// Update Redirection Target & Text
+			if (btnOpenFullPage && fullPageBtnText) {
+				if (activeTab === 'battlecards') {
+					btnOpenFullPage.href = '/battlecards';
+					fullPageBtnText.textContent = 'Open Full Deck ↗';
+				} else if (activeTab === 'presentation') {
+					btnOpenFullPage.href = '/presentations';
+					fullPageBtnText.textContent = 'Open Full Slides (16:9) ↗';
+				} else if (activeTab === 'email') {
+					btnOpenFullPage.href = '/emails';
+					fullPageBtnText.textContent = 'Open Full Email ↗';
+				} else if (activeTab === 'flowchart') {
+					btnOpenFullPage.href = '/flowcharts';
+					fullPageBtnText.textContent = 'Open Full MAP ↗';
+				} else if (activeTab === 'suite') {
+					const shareId = storedArtifacts.suite?.share_id || 'suite_live';
+					btnOpenFullPage.href = `/suite/${shareId}`;
+					fullPageBtnText.textContent = 'Open Buyer Room ↗';
+				}
+			}
+
+			const art = storedArtifacts[activeTab];
+
+			if (!art) {
+				if (sideEmptyState) {
+					sideEmptyState.classList.remove('hidden');
+					const emptyTitle = document.getElementById('side-empty-title');
+					const emptyDesc = document.getElementById('side-empty-desc');
+					if (emptyTitle) emptyTitle.textContent = `No ${titles[activeTab] || 'Deliverables'} Generated Yet`;
+					if (emptyDesc) emptyDesc.textContent = `Prompt the agent in the chat to synthesize ${titles[activeTab] || 'deliverables'} for this opportunity.`;
+				}
+				sideDeliverableView.classList.add('hidden');
+				return;
+			}
+
+			if (sideEmptyState) sideEmptyState.classList.add('hidden');
+			sideDeliverableView.classList.remove('hidden');
+
+			if (sideActiveAccount) {
+				sideActiveAccount.textContent = dealContext.account_name || 'Active Deal';
+			}
+
+			// BATTLECARDS: STACKED FLIPPABLE CAROUSEL
+			if (activeTab === 'battlecards') {
+				sideCards = art.content?.cards || [];
+				sideCardOrder = sideCards.map((_, i) => i);
+
+				sideDeliverableView.innerHTML = `
+
+						<!-- 3D Perspective Stack Stage -->
+						<div class="relative w-full h-[370px] perspective-1000 my-2" id="side-deck-stage">
+							<!-- Stack items injected below -->
 						</div>
-					`;
-				})
-				.join('');
-		}
 
-		function renderDeck() {
-			if (!currentSlides.length) return;
-			const slide = currentSlides[currentSlideIndex];
-			if (deckSlideCounter) deckSlideCounter.textContent = `Slide ${currentSlideIndex + 1} / ${currentSlides.length}`;
-			if (canvasSlideTag) canvasSlideTag.textContent = slide.tag || `Slide ${slide.slide_number}`;
-			if (canvasSlideTitle) canvasSlideTitle.textContent = slide.title || '';
-			if (canvasSlideSubtitle) canvasSlideSubtitle.textContent = slide.subtitle || '';
-			if (canvasSlideNotes) canvasSlideNotes.textContent = slide.speaker_note || '';
-			if (canvasSlideBullets) {
-				const bullets = slide.bullets || [];
-				canvasSlideBullets.innerHTML = bullets.map((b: string) => `<li>${b}</li>`).join('');
+						<!-- Progress Dots -->
+						<div class="flex items-center justify-center gap-1.5 pt-1" id="side-deck-dots"></div>
+					</div>
+				`;
+
+				renderSideStackedDeck();
+				setupSideDeckListeners();
+				updateSideStackPositions();
+				return;
+			}
+
+			// PRESENTATION: SLIDE DECK PREVIEW
+			if (activeTab === 'presentation') {
+				const slides = art.content?.slides || [];
+				sideDeliverableView.innerHTML = `
+					<div class="space-y-4">
+						<div class="space-y-3">
+							${slides.map((s: any) => `
+								<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
+									<div class="flex items-center justify-between">
+										<span class="badge badge-xs badge-neutral font-semibold">${s.tag || `Slide ${s.slide_number}`}</span>
+										<span class="text-[10px] font-mono text-base-content/50">#${s.slide_number}</span>
+									</div>
+									<h4 class="font-bold text-xs text-base-content">${s.title}</h4>
+									<p class="text-[11px] text-base-content/75">${s.subtitle || ''}</p>
+									<ul class="text-[11px] space-y-1 pt-1 text-base-content/85">
+										${(s.bullets || []).map((b: string) => `<li class="flex items-start gap-1.5"><span class="text-primary font-bold">✓</span><span>${b}</span></li>`).join('')}
+									</ul>
+									${s.speaker_note ? `
+										<div class="mt-2 p-2 bg-base-200/60 rounded-md text-[10px] text-base-content/70 italic border border-base-300/60">
+											<span class="font-semibold not-italic">Speaker Note:</span> ${s.speaker_note}
+										</div>
+									` : ''}
+								</div>
+							`).join('')}
+						</div>
+					</div>
+				`;
+				return;
+			}
+
+			// EMAIL: EXECUTIVE PROPOSAL
+			if (activeTab === 'email') {
+				const email = art.content || {};
+				sideDeliverableView.innerHTML = `
+					<div class="space-y-4">
+						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-3 shadow-2xs">
+							<div class="border-b border-base-200 pb-2 flex items-center justify-between">
+								<div>
+									<span class="text-[10px] text-base-content/60 font-mono uppercase block">Subject</span>
+									<h4 class="font-bold text-xs text-base-content">${email.subject || 'Proposal & Next Milestones'}</h4>
+								</div>
+								<button id="btn-copy-email" class="btn btn-xs btn-ghost gap-1" title="Copy to clipboard">
+									📋 Copy
+								</button>
+							</div>
+							<div class="text-[11px] text-base-content/85 whitespace-pre-line leading-relaxed bg-base-200/50 p-3.5 rounded-lg border border-base-300/60">
+								${email.body || ''}
+							</div>
+							${email.key_takeaways?.length ? `
+								<div class="flex flex-wrap gap-1 pt-1">
+									${email.key_takeaways.map((t: string) => `<span class="badge badge-xs badge-neutral">${t}</span>`).join('')}
+								</div>
+							` : ''}
+						</div>
+					</div>
+				`;
+
+				const copyBtn = document.getElementById('btn-copy-email');
+				copyBtn?.addEventListener('click', () => {
+					navigator.clipboard.writeText(`${email.subject}\n\n${email.body}`);
+					copyBtn.textContent = 'Copied ✓';
+					setTimeout(() => { copyBtn.textContent = '📋 Copy'; }, 2000);
+				});
+				return;
+			}
+
+			// MAP: MUTUAL ACTION PLAN
+			if (activeTab === 'flowchart') {
+				const map = art.content || {};
+				const stages = map.stages || [];
+				sideDeliverableView.innerHTML = `
+					<div class="space-y-4">
+						<div class="space-y-2.5">
+							${stages.map((st: any) => `
+								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-1.5 shadow-2xs">
+									<div class="flex items-center justify-between">
+										<span class="badge badge-xs ${st.status === 'completed' ? 'badge-success' : 'badge-neutral'} font-semibold">Stage ${st.stage_number}</span>
+										<span class="text-[10px] font-mono text-base-content/60">${st.target_date || ''}</span>
+									</div>
+									<h4 class="font-bold text-xs text-base-content">${st.name}</h4>
+									<p class="text-[11px] text-base-content/75">${st.description || ''}</p>
+									<div class="text-[10px] text-base-content/60 font-mono pt-1 flex justify-between">
+										<span>Owner: ${st.owner || 'AE'}</span>
+										<span>Deliverable: ${st.deliverable || 'Approved'}</span>
+									</div>
+								</div>
+							`).join('')}
+						</div>
+					</div>
+				`;
+				return;
+			}
+
+			// SUITE: BUYER DEAL ROOM
+			if (activeTab === 'suite') {
+				const suite = art;
+				sideDeliverableView.innerHTML = `
+					<div class="space-y-4">
+						<div class="card bg-gradient-to-br from-base-200/80 to-base-300/80 border border-primary/40 p-5 rounded-2xl space-y-3 shadow-xs">
+							<div class="flex items-center justify-between">
+								<span class="badge badge-xs badge-success font-semibold">Active Keycard</span>
+								<span class="font-mono text-[11px] text-base-content/70">${suite.share_id || 'suite_live'}</span>
+							</div>
+							<h4 class="font-bold text-sm text-base-content">Penthouse Suite: ${dealContext.account_name || 'Enterprise'}</h4>
+							<p class="text-[11px] text-base-content/75 leading-relaxed">
+								Encrypted guest deal room for enterprise stakeholders to review objection talk-tracks, verified ROI metrics, and mutual milestones.
+							</p>
+							<a href="/suite/${suite.share_id || 'suite_live'}" class="btn btn-sm btn-neutral w-full font-semibold shadow-xs">
+								Open Guest Suite 🏨
+							</a>
+						</div>
+					</div>
+				`;
+				return;
 			}
 		}
 
-		deckBtnPrev?.addEventListener('click', () => {
-			if (currentSlideIndex > 0) {
-				currentSlideIndex--;
-				renderDeck();
+		// STACKED BATTLECARDS CAROUSEL LOGIC
+		function renderSideStackedDeck() {
+			const stage = document.getElementById('side-deck-stage');
+			if (!stage) return;
+			stage.innerHTML = '';
+
+			sideCards.forEach((c, idx) => {
+				const tags = c.tags || c.proof_points || ['Verified'];
+				const item = document.createElement('div');
+				item.className = 'side-card-item absolute inset-0 transition-all duration-500 cursor-pointer select-none';
+				item.setAttribute('data-index', idx.toString());
+
+				item.innerHTML = `
+					<div class="flip-card h-full w-full">
+						<div class="flip-card-inner h-full w-full relative">
+							<!-- FRONT -->
+							<div class="absolute inset-0 backface-hidden p-5 rounded-2xl border border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
+								<div class="flex items-center justify-between border-b border-base-200 pb-2">
+									<span class="badge badge-xs badge-neutral font-bold uppercase tracking-wider">${c.category || 'Objection'}</span>
+									<span class="text-[10px] font-mono text-base-content/60">Click to Flip 🔄</span>
+								</div>
+
+								<div class="space-y-2 my-auto">
+									<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
+									<h4 class="text-sm font-bold text-base-content leading-snug">
+										"${c.objection_quote || c.objection}"
+									</h4>
+									<p class="text-[11px] text-base-content/75">
+										Persona: ${c.buyer_persona || 'Executive Sponsor'}
+									</p>
+								</div>
+
+								<div class="pt-2 border-t border-base-200 flex items-center justify-between text-[11px]">
+									<div class="flex gap-1">
+										${tags.slice(0, 1).map((t: string) => `<span class="badge badge-xs badge-outline">${t}</span>`).join('')}
+									</div>
+									<span class="font-semibold text-primary">Tap to reveal talk-track →</span>
+								</div>
+							</div>
+
+							<!-- BACK -->
+							<div class="absolute inset-0 backface-hidden rotate-y-180 p-5 rounded-2xl border border-primary/40 bg-base-200 flex flex-col justify-between shadow-xl">
+								<div class="flex items-center justify-between border-b border-base-300 pb-2">
+									<span class="badge badge-xs badge-success font-bold">Winning Talk-Track</span>
+									<span class="text-[10px] font-mono text-base-content/60">Tap to Flip Back ↺</span>
+								</div>
+
+								<div class="space-y-2 my-auto">
+									<div class="text-[11px] text-base-content leading-relaxed bg-base-100 p-3 rounded-xl border border-base-300 font-medium">
+										${c.winning_response || c.talk_track}
+									</div>
+									<div class="grid grid-cols-2 gap-1.5 text-[10px]">
+										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
+											<span class="block text-base-content/60 uppercase font-mono">Proof:</span>
+											<span class="font-semibold truncate">${(c.proof_points || ['Validated metrics'])[0]}</span>
+										</div>
+										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
+											<span class="block text-base-content/60 uppercase font-mono">Metric:</span>
+											<span class="font-semibold">${c.key_metric || '< 60-day break-even'}</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="pt-2 border-t border-base-300 flex items-center justify-between text-[10px]">
+									<span class="text-base-content/70">AE Confidence:</span>
+									<div class="flex gap-1">
+										<button class="btn btn-xs btn-outline py-0 h-5">Practice</button>
+										<button class="btn btn-xs btn-neutral py-0 h-5">Mastered ✓</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+
+				item.addEventListener('click', (e) => {
+					const target = e.target as HTMLElement;
+					if (target.tagName === 'BUTTON') return;
+					if (sideCardOrder[0] === idx) {
+						const flipCard = item.querySelector('.flip-card-inner');
+						flipCard?.classList.toggle('is-flipped');
+					}
+				});
+
+				stage.appendChild(item);
+			});
+		}
+
+		function updateSideStackPositions() {
+			const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
+			items.forEach((card, originalIdx) => {
+				const pos = sideCardOrder.indexOf(originalIdx);
+				const flipCard = card.querySelector('.flip-card-inner');
+
+				if (pos === 0) {
+					card.style.zIndex = '30';
+					card.style.transform = 'translateY(0) scale(1)';
+					card.style.opacity = '1';
+					card.style.pointerEvents = 'auto';
+				} else if (pos === 1) {
+					card.style.zIndex = '20';
+					card.style.transform = 'translateY(14px) scale(0.96)';
+					card.style.opacity = '0.85';
+					card.style.pointerEvents = 'none';
+					flipCard?.classList.remove('is-flipped');
+				} else if (pos === 2) {
+					card.style.zIndex = '10';
+					card.style.transform = 'translateY(28px) scale(0.92)';
+					card.style.opacity = '0.65';
+					card.style.pointerEvents = 'none';
+					flipCard?.classList.remove('is-flipped');
+				} else {
+					card.style.zIndex = '0';
+					card.style.transform = 'translateY(42px) scale(0.88)';
+					card.style.opacity = '0';
+					card.style.pointerEvents = 'none';
+					flipCard?.classList.remove('is-flipped');
+				}
+			});
+
+			const badge = document.getElementById('side-deck-badge');
+			if (badge && sideCards.length) {
+				badge.textContent = `Card ${sideCardOrder[0] + 1} of ${sideCards.length}`;
 			}
-		});
 
-		deckBtnNext?.addEventListener('click', () => {
-			if (currentSlideIndex < currentSlides.length - 1) {
-				currentSlideIndex++;
-				renderDeck();
+			const dotsContainer = document.getElementById('side-deck-dots');
+			if (dotsContainer) {
+				dotsContainer.innerHTML = '';
+				sideCards.forEach((_, i) => {
+					const dot = document.createElement('div');
+					dot.className = `w-1.5 h-1.5 rounded-full transition-all ${sideCardOrder[0] === i ? 'bg-primary w-4' : 'bg-base-300'}`;
+					dotsContainer.appendChild(dot);
+				});
 			}
-		});
+		}
 
-		// Initial Canvas Render
-		renderBattlecard();
-		renderMap();
-		renderDeck();
+		function setupSideDeckListeners() {
+			const btnNext = document.getElementById('side-btn-next');
+			const btnPrev = document.getElementById('side-btn-prev');
+			const btnFlip = document.getElementById('side-btn-flip');
 
-		// ==========================================
-		// Chat Stream & Inline Deliverable Rendering
-		// ==========================================
+			btnNext?.addEventListener('click', () => {
+				if (!sideCards.length) return;
+				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
+				const activeCard = items[sideCardOrder[0]];
+				const flipCard = activeCard.querySelector('.flip-card-inner');
+				flipCard?.classList.remove('is-flipped');
+
+				activeCard.style.transform = 'translateX(110%) rotate(12deg) scale(0.9)';
+				activeCard.style.opacity = '0';
+
+				setTimeout(() => {
+					const first = sideCardOrder.shift()!;
+					sideCardOrder.push(first);
+					updateSideStackPositions();
+				}, 250);
+			});
+
+			btnPrev?.addEventListener('click', () => {
+				if (!sideCards.length) return;
+				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
+				const lastIdx = sideCardOrder[sideCardOrder.length - 1];
+				const lastCard = items[lastIdx];
+				const flipCard = lastCard.querySelector('.flip-card-inner');
+				flipCard?.classList.remove('is-flipped');
+
+				const last = sideCardOrder.pop()!;
+				sideCardOrder.unshift(last);
+				updateSideStackPositions();
+			});
+
+			btnFlip?.addEventListener('click', () => {
+				if (!sideCards.length) return;
+				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
+				const activeCard = items[sideCardOrder[0]];
+				const flipCard = activeCard?.querySelector('.flip-card-inner');
+				flipCard?.classList.toggle('is-flipped');
+			});
+		}
+
+		// Update App Badges on Side Dock
+		function updateSideBadges() {
+			const bc = storedArtifacts.battlecards?.content?.cards?.length || 0;
+			if (appBadgeBc) {
+				appBadgeBc.textContent = bc.toString();
+				if (bc > 0) appBadgeBc.classList.remove('hidden');
+			}
+
+			const deck = storedArtifacts.presentation?.content?.slides?.length || 0;
+			if (appBadgeDeck) {
+				appBadgeDeck.textContent = deck.toString();
+				if (deck > 0) appBadgeDeck.classList.remove('hidden');
+			}
+
+			const email = storedArtifacts.email ? 1 : 0;
+			if (appBadgeEmail) {
+				appBadgeEmail.textContent = email.toString();
+				if (email > 0) appBadgeEmail.classList.remove('hidden');
+			}
+
+			const map = storedArtifacts.flowchart?.content?.stages?.length || 0;
+			if (appBadgeMap) {
+				appBadgeMap.textContent = map.toString();
+				if (map > 0) appBadgeMap.classList.remove('hidden');
+			}
+
+			const suite = storedArtifacts.suite ? 1 : 0;
+			if (appBadgeSuite) {
+				appBadgeSuite.textContent = suite.toString();
+				if (suite > 0) appBadgeSuite.classList.remove('hidden');
+			}
+		}
+
+		// Append User Message
 		function appendUserMessage(text: string) {
 			if (!chatStream) return;
+			if (welcomeTurn) welcomeTurn.classList.add('hidden');
+
 			const turnDiv = document.createElement('div');
-			turnDiv.className = 'space-y-1.5';
+			turnDiv.className = 'flex justify-end';
 			turnDiv.innerHTML = `
-				<div class="flex items-center justify-end gap-2 text-[11px] font-semibold text-base-content/60">
-					<span>You (Sales AE)</span>
-					<span class="w-5 h-5 rounded-full bg-neutral text-neutral-content flex items-center justify-center text-[10px]">AE</span>
-				</div>
-				<div class="p-3 bg-neutral text-neutral-content rounded-xl text-xs font-medium leading-relaxed max-w-[90%] ml-auto shadow-xs">
+				<div class="p-3.5 sm:p-4 bg-neutral text-neutral-content rounded-2xl text-xs sm:text-sm font-medium leading-relaxed max-w-[80%] shadow-xs">
 					${text}
 				</div>
 			`;
@@ -613,19 +739,19 @@ Alex Morgan | Strategic Accounts</pre>
 			chatStream.scrollTop = chatStream.scrollHeight;
 		}
 
+		// Append Progress Block
 		function appendProgressBlock(): HTMLDivElement | null {
 			if (!chatStream) return null;
 			const progDiv = document.createElement('div');
-			progDiv.className = 'space-y-2 p-3 bg-base-200/90 rounded-xl border border-base-300 animate-pulse text-xs';
+			progDiv.className = 'p-4 bg-base-200/80 rounded-2xl border border-base-300 animate-pulse text-xs max-w-xl space-y-2';
 			progDiv.innerHTML = `
 				<div class="flex items-center gap-2 font-bold text-base-content">
 					<span class="loading loading-spinner loading-xs text-primary"></span>
-					<span>Executing Autonomous Sales DAG Plan...</span>
+					<span>Analyzing deal directives & formulating plan...</span>
 				</div>
-				<div class="space-y-1 text-[11px] text-base-content/75 font-mono">
-					<div>● Parsing deal context & accounts...</div>
-					<div>● Formulating dependency graph...</div>
-					<div>● Dispatching tools in topological sequence...</div>
+				<div class="font-mono text-[11px] text-base-content/70 space-y-0.5">
+					<div>● Evaluating competitive context & ROI requirements...</div>
+					<div>● Dispatching deterministic tools to DAG engine...</div>
 				</div>
 			`;
 			chatStream.appendChild(progDiv);
@@ -633,364 +759,206 @@ Alex Morgan | Strategic Accounts</pre>
 			return progDiv;
 		}
 
+		// Append Agent Response with Smart Follow-up Questions
 		function appendAgentTurn(data: any) {
 			if (!chatStream) return;
 			const turnDiv = document.createElement('div');
-			turnDiv.className = 'space-y-2.5';
+			turnDiv.className = 'space-y-3.5 w-full';
 
-			// 1. Progress Steps Disclosure
-			const steps = data.steps || [];
-			const totalMs = data.total_duration_ms || 1200;
-			let stepsHtml = '';
-			if (steps.length > 0) {
-				stepsHtml = `
-					<details class="group bg-base-200/70 border border-base-300 rounded-xl p-2.5 text-[11px] cursor-pointer">
-						<summary class="font-bold text-base-content/85 flex items-center justify-between list-none">
-							<span class="flex items-center gap-1.5">
-								<span class="text-success">✓</span>
-								<span>DAG Execution Resolved (${steps.length} steps in ${totalMs}ms)</span>
-							</span>
-							<span class="text-xs group-open:rotate-180 transition-transform">▾</span>
-						</summary>
-						<div class="mt-2 pt-2 border-t border-base-300 space-y-1 font-mono text-[10px] text-base-content/75">
-							${steps
-								.map(
-									(s: any) => `
-								<div class="flex items-center justify-between">
-									<span>✓ ${s.name} ${s.output_summary ? `— ${s.output_summary}` : ''}</span>
-									<span class="text-base-content/50">${s.duration_ms}ms</span>
-								</div>
-							`
-								)
-								.join('')}
-						</div>
-					</details>
-				`;
+			// Update Deal Context
+			if (data.deal_context) {
+				dealContext = { ...dealContext, ...data.deal_context };
+				if (dealTitleBadge) {
+					dealTitleBadge.textContent = `${dealContext.account_name || 'Opportunity'} (${dealContext.deal_size || ''})`;
+				}
 			}
 
-			// 2. Inline Output Deliverables Cards
+			// Store new artifacts and switch to side view
 			const arts = data.artifacts || {};
-			let inlineDeliverablesHtml = '';
+			const newKeys = Object.keys(arts);
+			if (newKeys.length > 0) {
+				storedArtifacts = { ...storedArtifacts, ...arts };
+				updateSideBadges();
+				setSidePanelState(true);
+				switchAppTab(newKeys[0]);
+			}
 
-			// Battlecards Pill
-			if (arts.battlecards?.content?.cards?.[0]) {
-				const bc = arts.battlecards.content.cards[0];
-				inlineDeliverablesHtml += `
-					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
-						<div class="flex items-center justify-between">
-							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
-								<span>🎴</span>
-								<span>Objection Battlecard</span>
-							</span>
-							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-battlecards">
-								Open in Canvas →
-							</button>
-						</div>
-						<p class="text-xs font-semibold text-base-content">"${bc.objection_quote || bc.objection}"</p>
-						<p class="text-[11px] text-base-content/80 font-medium line-clamp-2">${bc.winning_response || bc.talk_track}</p>
+			// Generated deliverables pill banner
+			let generatedPillsHtml = '';
+			if (newKeys.length > 0) {
+				generatedPillsHtml = `
+					<div class="flex flex-wrap items-center gap-1.5 pt-1">
+						<span class="text-[11px] font-semibold text-base-content/70">Generated Deliverables:</span>
+						${newKeys.map((k) => {
+							const labels: Record<string, string> = {
+								battlecards: '🎴 Battlecards',
+								presentation: '📊 Pitch Deck',
+								email: '✉️ Proposal Email',
+								flowchart: '🗺️ Mutual Action Plan',
+								suite: '🏨 Deal Suite'
+							};
+							return `
+								<button class="side-inspect-pill btn btn-xs btn-neutral gap-1 cursor-pointer" data-tab="${k}">
+									<span>${labels[k] || k}</span>
+									<span>→</span>
+								</button>
+							`;
+						}).join('')}
 					</div>
 				`;
 			}
 
-			// MAP Pill
-			if (arts.flowchart?.content) {
-				const fc = arts.flowchart.content;
-				inlineDeliverablesHtml += `
-					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
-						<div class="flex items-center justify-between">
-							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
-								<span>🗺️</span>
-								<span>Mutual Action Plan (MAP)</span>
-							</span>
-							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-map">
-								Open in Canvas →
-							</button>
+			// Follow-up Suggestions
+			const followUps = data.follow_ups || [];
+			let followUpsHtml = '';
+			if (followUps.length > 0) {
+				followUpsHtml = `
+					<div class="mt-3 pt-3 border-t border-base-200/80 space-y-2">
+						<div class="flex items-center gap-1.5 text-[11px] font-semibold text-base-content/75">
+							<span>💡 Recommended Next Deliverables:</span>
 						</div>
-						<div class="flex items-center justify-between text-xs">
-							<span class="font-medium text-base-content">6-Stage Closing Roadmap</span>
-							<span class="badge badge-xs badge-warning font-semibold">Target: ${fc.target_close_date || 'Oct 28'}</span>
-						</div>
-					</div>
-				`;
-			}
-
-			// Email Pill
-			if (arts.email?.content) {
-				const em = arts.email.content;
-				inlineDeliverablesHtml += `
-					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
-						<div class="flex items-center justify-between">
-							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
-								<span>✉️</span>
-								<span>Executive Proposal Email</span>
-							</span>
-							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-email">
-								Open in Canvas →
-							</button>
-						</div>
-						<div class="text-xs font-semibold text-base-content line-clamp-1">Subject: ${em.subject}</div>
-					</div>
-				`;
-			}
-
-			// Deck Pill
-			if (arts.presentation?.content) {
-				inlineDeliverablesHtml += `
-					<div class="p-3 bg-base-100 rounded-xl border-2 border-base-300 shadow-2xs space-y-1.5">
-						<div class="flex items-center justify-between">
-							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
-								<span>📊</span>
-								<span>Pitch & ROI Presentation</span>
-							</span>
-							<button class="btn btn-xs btn-outline open-canvas-btn" data-target="tab-deck">
-								Open in Canvas →
-							</button>
-						</div>
-						<div class="text-xs font-medium text-base-content">4-Slide Executive Briefing Deck</div>
-					</div>
-				`;
-			}
-
-			// Suite Pill
-			if (arts.suite) {
-				inlineDeliverablesHtml += `
-					<div class="p-3 bg-base-100 rounded-xl border-2 border-primary/50 shadow-2xs space-y-2">
-						<div class="flex items-center justify-between">
-							<span class="font-bold text-xs text-base-content flex items-center gap-1.5">
-								<span>🏨</span>
-								<span>Buyer Deal Suite Keycard</span>
-							</span>
-							<span class="badge badge-xs badge-success font-semibold">Pass Active</span>
-						</div>
-						<div class="flex items-center justify-between text-xs">
-							<span class="font-mono text-base-content/70">${arts.suite.share_id}</span>
-							<a href="${arts.suite.access_url}" target="_blank" class="btn btn-xs btn-neutral font-semibold">
-								Enter Deal Room 🚪
-							</a>
+						<div class="flex flex-wrap gap-1.5">
+							${followUps.map((fu: any) => `
+								<button class="followup-chip btn btn-xs btn-outline rounded-full font-medium text-[11px] transition-all hover:btn-neutral cursor-pointer" data-prompt="${fu.prompt}">
+									${fu.label}
+								</button>
+							`).join('')}
 						</div>
 					</div>
 				`;
 			}
 
 			turnDiv.innerHTML = `
-				<div class="flex items-center gap-2 text-[11px] font-semibold text-base-content/60">
-					<span class="w-5 h-5 rounded-full bg-base-300 flex items-center justify-center text-[10px]">🤖</span>
-					<span>AI Deal Architect</span>
-					<span class="text-[10px] text-base-content/40 font-mono">just now</span>
-				</div>
-
-				${stepsHtml}
-
-				<div class="p-3.5 bg-base-200/90 rounded-xl border border-base-300 text-xs text-base-content leading-relaxed font-medium">
-					${data.agent_reply}
-				</div>
-
-				<div class="space-y-2 pt-1">
-					<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Generated Output Deliverables:</div>
-					${inlineDeliverablesHtml}
+				<div class="card bg-base-100 border border-base-200/90 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3">
+					<div class="text-xs sm:text-sm text-base-content leading-relaxed whitespace-pre-line font-medium">
+						${data.agent_reply || 'Plan executed.'}
+					</div>
+					${generatedPillsHtml}
+					${followUpsHtml}
 				</div>
 			`;
 
 			chatStream.appendChild(turnDiv);
 			chatStream.scrollTop = chatStream.scrollHeight;
 
-			// Attach Canvas Link buttons inside the chat message
-			turnDiv.querySelectorAll('.open-canvas-btn').forEach((btn) => {
-				btn.addEventListener('click', () => {
-					const target = btn.getAttribute('data-target');
-					if (target) switchCanvasTab(target);
+			// Attach listener to pills
+			turnDiv.querySelectorAll('.side-inspect-pill').forEach((pill) => {
+				pill.addEventListener('click', () => {
+					const tabKey = pill.getAttribute('data-tab') || 'battlecards';
+					switchAppTab(tabKey);
+				});
+			});
+
+			// Attach listener to follow-up suggestion chips
+			turnDiv.querySelectorAll('.followup-chip').forEach((chip) => {
+				chip.addEventListener('click', () => {
+					const prompt = chip.getAttribute('data-prompt');
+					if (prompt) submitPrompt(prompt);
 				});
 			});
 		}
 
-		// ==========================================
-		// Send Directive Logic
-		// ==========================================
-		async function sendDirective(promptText: string) {
-			if (!promptText) return;
-			appendUserMessage(promptText);
+		// Core Submit Prompt
+		async function submitPrompt(promptText: string) {
+			const text = promptText.trim();
+			if (!text) return;
 
-			if (sendBtn) (sendBtn as HTMLButtonElement).disabled = true;
-			if (agentStatusBadge) {
-				agentStatusBadge.className = 'badge badge-xs badge-warning ml-2 font-semibold animate-pulse';
-				agentStatusBadge.textContent = '● Executing DAG...';
+			if (chatInput) chatInput.value = '';
+			appendUserMessage(text);
+			const progBlock = appendProgressBlock();
+
+			if (sendBtn) {
+				sendBtn.setAttribute('disabled', 'true');
+				sendBtn.innerHTML = '<span class="loading loading-spinner loading-xs"></span>';
 			}
 
-			const progressBlock = appendProgressBlock();
-
 			try {
-				const res = await fetch('/api/agent/chat', {
+				const res = await fetch('/api/agent/run', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
-						message: promptText,
+						message: text,
 						deal_context: dealContext,
 					}),
 				});
 
+				if (!res.ok) throw new Error(`HTTP error ${res.status}`);
 				const data = await res.json();
-				if (progressBlock) progressBlock.remove();
-
-				if (res.ok && data.status === 'success') {
-					appendAgentTurn(data);
-
-					// Update memory
-					if (data.deal_context) {
-						dealContext = { ...dealContext, ...data.deal_context };
-						if (breadcrumbAccount) {
-							breadcrumbAccount.textContent = dealContext.account_name;
-						}
-					}
-
-					// Update Canvas Deliverables
-					const arts = data.artifacts || {};
-
-					// Update Battlecards
-					if (arts.battlecards?.content?.cards?.length) {
-						currentBattlecards = arts.battlecards.content.cards;
-						currentBcIndex = 0;
-						renderBattlecard();
-					}
-
-					// Update MAP
-					if (arts.flowchart?.content?.stages?.length) {
-						currentMapStages = arts.flowchart.content.stages;
-						if (canvasMapCloseDate) {
-							canvasMapCloseDate.textContent = `Target Close: ${arts.flowchart.content.target_close_date || 'Oct 28, 2026'}`;
-						}
-						renderMap();
-					}
-
-					// Update Email
-					if (arts.email?.content) {
-						const em = arts.email.content;
-						if (canvasEmailSubject) canvasEmailSubject.textContent = em.subject;
-						if (canvasEmailBody) canvasEmailBody.textContent = em.body;
-						if (canvasEmailRecipient) canvasEmailRecipient.textContent = `To: ${em.to || dealContext.recipient}`;
-					}
-
-					// Update Presentation
-					if (arts.presentation?.content?.slides?.length) {
-						currentSlides = arts.presentation.content.slides;
-						currentSlideIndex = 0;
-						renderDeck();
-					}
-
-					// Update Suite Keycard
-					if (arts.suite) {
-						currentSuite = arts.suite;
-						if (canvasSuiteName) canvasSuiteName.textContent = arts.suite.suite_name;
-						if (canvasSuiteToken) canvasSuiteToken.textContent = `Keycard Pass: ${arts.suite.share_id}`;
-						if (btnCanvasEnterSuite) btnCanvasEnterSuite.href = arts.suite.access_url;
-					}
-
-					// Update Telemetry Panel
-					updateTelemetryPanel(data.steps || [], data.total_duration_ms || 1200);
-
-				} else {
-					appendAgentTurn({
-						agent_reply: `Encountered an issue executing that directive: ${data.detail || 'Internal pipeline error'}`,
-						steps: [],
-						artifacts: {},
-					});
-				}
+				if (progBlock) progBlock.remove();
+				appendAgentTurn(data);
 			} catch (err: any) {
-				if (progressBlock) progressBlock.remove();
-				appendAgentTurn({
-					agent_reply: `Connection error: ${err.message}`,
-					steps: [],
-					artifacts: {},
-				});
+				if (progBlock) progBlock.remove();
+				const errDiv = document.createElement('div');
+				errDiv.className = 'p-4 bg-error/15 text-error rounded-2xl text-xs border border-error/30';
+				errDiv.textContent = `Encountered an issue executing deal instruction: ${err.message}`;
+				chatStream?.appendChild(errDiv);
 			} finally {
-				if (sendBtn) (sendBtn as HTMLButtonElement).disabled = false;
-				if (agentStatusBadge) {
-					agentStatusBadge.className = 'badge badge-xs badge-success ml-2 font-semibold';
-					agentStatusBadge.textContent = '● Engine Online';
+				if (sendBtn) {
+					sendBtn.removeAttribute('disabled');
+					sendBtn.innerHTML = 'Plan ⏎';
 				}
 			}
 		}
 
-		function updateTelemetryPanel(steps: any[], totalMs: number) {
-			const nodeCount = document.getElementById('telemetry-node-count');
-			const totalMsEl = document.getElementById('telemetry-total-ms');
-			const stepsList = document.getElementById('telemetry-steps-list');
-
-			if (nodeCount) nodeCount.textContent = `${steps.length} Nodes Resolved`;
-			if (totalMsEl) totalMsEl.textContent = `Execution Latency: ${(totalMs / 1000).toFixed(2)}s`;
-
-			if (stepsList) {
-				stepsList.innerHTML = steps
-					.map(
-						(s: any) => `
-					<div class="flex items-center justify-between p-2 rounded-lg bg-base-200 border border-base-300">
-						<div>
-							<span class="text-success font-bold">✓</span>
-							<span class="font-bold text-base-content ml-1">${s.name}</span>
-							${s.detail ? `<span class="text-base-content/60 ml-2">(${s.detail})</span>` : ''}
-						</div>
-						<span class="font-semibold text-primary">${s.duration_ms}ms</span>
-					</div>
-				`
-					)
-					.join('');
-			}
-		}
-
-		// ==========================================
-		// Event Listeners
-		// ==========================================
+		// Chat Form Submission
 		chatForm?.addEventListener('submit', (e) => {
 			e.preventDefault();
-			const val = (chatInput?.value || '').trim();
-			if (!val) return;
-			chatInput.value = '';
-			sendDirective(val);
+			if (chatInput) submitPrompt(chatInput.value);
 		});
 
+		// Starter Chips
 		chips.forEach((chip) => {
 			chip.addEventListener('click', () => {
-				const p = chip.getAttribute('data-prompt');
-				if (p) sendDirective(p);
+				const prompt = chip.getAttribute('data-prompt');
+				if (prompt) submitPrompt(prompt);
 			});
 		});
 
-		clearBtn?.addEventListener('click', () => {
+		// Reset Session
+		resetBtn?.addEventListener('click', () => {
+			dealContext = {};
+			storedArtifacts = {};
 			if (chatStream) {
-				chatStream.innerHTML = `
-					<div class="space-y-2">
-						<div class="flex items-center gap-2 text-[11px] font-semibold text-base-content/60">
-							<span class="w-5 h-5 rounded-full bg-base-300 flex items-center justify-center text-[10px]">🤖</span>
-							<span>AI Sales Assistant</span>
-							<span class="text-[10px] text-base-content/40 font-mono">reset</span>
-						</div>
-						<div class="p-3.5 bg-base-200/80 rounded-xl border border-base-300 space-y-1 text-xs">
-							<p class="font-semibold text-base-content">Agent stream reset.</p>
-							<p class="text-base-content/85">Tell me what deal you would like to work on.</p>
-						</div>
-					</div>
-				`;
+				chatStream.innerHTML = '';
+				if (welcomeTurn) chatStream.appendChild(welcomeTurn);
+				welcomeTurn?.classList.remove('hidden');
 			}
+			if (dealTitleBadge) dealTitleBadge.textContent = 'New Opportunity';
+			updateSideBadges();
+			setSidePanelState(false);
 		});
 
-		stepsToggleBtn?.addEventListener('click', () => {
-			if (fullStepPanel) fullStepPanel.classList.toggle('hidden');
-		});
+		// Load existing SQLite artifacts on page mount
+		async function loadInitialArtifacts() {
+			try {
+				const res = await fetch('/api/artifacts');
+				if (!res.ok) return;
+				const list = await res.json();
+				if (Array.isArray(list) && list.length > 0) {
+					const latestByType: Record<string, any> = {};
+					for (const art of list) {
+						if (art.type && !latestByType[art.type]) {
+							latestByType[art.type] = art;
+						}
+					}
+					storedArtifacts = { ...storedArtifacts, ...latestByType };
 
-		copyCanvasEmailBtn?.addEventListener('click', () => {
-			if (!canvasEmailBody) return;
-			navigator.clipboard.writeText(canvasEmailBody.textContent || '').then(() => {
-				const orig = copyCanvasEmailBtn.innerHTML;
-				copyCanvasEmailBtn.innerHTML = 'Copied! ✓';
-				setTimeout(() => (copyCanvasEmailBtn.innerHTML = orig), 2000);
-			});
-		});
+					const mostRecent = list[0];
+					if (mostRecent && mostRecent.deal_context && (!dealContext || !dealContext.account_name)) {
+						dealContext = { ...dealContext, ...mostRecent.deal_context };
+						if (dealTitleBadge && dealContext.account_name) {
+							dealTitleBadge.textContent = `${dealContext.account_name} (${dealContext.deal_size || ''})`;
+						}
+					}
+					updateSideBadges();
+				}
+			} catch (e) {
+				console.warn('Could not load initial artifacts:', e);
+			}
+		}
 
-		btnCopySuiteLink?.addEventListener('click', () => {
-			navigator.clipboard.writeText(currentSuite.share_id).then(() => {
-				const orig = btnCopySuiteLink.textContent;
-				btnCopySuiteLink.textContent = 'Copied! ✓';
-				setTimeout(() => (btnCopySuiteLink.textContent = orig), 2000);
-			});
-		});
+		// Initialize
+		updateSideBadges();
+		loadInitialArtifacts();
 	</script>
 </Layout>

@@ -3,7 +3,7 @@ import logging
 import neatlogs
 from typing import Dict, Any
 from app.config import get_settings
-from app.llm import get_litellm_client
+from app.llm import get_litellm_client, extract_json
 from app.services.artifact_store import save_artifact
 
 logger = logging.getLogger(__name__)
@@ -40,10 +40,9 @@ def create_email(account_name: str, recipient: str, context: str, tone: str = "E
         completion = llm_client.chat.completions.create(
             model=llm_model,
             messages=messages,
-            response_format={"type": "json_object"},
             temperature=0.2,
         )
-        parsed = json.loads(completion.choices[0].message.content or "{}")
+        parsed = extract_json(completion.choices[0].message.content or "")
     except Exception as e:
         logger.warning(f"Fallback email generation: {e}")
         parsed = {

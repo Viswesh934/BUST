@@ -3,7 +3,7 @@ import logging
 import neatlogs
 from typing import Dict, Any, Optional
 from app.config import get_settings
-from app.llm import get_litellm_client
+from app.llm import get_litellm_client, extract_json
 from app.schemas.battlecards import ObjectionBattlecardsDeck, ObjectionCard, ArtifactEnvelope
 from app.services.artifact_store import save_artifact
 
@@ -75,11 +75,9 @@ Meeting Discovery Notes:
         completion = llm_client.chat.completions.create(
             model=llm_model,
             messages=messages,
-            response_format={"type": "json_object"},
             temperature=0.2,
         )
-        raw_content = completion.choices[0].message.content or "{}"
-        parsed_json = json.loads(raw_content)
+        parsed_json = extract_json(completion.choices[0].message.content or "")
 
         # Validate against schema
         deck = ObjectionBattlecardsDeck(**parsed_json)
