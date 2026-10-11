@@ -78,6 +78,7 @@ def health() -> Dict[str, str]:
 
 
 @app.post("/api/agent/chat")
+@app.post("/api/agent/run")
 @neatlogs.span(kind="WORKFLOW", name="deal-agent-chat-turn")
 def agent_chat_endpoint(req: AgentChatRequest) -> Dict[str, Any]:
     """

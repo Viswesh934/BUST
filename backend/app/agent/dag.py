@@ -70,7 +70,7 @@ class SalesDAGExecutionEngine:
         - suite: Luxury Deal Room guest keycard pass (depends on battlecards)
         """
         # Node 1: Battlecards
-        if plan_flags.get("create_battlecards", True):
+        if bool(plan_flags.get("create_battlecards", False)):
             self.add_node(
                 DAGNode(
                     id="node_battlecards",
@@ -87,7 +87,7 @@ class SalesDAGExecutionEngine:
             )
 
         # Node 2: MAP Flowchart
-        if plan_flags.get("create_flowchart", True):
+        if bool(plan_flags.get("create_flowchart", False)):
             self.add_node(
                 DAGNode(
                     id="node_flowchart",
@@ -103,7 +103,7 @@ class SalesDAGExecutionEngine:
             )
 
         # Node 3: Executive Email (depends on Battlecards & Flowchart for context pipelining)
-        if plan_flags.get("create_email", True):
+        if bool(plan_flags.get("create_email", False)):
             email_deps = []
             if "node_battlecards" in self.nodes:
                 email_deps.append("node_battlecards")
@@ -126,7 +126,7 @@ class SalesDAGExecutionEngine:
             )
 
         # Node 4: Pitch Deck (depends on Flowchart)
-        if plan_flags.get("create_presentation", True):
+        if bool(plan_flags.get("create_presentation", False)):
             deck_deps = []
             if "node_flowchart" in self.nodes:
                 deck_deps.append("node_flowchart")
@@ -146,7 +146,7 @@ class SalesDAGExecutionEngine:
             )
 
         # Node 5: Deal Room Keycard Suite (depends on Battlecards)
-        if plan_flags.get("publish_suite", True):
+        if bool(plan_flags.get("publish_suite", False)):
             suite_deps = []
             if "node_battlecards" in self.nodes:
                 suite_deps.append("node_battlecards")

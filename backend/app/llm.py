@@ -1,3 +1,5 @@
+import json
+import re
 from typing import Any, Dict, List, Optional
 import neatlogs
 from openai import OpenAI
@@ -20,6 +22,41 @@ def get_litellm_client(
         base_url=url,
     )
     return neatlogs.wrap(client)
+
+
+def extract_json(text: str) -> Dict[str, Any]:
+    """
+    Extracts and parses a JSON object from raw LLM text, safely handling
+    markdown backticks, conversational preamble, and conversational postamble.
+    """
+    if not text:
+        return {}
+    clean = text.strip()
+    # 1. Direct parse attempt
+    try:
+        return json.loads(clean)
+    except Exception:
+        pass
+
+    # 2. Match markdown code block ```json ... ``` or ``` ... ```
+    fence_pattern = r"```(?:json)?\s*(\{[\s\S]*?\})\s*```"
+    match = re.search(fence_pattern, clean)
+    if match:
+        try:
+            return json.loads(match.group(1))
+        except Exception:
+            pass
+
+    # 3. Find first { and matching last }
+    first_idx = clean.find("{")
+    last_idx = clean.rfind("}")
+    if first_idx != -1 and last_idx != -1 and last_idx > first_idx:
+        try:
+            return json.loads(clean[first_idx : last_idx + 1])
+        except Exception:
+            pass
+
+    return {}
 
 
 def test_completion(

@@ -23,6 +23,9 @@ wheels/
 .venv
 venv/
 ENV/
+*.sqlite
+*.db
+backend/data/*.db
 
 # Node
 node_modules/

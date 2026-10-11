@@ -4,40 +4,62 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Objection Battlecards" description="Physical Stacked Deck & AE Pitch Practice Mode">
 	<div class="space-y-6 w-full">
-		<!-- Standardized Header Toolbar -->
+		<!-- Header Toolbar -->
 		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
 			<div>
 				<div class="flex items-center gap-2.5">
 					<h1 class="text-xl font-bold tracking-tight text-base-content">Objection Battlecards</h1>
-					<span class="badge badge-sm badge-neutral" id="deck-counter-badge">Card 1 of 4</span>
-					<span class="badge badge-sm badge-success">Stacked Deck Active</span>
+					<span class="badge badge-sm badge-neutral" id="deck-counter-badge">Card 1 of 0</span>
+					<span class="badge badge-sm badge-success" id="deck-status-badge">Stacked Deck</span>
 				</div>
 				<p class="text-xs text-base-content/80 mt-1">
 					Physical stacked card deck: flip to practice winning talk-tracks, then draw next card to cycle the deck.
 				</p>
 			</div>
-			<!-- Consistent Top-Right Action Buttons -->
+			
+			<!-- Actions -->
 			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
 				<button id="btn-toggle-view" type="button" class="btn btn-sm btn-outline gap-1.5">
 					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
 					<span id="view-mode-text">Switch to Grid View</span>
 				</button>
-				<button id="btn-add-card" type="button" class="btn btn-sm btn-neutral gap-1.5">
-					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-					<span>Add Objection</span>
-				</button>
+				<a href="/" class="btn btn-sm btn-neutral gap-1.5 font-semibold">
+					<span>← Back to Plan</span>
+				</a>
 			</div>
 		</div>
 
-		<!-- STACKED DECK CONTAINER VIEW -->
-		<div id="stacked-deck-view" class="flex flex-col items-center justify-center py-6 w-full">
-			<!-- Stack Deck Controls Bar -->
-			<!-- Stack Deck Controls Bar -->
+		<!-- LOADING STATE -->
+		<div id="loading-state" class="py-16 text-center space-y-3">
+			<span class="loading loading-spinner loading-md text-primary"></span>
+			<p class="text-xs text-base-content/60 font-mono">Loading battlecards from agent artifact store...</p>
+		</div>
+
+		<!-- EMPTY STATE -->
+		<div id="empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center space-y-4">
+			<div class="w-16 h-16 rounded-2xl bg-base-200 border-2 border-base-300 flex items-center justify-center text-3xl shadow-xs">
+				🛡️
+			</div>
+			<div class="max-w-md space-y-1.5">
+				<h3 class="font-bold text-base text-base-content">No Battlecards Generated Yet</h3>
+				<p class="text-xs text-base-content/75 leading-relaxed">
+					Battlecards are generated dynamically from your deal context. Direct the AI agent in Plan with your account notes and competitor objections to synthesize battlecards.
+				</p>
+			</div>
+			<a href="/" class="btn btn-sm btn-neutral font-semibold">
+				Go to Plan ⚡
+			</a>
+		</div>
+
+		<!-- STACKED CAROUSEL VIEW -->
+		<div id="stacked-deck-view" class="hidden flex flex-col items-center justify-center py-4 w-full">
+			
+			<!-- Controls Bar -->
 			<div class="flex items-center justify-between w-full max-w-xl mb-3 px-2">
 				<div class="flex items-center gap-2 text-xs">
-					<span class="font-bold text-base-content">Stack Depth: 4 Cards</span>
+					<span class="font-bold text-base-content" id="stack-depth-label">Stack Depth: 0 Cards</span>
 					<span class="text-base-content/40">•</span>
-					<span class="text-base-content/75 font-medium">Click card to flip</span>
+					<span class="text-base-content/75 font-medium">Click card to flip 🔄</span>
 				</div>
 				<div class="flex items-center gap-1.5">
 					<button id="btn-flip-card" type="button" class="btn btn-xs btn-outline">
@@ -52,12 +74,12 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 			</div>
 
-			<!-- Physical Stack Container with Overlapping Elevation and Prominent Side Navigation Arrows -->
+			<!-- Stack Stage with Floating Arrows -->
 			<div class="relative w-full max-w-2xl flex items-center justify-center my-2">
 				
-				<!-- Floating Left Arrow (Like PPT) -->
+				<!-- Left Floating Arrow -->
 				<button
-					id="btn-floating-card-prev"
+					id="btn-floating-prev"
 					type="button"
 					class="absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 w-11 h-11 md:w-13 md:h-13 rounded-full bg-base-100 hover:bg-base-200 border-2 border-base-300 shadow-xl flex items-center justify-center font-black text-xl text-base-content hover:scale-110 active:scale-95 transition-all z-40 cursor-pointer"
 					title="Previous Card"
@@ -66,9 +88,9 @@ import Layout from '../layouts/Layout.astro';
 					❮
 				</button>
 
-				<!-- Floating Right Arrow (Like PPT) -->
+				<!-- Right Floating Arrow -->
 				<button
-					id="btn-floating-card-next"
+					id="btn-floating-next"
 					type="button"
 					class="absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 w-11 h-11 md:w-13 md:h-13 rounded-full bg-base-100 hover:bg-base-200 border-2 border-base-300 shadow-xl flex items-center justify-center font-black text-xl text-base-content hover:scale-110 active:scale-95 transition-all z-40 cursor-pointer"
 					title="Next Card"
@@ -77,394 +99,328 @@ import Layout from '../layouts/Layout.astro';
 					❯
 				</button>
 
-				<!-- Stack Deck Stage -->
-				<div class="relative w-full max-w-xl h-96 perspective-1000" id="deck-stage">
-				
-				<!-- CARD 1 (Top / Pricing) -->
-				<div class="card-stack-item absolute inset-0 z-30 transition-all duration-500 cursor-pointer" data-index="0">
-					<div class="flip-card h-full w-full">
-						<div class="flip-card-inner h-full w-full relative">
-							<!-- FRONT -->
-							<div class="absolute inset-0 backface-hidden p-7 rounded-2xl border-2 border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-200 pb-3">
-									<div class="flex items-center gap-2">
-										<span class="badge badge-sm badge-neutral font-semibold">Pricing / Budget</span>
-										<span class="badge badge-sm badge-outline">Card #1</span>
-									</div>
-									<span class="text-xs font-mono text-base-content/60">Click to Flip 🔄</span>
-								</div>
-
-								<div class="space-y-2.5 my-auto">
-									<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
-									<p class="text-lg font-bold text-base-content leading-snug">
-										"Your quote is 20% higher than our renewal price from LegacyVendor."
-									</p>
-									<p class="text-xs text-base-content/75 font-medium">
-										Persona: VP of Sales Operations & Procurement
-									</p>
-								</div>
-
-								<div class="pt-3 border-t border-base-200 flex items-center justify-between">
-									<div class="flex gap-1.5">
-										<span class="badge badge-xs badge-neutral">TCO Comparison</span>
-										<span class="badge badge-xs badge-outline">2 FTE Savings</span>
-									</div>
-									<span class="text-xs font-semibold text-base-content/80 hover:underline">Tap to reveal talk-track →</span>
-								</div>
-							</div>
-
-							<!-- BACK -->
-							<div class="absolute inset-0 backface-hidden rotate-y-180 p-7 rounded-2xl border-2 border-primary/30 bg-base-200 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-300 pb-3">
-									<span class="badge badge-sm badge-success font-bold">Winning Executive Talk-Track</span>
-									<span class="text-xs font-mono text-base-content/60">Tap to Flip Back ↺</span>
-								</div>
-
-								<div class="space-y-3 my-auto">
-									<p class="text-xs text-base-content leading-relaxed bg-base-100 p-4 rounded-xl border border-base-300 shadow-2xs font-medium">
-										"While our upfront subscription is 20% higher, LegacyVendor requires an estimated 2 full-time sales ops staff just to maintain manual data sync. BUST automates that workflow entirely, delivering a net operational savings of $80,000 in Year 1."
-									</p>
-									<div class="grid grid-cols-2 gap-2 text-xs">
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">Proof Point:</strong> $80k net savings
-										</div>
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">cfo.ai Metric:</strong> 60-day break-even
-										</div>
-									</div>
-								</div>
-
-								<div class="pt-3 border-t border-base-300 flex items-center justify-between">
-									<span class="text-xs text-base-content/70">AE Confidence:</span>
-									<div class="flex gap-1.5">
-										<button class="btn btn-xs btn-outline">Needs Work</button>
-										<button class="btn btn-xs btn-neutral">Mastered ✓</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- CARD 2 (Stacked behind / Security) -->
-				<div class="card-stack-item absolute inset-0 z-20 translate-y-3 scale-96 opacity-90 transition-all duration-500 cursor-pointer" data-index="1">
-					<div class="flip-card h-full w-full">
-						<div class="flip-card-inner h-full w-full relative">
-							<!-- FRONT -->
-							<div class="absolute inset-0 backface-hidden p-7 rounded-2xl border-2 border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-200 pb-3">
-									<div class="flex items-center gap-2">
-										<span class="badge badge-sm badge-neutral font-semibold">Security & InfoSec</span>
-										<span class="badge badge-sm badge-outline">Card #2</span>
-									</div>
-									<span class="text-xs font-mono text-base-content/60">Click to Flip 🔄</span>
-								</div>
-
-								<div class="space-y-2.5 my-auto">
-									<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
-									<p class="text-lg font-bold text-base-content leading-snug">
-										"Our InfoSec board will not approve any AI software that trains models on enterprise deal data."
-									</p>
-									<p class="text-xs text-base-content/75 font-medium">
-										Persona: Chief Information Security Officer (CISO)
-									</p>
-								</div>
-
-								<div class="pt-3 border-t border-base-200 flex items-center justify-between">
-									<div class="flex gap-1.5">
-										<span class="badge badge-xs badge-neutral">SOC2 Type II</span>
-										<span class="badge badge-xs badge-outline">Zero Retention</span>
-									</div>
-									<span class="text-xs font-semibold text-base-content/80 hover:underline">Tap to reveal talk-track →</span>
-								</div>
-							</div>
-
-							<!-- BACK -->
-							<div class="absolute inset-0 backface-hidden rotate-y-180 p-7 rounded-2xl border-2 border-primary/30 bg-base-200 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-300 pb-3">
-									<span class="badge badge-sm badge-success font-bold">Winning Executive Talk-Track</span>
-									<span class="text-xs font-mono text-base-content/60">Tap to Flip Back ↺</span>
-								</div>
-
-								<div class="space-y-3 my-auto">
-									<p class="text-xs text-base-content leading-relaxed bg-base-100 p-4 rounded-xl border border-base-300 shadow-2xs font-medium">
-										"We operate under a strict Zero Data Retention policy with regional AWS isolation. Customer data is processed ephemerally in-memory and is never used for model training. Our independent SOC2 Type II audit report is available in our Trust Center."
-									</p>
-									<div class="grid grid-cols-2 gap-2 text-xs">
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">Certification:</strong> SOC2 Type II Audited
-										</div>
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">Tenancy:</strong> Dedicated Regional Private Cloud
-										</div>
-									</div>
-								</div>
-
-								<div class="pt-3 border-t border-base-300 flex items-center justify-between">
-									<span class="text-xs text-base-content/70">AE Confidence:</span>
-									<div class="flex gap-1.5">
-										<button class="btn btn-xs btn-outline">Needs Work</button>
-										<button class="btn btn-xs btn-neutral">Mastered ✓</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- CARD 3 (Stacked behind / Competitor) -->
-				<div class="card-stack-item absolute inset-0 z-10 translate-y-6 scale-92 opacity-75 transition-all duration-500 cursor-pointer" data-index="2">
-					<div class="flip-card h-full w-full">
-						<div class="flip-card-inner h-full w-full relative">
-							<!-- FRONT -->
-							<div class="absolute inset-0 backface-hidden p-7 rounded-2xl border-2 border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-200 pb-3">
-									<div class="flex items-center gap-2">
-										<span class="badge badge-sm badge-neutral font-semibold">Competitor Trap</span>
-										<span class="badge badge-sm badge-outline">Card #3</span>
-									</div>
-									<span class="text-xs font-mono text-base-content/60">Click to Flip 🔄</span>
-								</div>
-
-								<div class="space-y-2.5 my-auto">
-									<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
-									<p class="text-lg font-bold text-base-content leading-snug">
-										"LegacyVendor claims they already have an AI feature built into their existing platform."
-									</p>
-									<p class="text-xs text-base-content/75 font-medium">
-										Persona: Director of Enterprise Sales
-									</p>
-								</div>
-
-								<div class="pt-3 border-t border-base-200 flex items-center justify-between">
-									<div class="flex gap-1.5">
-										<span class="badge badge-xs badge-neutral">Point Solution vs Suite</span>
-										<span class="badge badge-xs badge-outline">DAG Architecture</span>
-									</div>
-									<span class="text-xs font-semibold text-base-content/80 hover:underline">Tap to reveal talk-track →</span>
-								</div>
-							</div>
-
-							<!-- BACK -->
-							<div class="absolute inset-0 backface-hidden rotate-y-180 p-7 rounded-2xl border-2 border-primary/30 bg-base-200 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-300 pb-3">
-									<span class="badge badge-sm badge-success font-bold">Winning Executive Talk-Track</span>
-									<span class="text-xs font-mono text-base-content/60">Tap to Flip Back ↺</span>
-								</div>
-
-								<div class="space-y-3 my-auto">
-									<p class="text-xs text-base-content leading-relaxed bg-base-100 p-4 rounded-xl border border-base-300 shadow-2xs font-medium">
-										"LegacyVendor's add-on is a basic autocomplete box. BUST is an autonomous orchestration engine that takes one instruction and coordinates the generation, schema validation, and alignment of 4 full deliverables simultaneously."
-									</p>
-									<div class="grid grid-cols-2 gap-2 text-xs">
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">Differentiator:</strong> End-to-end Deliverables
-										</div>
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">Execution:</strong> Deterministic DAG Workflow
-										</div>
-									</div>
-								</div>
-
-								<div class="pt-3 border-t border-base-300 flex items-center justify-between">
-									<span class="text-xs text-base-content/70">AE Confidence:</span>
-									<div class="flex gap-1.5">
-										<button class="btn btn-xs btn-outline">Needs Work</button>
-										<button class="btn btn-xs btn-neutral">Mastered ✓</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- CARD 4 (Stacked at the base / Budget) -->
-				<div class="card-stack-item absolute inset-0 z-0 translate-y-9 scale-88 opacity-60 transition-all duration-500 cursor-pointer" data-index="3">
-					<div class="flip-card h-full w-full">
-						<div class="flip-card-inner h-full w-full relative">
-							<!-- FRONT -->
-							<div class="absolute inset-0 backface-hidden p-7 rounded-2xl border-2 border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-200 pb-3">
-									<div class="flex items-center gap-2">
-										<span class="badge badge-sm badge-neutral font-semibold">Budget Horizon</span>
-										<span class="badge badge-sm badge-outline">Card #4</span>
-									</div>
-									<span class="text-xs font-mono text-base-content/60">Click to Flip 🔄</span>
-								</div>
-
-								<div class="space-y-2.5 my-auto">
-									<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
-									<p class="text-lg font-bold text-base-content leading-snug">
-										"We did not allocate budget for new sales enablement software this fiscal quarter."
-									</p>
-									<p class="text-xs text-base-content/75 font-medium">
-										Persona: CFO / VP of Finance
-									</p>
-								</div>
-
-								<div class="pt-3 border-t border-base-200 flex items-center justify-between">
-									<div class="flex gap-1.5">
-										<span class="badge badge-xs badge-neutral">cfo.ai Projections</span>
-										<span class="badge badge-xs badge-outline">Milestone Terms</span>
-									</div>
-									<span class="text-xs font-semibold text-base-content/80 hover:underline">Tap to reveal talk-track →</span>
-								</div>
-							</div>
-
-							<!-- BACK -->
-							<div class="absolute inset-0 backface-hidden rotate-y-180 p-7 rounded-2xl border-2 border-primary/30 bg-base-200 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-300 pb-3">
-									<span class="badge badge-sm badge-success font-bold">Winning Executive Talk-Track</span>
-									<span class="text-xs font-mono text-base-content/60">Tap to Flip Back ↺</span>
-								</div>
-
-								<div class="space-y-3 my-auto">
-									<p class="text-xs text-base-content leading-relaxed bg-base-100 p-4 rounded-xl border border-base-300 shadow-2xs font-medium">
-										"Our commercial rollout requires zero new unallocated budget: we structure payment terms upon the first closed deal milestone. With an average deal acceleration of 18 days, our customers recover 100% of the cost within their existing pipeline cycle."
-									</p>
-									<div class="grid grid-cols-2 gap-2 text-xs">
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">Structure:</strong> Milestone Payback Terms
-										</div>
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<strong class="text-base-content">Payback:</strong> Within existing quarter
-										</div>
-									</div>
-								</div>
-
-								<div class="pt-3 border-t border-base-300 flex items-center justify-between">
-									<span class="text-xs text-base-content/70">AE Confidence:</span>
-									<div class="flex gap-1.5">
-										<button class="btn btn-xs btn-outline">Needs Work</button>
-										<button class="btn btn-xs btn-neutral">Mastered ✓</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+				<!-- 3D Perspective Stage -->
+				<div class="relative w-full max-w-xl h-[420px] perspective-1000" id="deck-stage">
+					<!-- Stack items injected via JS -->
 				</div>
 			</div>
+
+			<!-- Carousel Progress Dots -->
+			<div class="flex items-center justify-center gap-1.5 mt-4" id="carousel-dots">
+				<!-- Dots injected via JS -->
+			</div>
+
 		</div>
+
+		<!-- ALTERNATIVE GRID VIEW -->
+		<div id="grid-deck-view" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
+			<!-- Rendered dynamically -->
+		</div>
+
 	</div>
 
-		<!-- ALTERNATIVE EXPANDED GRID VIEW (Initially hidden) -->
-		<div id="grid-deck-view" class="hidden grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
-			<!-- Rendered dynamically or copied when toggled -->
-		</div>
-	</div>
+	<style is:global>
+		.perspective-1000 {
+			perspective: 1000px;
+		}
+		.flip-card {
+			perspective: 1000px;
+		}
+		.flip-card-inner {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+			transform-style: preserve-3d;
+		}
+		.flip-card-inner.is-flipped {
+			transform: rotateY(180deg);
+		}
+		.backface-hidden {
+			backface-visibility: hidden;
+			-webkit-backface-visibility: hidden;
+		}
+		.rotate-y-180 {
+			transform: rotateY(180deg);
+		}
+	</style>
 
 	<script>
-		// Stack Management Logic
-		const stackItems = Array.from(document.querySelectorAll('.card-stack-item'));
-		const deckCounterBadge = document.getElementById('deck-counter-badge');
-		const btnNext = document.getElementById('btn-next-card');
-		const btnPrev = document.getElementById('btn-prev-card');
-		const btnFlip = document.getElementById('btn-flip-card');
-		const btnToggleView = document.getElementById('btn-toggle-view');
-		const viewModeText = document.getElementById('view-mode-text');
-		const stackedView = document.getElementById('stacked-deck-view');
-		const gridView = document.getElementById('grid-deck-view');
-
-		let currentOrder = [0, 1, 2, 3];
+		let allCards: any[] = [];
+		let currentOrder: number[] = [];
 		let isGridView = false;
 
+		const loadingState = document.getElementById('loading-state');
+		const emptyState = document.getElementById('empty-state');
+		const stackedView = document.getElementById('stacked-deck-view');
+		const gridView = document.getElementById('grid-deck-view');
+		const deckStage = document.getElementById('deck-stage');
+		const deckCounterBadge = document.getElementById('deck-counter-badge');
+		const stackDepthLabel = document.getElementById('stack-depth-label');
+		const carouselDots = document.getElementById('carousel-dots');
+		const btnToggleView = document.getElementById('btn-toggle-view');
+		const viewModeText = document.getElementById('view-mode-text');
+
+		const btnPrev = document.getElementById('btn-prev-card');
+		const btnNext = document.getElementById('btn-next-card');
+		const btnFloatingPrev = document.getElementById('btn-floating-prev');
+		const btnFloatingNext = document.getElementById('btn-floating-next');
+		const btnFlip = document.getElementById('btn-flip-card');
+
+		async function loadBattlecards() {
+			try {
+				const res = await fetch('/api/artifacts');
+				if (!res.ok) throw new Error('Failed to fetch artifacts');
+				const artifacts = await res.json();
+				const battlecardArtifacts = artifacts.filter((a: any) => a.type === 'battlecards');
+
+				if (loadingState) loadingState.classList.add('hidden');
+
+				if (!battlecardArtifacts.length) {
+					if (emptyState) emptyState.classList.remove('hidden');
+					return;
+				}
+
+				allCards = [];
+				battlecardArtifacts.forEach((art: any) => {
+					const cards = art.content?.cards || [];
+					cards.forEach((c: any) => {
+						allCards.push({ ...c, account_name: art.deal_context?.account_name || 'Account' });
+					});
+				});
+
+				if (!allCards.length) {
+					if (emptyState) emptyState.classList.remove('hidden');
+					return;
+				}
+
+				currentOrder = allCards.map((_, i) => i);
+
+				renderStackedDeck();
+				renderGridView();
+
+				if (stackedView) stackedView.classList.remove('hidden');
+				updateStackPositions();
+			} catch (e) {
+				if (loadingState) loadingState.classList.add('hidden');
+				if (emptyState) emptyState.classList.remove('hidden');
+			}
+		}
+
+		function renderStackedDeck() {
+			if (!deckStage) return;
+			deckStage.innerHTML = '';
+
+			allCards.forEach((c, idx) => {
+				const tags = c.tags || c.proof_points || ['Verified Talk-Track'];
+				const item = document.createElement('div');
+				item.className = 'card-stack-item absolute inset-0 transition-all duration-500 cursor-pointer select-none';
+				item.setAttribute('data-index', idx.toString());
+
+				item.innerHTML = `
+					<div class="flip-card h-full w-full">
+						<div class="flip-card-inner h-full w-full relative">
+							<!-- FRONT -->
+							<div class="absolute inset-0 backface-hidden p-7 rounded-2xl border-2 border-base-300 bg-base-100 flex flex-col justify-between shadow-2xl">
+								<div class="flex items-center justify-between border-b border-base-200 pb-3">
+									<div class="flex items-center gap-2">
+										<span class="badge badge-sm badge-neutral font-semibold uppercase tracking-wider">${c.category || 'Objection'}</span>
+										<span class="badge badge-sm badge-outline font-mono">#${idx + 1}</span>
+									</div>
+									<span class="text-xs font-mono text-base-content/60">Click to Flip 🔄</span>
+								</div>
+
+								<div class="space-y-3 my-auto">
+									<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
+									<p class="text-lg sm:text-xl font-bold text-base-content leading-snug">
+										"${c.objection_quote || c.objection}"
+									</p>
+									<p class="text-xs text-base-content/75 font-medium">
+										Persona: ${c.buyer_persona || 'Executive Decision Maker'} • <span class="font-mono text-base-content/50">${c.account_name}</span>
+									</p>
+								</div>
+
+								<div class="pt-3 border-t border-base-200 flex items-center justify-between">
+									<div class="flex gap-1.5 flex-wrap">
+										${tags.slice(0, 2).map((t: string) => `<span class="badge badge-xs badge-neutral">${t}</span>`).join('')}
+									</div>
+									<span class="text-xs font-semibold text-primary hover:underline">Tap to reveal talk-track →</span>
+								</div>
+							</div>
+
+							<!-- BACK -->
+							<div class="absolute inset-0 backface-hidden rotate-y-180 p-7 rounded-2xl border-2 border-primary/40 bg-base-200 flex flex-col justify-between shadow-2xl">
+								<div class="flex items-center justify-between border-b border-base-300 pb-3">
+									<span class="badge badge-sm badge-success font-bold">Winning Executive Talk-Track</span>
+									<span class="text-xs font-mono text-base-content/60">Tap to Flip Back ↺</span>
+								</div>
+
+								<div class="space-y-3 my-auto">
+									<div class="text-xs sm:text-sm text-base-content leading-relaxed bg-base-100 p-4 rounded-xl border border-base-300 shadow-2xs font-medium">
+										${c.winning_response || c.talk_track}
+									</div>
+									<div class="grid grid-cols-2 gap-2 text-xs">
+										<div class="p-2.5 rounded-lg bg-base-100 border border-base-300">
+											<strong class="text-base-content block text-[10px] uppercase font-mono text-base-content/60">Proof Point:</strong>
+											<span class="font-medium">${(c.proof_points || ['Validated enterprise metrics'])[0]}</span>
+										</div>
+										<div class="p-2.5 rounded-lg bg-base-100 border border-base-300">
+											<strong class="text-base-content block text-[10px] uppercase font-mono text-base-content/60">Key Metric:</strong>
+											<span class="font-medium">${c.key_metric || '< 60-day break-even'}</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="pt-3 border-t border-base-300 flex items-center justify-between">
+									<span class="text-xs text-base-content/70">AE Confidence:</span>
+									<div class="flex gap-1.5">
+										<button class="btn btn-xs btn-outline">Needs Work</button>
+										<button class="btn btn-xs btn-neutral">Mastered ✓</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+
+				item.addEventListener('click', (e) => {
+					const target = e.target as HTMLElement;
+					if (target.tagName === 'BUTTON') return;
+					if (currentOrder[0] === idx) {
+						const flipCard = item.querySelector('.flip-card-inner');
+						flipCard?.classList.toggle('is-flipped');
+					}
+				});
+
+				deckStage.appendChild(item);
+			});
+		}
+
+		function renderGridView() {
+			if (!gridView) return;
+			gridView.innerHTML = '';
+
+			allCards.forEach((c, idx) => {
+				const tags = c.tags || c.proof_points || ['Verified'];
+				const div = document.createElement('div');
+				div.className = 'card bg-base-100 border-2 border-base-300 p-5 rounded-2xl shadow-sm hover:border-primary/50 transition-all space-y-3 flex flex-col justify-between';
+				div.innerHTML = `
+					<div class="space-y-2">
+						<div class="flex items-center justify-between border-b border-base-200 pb-2">
+							<span class="badge badge-xs badge-neutral font-bold uppercase tracking-wider">${c.category || 'Objection'}</span>
+							<span class="text-[10px] font-mono text-base-content/60">${c.account_name}</span>
+						</div>
+						<h4 class="text-sm font-bold text-base-content leading-snug">"${c.objection_quote || c.objection}"</h4>
+						<p class="text-[11px] text-base-content/70">Persona: ${c.buyer_persona || 'Executive'}</p>
+					</div>
+
+					<div class="p-3 bg-base-200 rounded-xl border border-base-300 space-y-1 text-xs">
+						<span class="font-semibold text-primary block text-[10px]">Winning Talk-Track:</span>
+						<p class="text-base-content/85 leading-relaxed">${c.winning_response || c.talk_track}</p>
+					</div>
+
+					<div class="flex flex-wrap gap-1 pt-1">
+						${tags.map((t: string) => `<span class="badge badge-xs badge-outline">${t}</span>`).join('')}
+					</div>
+				`;
+				gridView.appendChild(div);
+			});
+		}
+
 		function updateStackPositions() {
-			stackItems.forEach((card, originalIdx) => {
+			const items = Array.from(document.querySelectorAll('.card-stack-item')) as HTMLElement[];
+			items.forEach((card, originalIdx) => {
 				const pos = currentOrder.indexOf(originalIdx);
-				const flipCard = card.querySelector('.flip-card');
+				const flipCard = card.querySelector('.flip-card-inner');
 
 				if (pos === 0) {
-					// Top card: fully interactive
 					card.style.zIndex = '30';
 					card.style.transform = 'translateY(0) scale(1)';
 					card.style.opacity = '1';
 					card.style.pointerEvents = 'auto';
 				} else if (pos === 1) {
-					// Second card in stack
 					card.style.zIndex = '20';
-					card.style.transform = 'translateY(14px) scale(0.96)';
-					card.style.opacity = '0.9';
+					card.style.transform = 'translateY(16px) scale(0.96)';
+					card.style.opacity = '0.85';
 					card.style.pointerEvents = 'none';
 					flipCard?.classList.remove('is-flipped');
 				} else if (pos === 2) {
-					// Third card in stack
 					card.style.zIndex = '10';
-					card.style.transform = 'translateY(28px) scale(0.92)';
-					card.style.opacity = '0.75';
+					card.style.transform = 'translateY(32px) scale(0.92)';
+					card.style.opacity = '0.65';
 					card.style.pointerEvents = 'none';
 					flipCard?.classList.remove('is-flipped');
 				} else {
-					// Fourth card
 					card.style.zIndex = '0';
-					card.style.transform = 'translateY(42px) scale(0.88)';
-					card.style.opacity = '0.55';
+					card.style.transform = 'translateY(48px) scale(0.88)';
+					card.style.opacity = '0';
 					card.style.pointerEvents = 'none';
 					flipCard?.classList.remove('is-flipped');
 				}
 			});
 
-			if (deckCounterBadge) {
-				const topCardNum = currentOrder[0] + 1;
-				deckCounterBadge.textContent = `Card ${topCardNum} of ${stackItems.length}`;
+			if (deckCounterBadge && allCards.length) {
+				deckCounterBadge.textContent = `Card ${currentOrder[0] + 1} of ${allCards.length}`;
+			}
+			if (stackDepthLabel) {
+				stackDepthLabel.textContent = `Stack Depth: ${allCards.length} Cards`;
+			}
+
+			// Render Dots
+			if (carouselDots) {
+				carouselDots.innerHTML = '';
+				allCards.forEach((_, i) => {
+					const dot = document.createElement('div');
+					dot.className = `w-2 h-2 rounded-full transition-all ${currentOrder[0] === i ? 'bg-primary w-5' : 'bg-base-300'}`;
+					carouselDots.appendChild(dot);
+				});
 			}
 		}
 
-		// Click to flip active top card
-		stackItems.forEach((item, idx) => {
-			item.addEventListener('click', (e) => {
-				const target = e.target as HTMLElement;
-				if (target.tagName === 'BUTTON') return;
-				if (currentOrder[0] === idx) {
-					const flipCard = item.querySelector('.flip-card');
-					flipCard?.classList.toggle('is-flipped');
-				}
-			});
-		});
-
-		// Flip Button
-		btnFlip?.addEventListener('click', () => {
-			const activeIdx = currentOrder[0];
-			const activeCard = stackItems[activeIdx];
-			const flipCard = activeCard.querySelector('.flip-card');
-			flipCard?.classList.toggle('is-flipped');
-		});
-
-		// Floating Side Arrows (Like PPT)
-		const floatingPrev = document.getElementById('btn-floating-card-prev');
-		const floatingNext = document.getElementById('btn-floating-card-next');
-
 		function advanceNextCard() {
-			const activeIdx = currentOrder[0];
-			const activeCard = stackItems[activeIdx];
-			const flipCard = activeCard.querySelector('.flip-card');
+			if (!allCards.length) return;
+			const items = Array.from(document.querySelectorAll('.card-stack-item')) as HTMLElement[];
+			const activeCard = items[currentOrder[0]];
+			const flipCard = activeCard.querySelector('.flip-card-inner');
 			flipCard?.classList.remove('is-flipped');
 
-			// Slide animation to the right
-			activeCard.style.transform = 'translateX(120%) rotate(15deg) scale(0.9)';
+			activeCard.style.transform = 'translateX(110%) rotate(12deg) scale(0.9)';
 			activeCard.style.opacity = '0';
 
 			setTimeout(() => {
 				const first = currentOrder.shift()!;
 				currentOrder.push(first);
 				updateStackPositions();
-			}, 280);
+			}, 260);
 		}
 
 		function advancePrevCard() {
+			if (!allCards.length) return;
+			const items = Array.from(document.querySelectorAll('.card-stack-item')) as HTMLElement[];
+			const lastIdx = currentOrder[currentOrder.length - 1];
+			const lastCard = items[lastIdx];
+			const flipCard = lastCard.querySelector('.flip-card-inner');
+			flipCard?.classList.remove('is-flipped');
+
 			const last = currentOrder.pop()!;
 			currentOrder.unshift(last);
 			updateStackPositions();
 		}
 
-		// Next Card triggers
+		function flipActiveCard() {
+			if (!allCards.length) return;
+			const items = Array.from(document.querySelectorAll('.card-stack-item')) as HTMLElement[];
+			const activeCard = items[currentOrder[0]];
+			const flipCard = activeCard?.querySelector('.flip-card-inner');
+			flipCard?.classList.toggle('is-flipped');
+		}
+
 		btnNext?.addEventListener('click', advanceNextCard);
-		floatingNext?.addEventListener('click', advanceNextCard);
-
-		// Prev Card triggers
 		btnPrev?.addEventListener('click', advancePrevCard);
-		floatingPrev?.addEventListener('click', advancePrevCard);
+		btnFloatingNext?.addEventListener('click', advanceNextCard);
+		btnFloatingPrev?.addEventListener('click', advancePrevCard);
+		btnFlip?.addEventListener('click', flipActiveCard);
 
-		// Toggle View: Stack vs Grid
 		btnToggleView?.addEventListener('click', () => {
 			isGridView = !isGridView;
 			if (isGridView) {
@@ -475,10 +431,10 @@ import Layout from '../layouts/Layout.astro';
 				gridView?.classList.add('hidden');
 				stackedView?.classList.remove('hidden');
 				if (viewModeText) viewModeText.textContent = 'Switch to Grid View';
+				updateStackPositions();
 			}
 		});
 
-		// Initialize
-		updateStackPositions();
+		loadBattlecards();
 	</script>
 </Layout>
