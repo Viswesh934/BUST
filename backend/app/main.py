@@ -191,6 +191,43 @@ def reset_artifacts_endpoint() -> Dict[str, Any]:
 
 
 # ==========================================
+# Technical Grounding: GitHub / Docs / PDF
+# ==========================================
+
+
+class IngestSourceRequest(BaseModel):
+    source_type: str  # "github", "website", "pdf"
+    url_or_path: str
+    raw_content: Optional[str] = None
+
+
+@app.post("/api/sources/ingest")
+def ingest_source_endpoint(req: IngestSourceRequest) -> Dict[str, Any]:
+    """Ingests a GitHub repo, website, or PDF into the technical grounding store."""
+    try:
+        from app.services.grounding import ingest_grounding_source
+
+        source = ingest_grounding_source(
+            source_type=req.source_type,
+            url_or_path=req.url_or_path,
+            raw_content=req.raw_content,
+        )
+        return {"status": "success", "source": source}
+    except Exception as exc:
+        logger.error(f"Failed to ingest source: {exc}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/api/sources")
+def get_sources_endpoint() -> List[Dict[str, Any]]:
+    """Returns all active technical grounding sources."""
+    from app.services.grounding import get_all_grounded_sources
+
+    return get_all_grounded_sources()
+
+
+
+# ==========================================
 # Milestone 3: Buyer Deal Rooms & Sharing Endpoints
 # ==========================================
 

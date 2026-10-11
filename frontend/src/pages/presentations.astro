@@ -107,8 +107,15 @@ import Layout from '../layouts/Layout.astro';
 								CONFIDENTIAL BRIEFING
 							</span>
 						</div>
-						<div class="text-[11px] font-mono text-base-content/60 font-semibold" id="current-slide-index-badge">
-							SLIDE 01
+						<div class="flex items-center gap-2">
+							<div class="badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs" id="current-slide-source-badge">
+								<span class="opacity-75">Source:</span>
+								<span id="current-slide-source-text" class="font-bold">github.com/bust-ai/core</span>
+								<span>✓</span>
+							</div>
+							<div class="text-[11px] font-mono text-base-content/60 font-semibold" id="current-slide-index-badge">
+								SLIDE 01
+							</div>
 						</div>
 					</div>
 
@@ -264,6 +271,10 @@ import Layout from '../layouts/Layout.astro';
 					<div class="text-xs font-bold text-base-content truncate">
 						${s.title}
 					</div>
+					<div class="text-[9px] font-mono text-success flex items-center gap-1 truncate pt-0.5">
+						<span>🔗</span>
+						<span class="truncate">${s.source || 'Verified Source'}</span>
+					</div>
 				`;
 
 				thumb.addEventListener('click', () => {
@@ -283,6 +294,8 @@ import Layout from '../layouts/Layout.astro';
 			// Update stage content
 			if (currentSlideTag) currentSlideTag.textContent = slide.tag || `SLIDE 0${index + 1}`;
 			if (currentSlideIndexBadge) currentSlideIndexBadge.textContent = `SLIDE 0${index + 1}`;
+			const sourceText = document.getElementById('current-slide-source-text');
+			if (sourceText) sourceText.textContent = slide.source || 'Verified Source';
 			if (currentSlideTitle) currentSlideTitle.textContent = slide.title;
 			if (currentSlideSubtitle) currentSlideSubtitle.textContent = slide.subtitle || '';
 

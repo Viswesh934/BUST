@@ -4,3 +4,5 @@ openai>=1.40.0
 python-dotenv>=1.0.0
 pydantic>=2.8.0
 neatlogs[openai]
+pypdf>=5.0.0
+

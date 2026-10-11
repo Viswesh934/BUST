@@ -237,6 +237,14 @@ class SalesDAGExecutionEngine:
                     deck_notes.append("Key Competitive Talk-Tracks to reflect in value pillars:\n" + "\n".join(obj_lines))
             if financial_grounding:
                 deck_notes.append(f"Commercial Terms Slide Grounding: {financial_grounding}")
+            try:
+                from app.services.grounding import get_all_grounded_sources
+                sources = get_all_grounded_sources()
+                if sources:
+                    src_lines = [f"- {s.get('content', {}).get('title')} ({s.get('content', {}).get('url_or_path')}): {', '.join(s.get('content', {}).get('key_technical_facts', [])[:2])}" for s in sources]
+                    deck_notes.append("Verified Technical Grounding Sources to cite on slides:\n" + "\n".join(src_lines))
+            except Exception as e:
+                pass
             inputs["context"] = "\n\n".join(deck_notes)
 
             return create_presentation(

@@ -1,12 +1,14 @@
 import json
 import logging
 import neatlogs
+import re
 from typing import Dict, Any, List, Optional
 from app.config import get_settings
 from app.llm import get_litellm_client, extract_json
 from app.agent.dag import SalesDAGExecutionEngine
 from app.tools.cfo import get_cfo_financial_context
 from app.services.artifact_store import list_artifacts
+from app.services.grounding import get_all_grounded_sources, ingest_grounding_source
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +116,30 @@ def run_agent_turn(
     # 3. Calculate Live CFO Financial Grounding
     cfo_context = get_cfo_financial_context(account_name=account_name, deal_size=deal_size)
 
-    # 4. Format Conversation History
+    # 4. Auto-ingest URLs from user directive if present
+    url_matches = re.findall(r'https?://[^\s]+', user_message)
+    for u in url_matches:
+        clean_u = u.rstrip(".,;:)\"'>")
+        try:
+            if "github.com" in clean_u:
+                ingest_grounding_source("github", clean_u)
+            elif clean_u.lower().endswith(".pdf"):
+                ingest_grounding_source("pdf", clean_u)
+            else:
+                ingest_grounding_source("website", clean_u)
+        except Exception as e:
+            logger.warning(f"Auto-ingest URL failed: {e}")
+
+    # Retrieve all active grounded sources
+    sources = get_all_grounded_sources()
+    sources_summary_list = []
+    for s in sources:
+        c = s.get("content") or {}
+        facts = ", ".join(c.get("key_technical_facts", [])[:3])
+        sources_summary_list.append(f"• {c.get('title')} ({c.get('url_or_path')}): {c.get('summary')} | Verified Facts: {facts}")
+    grounding_sources_str = "\n".join(sources_summary_list) if sources_summary_list else "None attached. Ground architecture in standard enterprise specifications."
+
+    # 5. Format Conversation History
     history_lines = []
     if history and isinstance(history, list):
         for turn in history[-8:]:
@@ -123,7 +148,7 @@ def run_agent_turn(
             history_lines.append(f"{role_label}: {content}")
     history_str = "\n".join(history_lines) if history_lines else "No prior conversation turns."
 
-    # 5. Build Decision Engine Prompt
+    # 6. Build Decision Engine Prompt
     user_prompt = f"""=== ACTIVE DEAL STATE ===
 Account: {account_name}
 Deal Size: {deal_size}
@@ -135,6 +160,9 @@ Active Objections: {", ".join(key_objections) if key_objections else "None recor
 Primary Risk: {primary_risk or "None identified yet"}
 Existing Collateral in Database: {existing_collateral_str}
 CFO Financial Grounding: Deal ARR {cfo_context.get('deal_arr')}, Payback {cfo_context.get('payback_period_days')}, Annual Savings {cfo_context.get('annual_projected_savings')}, ROI {cfo_context.get('projected_roi')}
+
+=== TECHNICAL GROUND TRUTH (GITHUB / DOCS / PDF) ===
+{grounding_sources_str}
 
 === CONVERSATION HISTORY ===
 {history_str}

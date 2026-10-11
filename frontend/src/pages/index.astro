@@ -56,13 +56,24 @@ import Layout from '../layouts/Layout.astro';
 			</div>
 
 			<!-- EXPANSIVE BOTTOM PROMPT BAR (Permanently sticky at bottom, never moves with messages) -->
-			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto shrink-0 pt-2 pb-1 px-2 sm:px-4 bg-base-100">
+			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto shrink-0 pt-2 pb-1 px-2 sm:px-4 bg-base-100 space-y-1.5">
+				<!-- Attached Grounding Sources Tray -->
+				<div id="sources-tray" class="flex items-center gap-1.5 flex-wrap text-[11px]">
+					<button id="btn-open-attach-modal" type="button" class="btn btn-xs btn-outline rounded-lg gap-1 font-mono text-[10px] text-base-content/75 hover:text-base-content cursor-pointer">
+						<span>+ Attach Source</span>
+						<span class="text-[9px] opacity-60">(GitHub / Docs / PDF)</span>
+					</button>
+					<div id="active-sources-list" class="flex items-center gap-1.5 flex-wrap">
+						<!-- Injected active source badges -->
+					</div>
+				</div>
+
 				<form id="chat-form" class="card bg-base-200/80 border border-base-300 p-2 sm:p-2.5 rounded-2xl shadow-xs flex flex-row items-center gap-2">
 					<input
 						id="chat-input"
 						type="text"
 						class="input input-sm sm:input-md flex-1 bg-transparent border-0 text-xs sm:text-sm text-base-content focus:outline-none"
-						placeholder="Plan a deal (e.g. 'Discovery with Snowflake for $400k ARR, prepare pitch deck and talk-tracks...')"
+						placeholder="Plan a deal (or paste a GitHub repo/docs link to ground technically...)"
 						autocomplete="off"
 					/>
 					<button id="btn-send-directive" type="submit" class="btn btn-sm btn-neutral px-4 font-semibold shadow-xs rounded-xl">
@@ -70,6 +81,55 @@ import Layout from '../layouts/Layout.astro';
 					</button>
 				</form>
 			</div>
+
+			<!-- ATTACH SOURCE MODAL -->
+			<dialog id="attach-source-modal" class="modal">
+				<div class="modal-box bg-base-100 border-2 border-base-300 rounded-2xl max-w-md p-6 space-y-4">
+					<div class="flex items-center justify-between border-b border-base-200 pb-2.5">
+						<div class="flex items-center gap-2">
+							<span class="text-lg">🔗</span>
+							<h3 class="font-bold text-sm text-base-content">Attach Technical Grounding Source</h3>
+						</div>
+						<form method="dialog">
+							<button class="btn btn-xs btn-circle btn-ghost">✕</button>
+						</form>
+					</div>
+
+					<p class="text-xs text-base-content/75 leading-relaxed">
+						Ground your presentations, architecture slides, and objection battlecards in real company technical sources so deliverables cite verified facts.
+					</p>
+
+					<div class="space-y-3 text-xs">
+						<div>
+							<label class="block font-bold text-base-content mb-1">Source Type</label>
+							<select id="modal-source-type" class="select select-sm select-bordered w-full rounded-xl text-xs">
+								<option value="github">🐙 GitHub Repository (README / Architecture)</option>
+								<option value="website">🌐 Technical Documentation / Website</option>
+								<option value="pdf">📄 Whitepaper / Security Audit (PDF)</option>
+							</select>
+						</div>
+
+						<div>
+							<label class="block font-bold text-base-content mb-1" id="modal-url-label">Repository URL / Name</label>
+							<input
+								id="modal-source-url"
+								type="text"
+								class="input input-sm input-bordered w-full rounded-xl text-xs font-mono"
+								placeholder="e.g. https://github.com/my-org/core-engine"
+							/>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-end gap-2 pt-2 border-t border-base-200">
+						<form method="dialog">
+							<button class="btn btn-sm btn-ghost">Cancel</button>
+						</form>
+						<button id="btn-submit-source" type="button" class="btn btn-sm btn-neutral font-semibold rounded-xl gap-1">
+							<span>Verify & Attach ↗</span>
+						</button>
+					</div>
+				</div>
+			</dialog>
 
 		</div>
 
@@ -1233,8 +1293,82 @@ import Layout from '../layouts/Layout.astro';
 			}
 		}
 
+		// Grounding Sources Logic
+		const btnOpenAttachModal = document.getElementById('btn-open-attach-modal');
+		const attachSourceModal = document.getElementById('attach-source-modal') as HTMLDialogElement;
+		const modalSourceType = document.getElementById('modal-source-type') as HTMLSelectElement;
+		const modalSourceUrl = document.getElementById('modal-source-url') as HTMLInputElement;
+		const btnSubmitSource = document.getElementById('btn-submit-source');
+		const activeSourcesList = document.getElementById('active-sources-list');
+
+		btnOpenAttachModal?.addEventListener('click', () => {
+			attachSourceModal?.showModal();
+		});
+
+		async function loadSources() {
+			try {
+				const res = await fetch('/api/sources');
+				if (!res.ok) return;
+				const sources = await res.json();
+				renderActiveSources(sources);
+			} catch (e) {
+				console.warn('Could not load sources:', e);
+			}
+		}
+
+		function renderActiveSources(sources: any[]) {
+			if (!activeSourcesList) return;
+			activeSourcesList.innerHTML = '';
+			if (!Array.isArray(sources) || sources.length === 0) return;
+
+			sources.forEach((s) => {
+				const c = s.content || {};
+				const badge = document.createElement('div');
+				badge.className = 'badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs select-none';
+				const icon = s.source_type === 'github' ? '🐙' : s.source_type === 'pdf' ? '📄' : '🌐';
+				badge.innerHTML = `
+					<span>${icon}</span>
+					<span class="font-bold truncate max-w-[140px]">${c.title || c.url_or_path}</span>
+					<span class="text-success-content/80">✓ Grounded</span>
+				`;
+				activeSourcesList.appendChild(badge);
+			});
+		}
+
+		btnSubmitSource?.addEventListener('click', async () => {
+			const type = modalSourceType?.value || 'github';
+			const url = modalSourceUrl?.value.trim() || '';
+			if (!url) return;
+
+			if (btnSubmitSource) {
+				btnSubmitSource.setAttribute('disabled', 'true');
+				btnSubmitSource.textContent = 'Verifying...';
+			}
+
+			try {
+				const res = await fetch('/api/sources/ingest', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ source_type: type, url_or_path: url }),
+				});
+				if (res.ok) {
+					modalSourceUrl.value = '';
+					attachSourceModal?.close();
+					await loadSources();
+				}
+			} catch (e) {
+				console.error(e);
+			} finally {
+				if (btnSubmitSource) {
+					btnSubmitSource.removeAttribute('disabled');
+					btnSubmitSource.textContent = 'Verify & Attach ↗';
+				}
+			}
+		});
+
 		// Initialize
 		updateSideBadges();
 		loadInitialArtifacts();
+		loadSources();
 	</script>
 </Layout>
