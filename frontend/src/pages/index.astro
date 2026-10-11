@@ -1,191 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ChatWindow from '../components/ChatWindow.astro';
+import SidePanel from '../components/SidePanel.astro';
+import AppDock from '../components/AppDock.astro';
 ---
 
 <Layout title="BUST — Plan" description="AI Deal Planning & Execution" fullHeight={true}>
-	<!-- MAIN WORKSPACE: ROCK-SOLID CHAT + FLOATING SLIDE-OVER DELIVERABLES + STICKY APP DOCK -->
 	<div class="relative flex flex-1 w-full h-full min-h-0 overflow-hidden">
-		
-		<!-- 1. LEFT BALANCE SPACER: Matches the right dock (w-12) to ensure optical centering -->
+		<!-- 1. LEFT BALANCE SPACER: Matches right dock (w-12) to ensure optical centering -->
 		<div class="w-12 shrink-0 hidden md:block select-none pointer-events-none"></div>
 
-		<!-- 2. CENTER: EXPANSIVE, ROCK-SOLID PLANNER CHAT WINDOW (NEVER MOVES) -->
-		<div class="flex-1 min-h-0 flex flex-col h-full overflow-hidden">
-			
-			<!-- TOP CHAT BAR (Centered and aligned with conversation & input) -->
-			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto flex items-center justify-between pb-2.5 border-b border-base-300 gap-2 shrink-0 px-2 sm:px-4">
-				<div class="flex items-center gap-2">
-					<h1 class="text-base font-bold text-base-content">Plan</h1>
-					<span class="text-xs text-base-content/50">•</span>
-					<span class="text-xs font-mono text-base-content/70" id="deal-title-badge">New Opportunity</span>
-				</div>
+		<!-- 2. CENTER: EXPANSIVE PLANNER CHAT WINDOW -->
+		<ChatWindow />
 
-				<div class="flex items-center gap-2">
-					<!-- Reset Session -->
-					<button id="btn-reset-session" type="button" class="btn btn-xs btn-ghost text-base-content/60 hover:text-base-content gap-1">
-						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-						<span>Reset</span>
-					</button>
-				</div>
-			</div>
+		<!-- 3. FLOATING SLIDE-OVER DELIVERABLES PANEL -->
+		<SidePanel />
 
-			<!-- EXPANSIVE CONVERSATION STREAM (Rock-solid centered position, scrolls internally) -->
-			<div id="chat-stream" class="flex-1 min-h-0 overflow-y-auto space-y-6 text-xs sm:text-sm p-2 sm:p-4 pb-6 font-sans w-full max-w-4xl xl:max-w-5xl mx-auto">
-				
-				<!-- Clean Welcome Turn -->
-				<div id="welcome-turn" class="py-14 sm:py-20 text-center space-y-4 max-w-2xl mx-auto">
-					<div class="w-12 h-12 rounded-2xl bg-base-200 border border-base-300 mx-auto flex items-center justify-center text-xl font-bold shadow-xs">
-						⚡
-					</div>
-					<div class="space-y-1.5">
-						<h2 class="text-xl sm:text-2xl font-bold text-base-content tracking-tight">
-							Plan your next enterprise deal
-						</h2>
-						<p class="text-xs sm:text-sm text-base-content/75 leading-relaxed">
-							Drop raw discovery notes, customer objections, or deal parameters. The agent analyzes strategy, asks follow-up questions, and synthesizes full sales deliverables to the side.
-						</p>
-					</div>
-
-					<!-- Starter Opportunity Chips -->
-					<div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-[11px] sm:text-xs">
-						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="We just wrapped discovery with Datadog ($320k ARR) facing aggressive competitor pricing. Generate competitive battlecards and an executive pitch deck.">
-							⚡ Datadog ($320k): Battlecards + Deck
-						</button>
-						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="We have a $450k ARR deal with Snowflake evaluating us against LegacyCRM. What collateral should we prepare?">
-							❄️ Snowflake ($450k): Strategy & Needs
-						</button>
-						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="Create competitive objection handling battlecards for Stripe ($280k ARR) overcoming renewal objections regarding data security.">
-							🛡️ Stripe ($280k): Security Battlecards
-						</button>
-					</div>
-				</div>
-
-			</div>
-
-			<!-- EXPANSIVE BOTTOM PROMPT BAR (Permanently sticky at bottom, never moves with messages) -->
-			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto shrink-0 pt-2 pb-1 px-2 sm:px-4 bg-base-100">
-				<form id="chat-form" class="card bg-base-200/80 border border-base-300 p-2 sm:p-2.5 rounded-2xl shadow-xs flex flex-row items-center gap-2">
-					<input
-						id="chat-input"
-						type="text"
-						class="input input-sm sm:input-md flex-1 bg-transparent border-0 text-xs sm:text-sm text-base-content focus:outline-none"
-						placeholder="Plan a deal (e.g. 'Discovery with Snowflake for $400k ARR, prepare pitch deck and talk-tracks...')"
-						autocomplete="off"
-					/>
-					<button id="btn-send-directive" type="submit" class="btn btn-sm btn-neutral px-4 font-semibold shadow-xs rounded-xl">
-						Plan ⏎
-					</button>
-				</form>
-			</div>
-
-		</div>
-
-		<!-- 2. FLOATING SLIDE-OVER DELIVERABLES PANEL (Anchored to the right, DOES NOT move the chat) -->
-		<div
-			id="side-panel"
-			class="absolute top-0 right-13 bottom-0 w-[470px] max-w-[calc(100vw-4.5rem)] z-40 bg-base-100/98 backdrop-blur-xl border-l border-base-300 shadow-2xl flex flex-col rounded-l-2xl transition-all duration-300 ease-out transform translate-x-[110%] opacity-0 pointer-events-none"
-		>
-			
-			<!-- STICKY SIDE PANEL HEADER -->
-			<div class="sticky top-0 z-30 bg-base-100/95 backdrop-blur-md flex items-center justify-between p-3.5 border-b border-base-200 gap-2 shrink-0">
-				<div class="flex items-center gap-2">
-					<span class="text-sm font-bold text-base-content" id="side-panel-title">🎴 Objection Battlecards</span>
-					<span class="badge badge-xs badge-neutral font-mono" id="side-active-account">Active</span>
-				</div>
-				
-				<div class="flex items-center gap-2">
-					<!-- Prominent "Open Full View ↗" Redirect Link -->
-					<a id="btn-open-full-page" href="/battlecards" class="btn btn-xs btn-neutral gap-1 font-semibold">
-						<span id="full-page-btn-text">Open Full Deck ↗</span>
-					</a>
-					<button id="btn-close-side" type="button" class="btn btn-xs btn-circle btn-ghost text-base-content/70 hover:text-base-content" title="Close Side Panel">
-						✕
-					</button>
-				</div>
-			</div>
-
-			<!-- SIDE CONTENT VIEWPORT (Scrollable) -->
-			<div class="flex-1 overflow-y-auto p-4 space-y-4" id="side-content-area">
-				
-				<!-- Empty Placeholder -->
-				<div id="side-empty-state" class="py-16 text-center space-y-3">
-					<div class="w-12 h-12 rounded-2xl bg-base-200 border border-base-300 mx-auto flex items-center justify-center text-2xl shadow-xs">
-						📑
-					</div>
-					<div class="space-y-1">
-						<h4 class="font-bold text-sm text-base-content" id="side-empty-title">Select an App Icon</h4>
-						<p class="text-xs text-base-content/70 max-w-xs mx-auto leading-relaxed" id="side-empty-desc">
-							Click any app icon on the side dock to inspect generated battlecards, slide decks, proposals, or action plans.
-						</p>
-					</div>
-				</div>
-
-				<!-- Dynamic Content Container -->
-				<div id="side-deliverable-view" class="hidden space-y-4">
-					<!-- Injected via JS -->
-				</div>
-
-			</div>
-
-		</div>
-
-		<!-- 3. STICKY VERTICAL APP ICONS DOCK (Anchored on the far right edge) -->
-		<div class="self-start w-12 flex flex-col items-center py-2.5 px-1 border-l border-base-300 bg-base-200/50 shrink-0 gap-3 z-50 select-none rounded-xl ml-auto">
-			
-			<!-- 🎴 Battlecards App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Objection Battlecards">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="battlecards" id="app-icon-bc">
-					<span>🎴</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-bc">0</span>
-				</button>
-			</div>
-
-			<!-- 📊 Pitch Deck App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Pitch & Presentation Decks">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="presentation" id="app-icon-deck">
-					<span>📊</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-deck">0</span>
-				</button>
-			</div>
-
-			<!-- ✉️ Proposal Email App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Deal Follow-Up Emails">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="email" id="app-icon-email">
-					<span>✉️</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-email">0</span>
-				</button>
-			</div>
-
-			<!-- 🗺️ Mutual Action Plan App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Mutual Action Plans (MAP)">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="flowchart" id="app-icon-map">
-					<span>🗺️</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-map">0</span>
-				</button>
-			</div>
-
-			<!-- 🏨 Buyer Deal Room App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Buyer Deal Suites">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="suite" id="app-icon-suite">
-					<span>🏨</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-suite">0</span>
-				</button>
-			</div>
-
-			<div class="w-6 h-px bg-base-300 my-1 opacity-50"></div>
-
-			<!-- Toggle / Collapse Button -->
-			<div class="tooltip tooltip-left" data-tip="Toggle Deliverables Panel">
-				<button type="button" class="w-8 h-8 rounded-lg text-base-content/60 hover:text-base-content hover:bg-base-200 flex items-center justify-center text-xs transition-all cursor-pointer" id="app-dock-toggle">
-					<span id="app-dock-toggle-icon">◀</span>
-				</button>
-			</div>
-
-		</div>
-
+		<!-- 4. STICKY VERTICAL APP ICONS DOCK -->
+		<AppDock />
 	</div>
 
-	<!-- 3D FLIP CARD & CAROUSEL STYLES -->
+	<!-- 3D FLIP CARD & CAROUSEL UTILITY STYLES -->
 	<style is:global>
 		.perspective-1000 {
 			perspective: 1000px;
@@ -213,25 +48,33 @@ import Layout from '../layouts/Layout.astro';
 	</style>
 
 	<script>
+		import { renderMarkdown } from '../utils/markdown';
+		import { renderCompetitorView } from '../components/deliverables/competitor';
+		import { renderBattlecardsView } from '../components/deliverables/battlecards';
+		import { renderPresentationView } from '../components/deliverables/presentation';
+		import { renderEmailView } from '../components/deliverables/email';
+		import { renderFlowchartView } from '../components/deliverables/flowchart';
+		import { renderSocialView } from '../components/deliverables/social';
+		import { renderSuiteView } from '../components/deliverables/suite';
+
 		let dealContext: any = {};
 		let storedArtifacts: any = {};
 		let activeTab: string = 'battlecards';
 		let sidePanelOpen: boolean = false;
+		let conversationHistory: Array<{ role: string; content: string }> = [];
 
-		// Stacked Deck state for side panel
-		let sideCards: any[] = [];
-		let sideCardOrder: number[] = [];
-
+		// Chat DOM elements
 		const chatStream = document.getElementById('chat-stream');
 		const chatForm = document.getElementById('chat-form');
 		const chatInput = document.getElementById('chat-input') as HTMLInputElement;
 		const sendBtn = document.getElementById('btn-send-directive');
 		const resetBtn = document.getElementById('btn-reset-session');
 		const welcomeTurn = document.getElementById('welcome-turn');
-		const chips = document.querySelectorAll('.chat-chip');
 		const dealTitleBadge = document.getElementById('deal-title-badge');
+		const dealStageBadge = document.getElementById('deal-stage-badge');
+		const dealHealthBadge = document.getElementById('deal-health-badge');
 
-		// Side Panel elements
+		// Side Panel DOM elements
 		const sidePanel = document.getElementById('side-panel');
 		const btnCloseSide = document.getElementById('btn-close-side');
 		const sidePanelTitle = document.getElementById('side-panel-title');
@@ -241,33 +84,33 @@ import Layout from '../layouts/Layout.astro';
 		const sideEmptyState = document.getElementById('side-empty-state');
 		const sideDeliverableView = document.getElementById('side-deliverable-view');
 
-		// App Dock elements
+		// App Dock DOM elements
 		const sideAppBtns = document.querySelectorAll('.side-app-btn');
 		const appDockToggle = document.getElementById('app-dock-toggle');
 		const appDockToggleIcon = document.getElementById('app-dock-toggle-icon');
 		const appBadgeBc = document.getElementById('app-badge-bc');
+		const appBadgeComp = document.getElementById('app-badge-comp');
 		const appBadgeDeck = document.getElementById('app-badge-deck');
 		const appBadgeEmail = document.getElementById('app-badge-email');
 		const appBadgeMap = document.getElementById('app-badge-map');
+		const appBadgeSocial = document.getElementById('app-badge-social');
 		const appBadgeSuite = document.getElementById('app-badge-suite');
 
-		// Toggle Side Panel State (Floats over without moving the chat)
+		// Side Panel Open/Close Transition
 		function setSidePanelState(open: boolean) {
 			sidePanelOpen = open;
 			if (!sidePanel) return;
+
 			if (open) {
 				sidePanel.classList.remove('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
 				sidePanel.classList.add('translate-x-0', 'opacity-100', 'pointer-events-auto');
 				if (appDockToggleIcon) appDockToggleIcon.textContent = '▶';
+				renderActiveDeliverable();
 			} else {
-				sidePanel.classList.add('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
 				sidePanel.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+				sidePanel.classList.add('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
 				if (appDockToggleIcon) appDockToggleIcon.textContent = '◀';
-				// Clean reset button highlight
-				sideAppBtns.forEach((b) => {
-					b.classList.remove('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
-					b.classList.add('bg-base-100');
-				});
+				sideAppBtns.forEach((b) => b.classList.remove('ring-2', 'ring-primary', 'bg-base-200'));
 			}
 		}
 
@@ -279,30 +122,28 @@ import Layout from '../layouts/Layout.astro';
 			setSidePanelState(false);
 		});
 
-		// Switch Active App Tab (Sticky when clicked)
+		// Switch Active App Tab
 		function switchAppTab(tabKey: string) {
 			if (sidePanelOpen && activeTab === tabKey) {
-				// Sticky toggle: clicking active icon again collapses panel smoothly
 				setSidePanelState(false);
 				return;
 			}
 
 			activeTab = tabKey;
-			setSidePanelState(true);
-
-			// Highlight active app button with clean, sticky active styling
 			sideAppBtns.forEach((btn) => {
 				const key = btn.getAttribute('data-tab');
 				if (key === tabKey) {
-					btn.classList.add('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
-					btn.classList.remove('bg-base-100', 'hover:bg-base-200');
+					btn.classList.add('ring-2', 'ring-primary', 'bg-base-200');
 				} else {
-					btn.classList.remove('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
-					btn.classList.add('bg-base-100', 'hover:bg-base-200');
+					btn.classList.remove('ring-2', 'ring-primary', 'bg-base-200');
 				}
 			});
 
-			renderActiveDeliverable();
+			if (!sidePanelOpen) {
+				setSidePanelState(true);
+			} else {
+				renderActiveDeliverable();
+			}
 		}
 
 		sideAppBtns.forEach((btn) => {
@@ -318,9 +159,11 @@ import Layout from '../layouts/Layout.astro';
 
 			const titles: Record<string, string> = {
 				battlecards: '🎴 Objection Battlecards',
+				competitor: '🎯 Competitor Intelligence',
 				presentation: '📊 Pitch Presentation Deck',
 				email: '✉️ Executive Proposal Email',
 				flowchart: '🗺️ Mutual Action Plan (MAP)',
+				social: '🐦 Executive Social Touchpoint (X / LinkedIn)',
 				suite: '🏨 Buyer Deal Room Suite'
 			};
 
@@ -333,18 +176,24 @@ import Layout from '../layouts/Layout.astro';
 				if (activeTab === 'battlecards') {
 					btnOpenFullPage.href = '/battlecards';
 					fullPageBtnText.textContent = 'Open Full Deck ↗';
+				} else if (activeTab === 'competitor') {
+					btnOpenFullPage.href = '/competitor';
+					fullPageBtnText.textContent = 'Open Full Teardown ↗';
 				} else if (activeTab === 'presentation') {
 					btnOpenFullPage.href = '/presentations';
-					fullPageBtnText.textContent = 'Open Full Slides (16:9) ↗';
+					fullPageBtnText.textContent = 'Open 16:9 Studio ↗';
 				} else if (activeTab === 'email') {
 					btnOpenFullPage.href = '/emails';
 					fullPageBtnText.textContent = 'Open Full Email ↗';
 				} else if (activeTab === 'flowchart') {
 					btnOpenFullPage.href = '/flowcharts';
 					fullPageBtnText.textContent = 'Open Full MAP ↗';
+				} else if (activeTab === 'social') {
+					btnOpenFullPage.href = '#';
+					fullPageBtnText.textContent = 'Social Hook 🐦';
 				} else if (activeTab === 'suite') {
 					const shareId = storedArtifacts.suite?.share_id || 'suite_live';
-					btnOpenFullPage.href = `/suite/${shareId}`;
+					btnOpenFullPage.href = `/suite?id=${shareId}`;
 					fullPageBtnText.textContent = 'Open Buyer Room ↗';
 				}
 			}
@@ -370,356 +219,94 @@ import Layout from '../layouts/Layout.astro';
 				sideActiveAccount.textContent = dealContext.account_name || 'Active Deal';
 			}
 
-			// BATTLECARDS: STACKED FLIPPABLE CAROUSEL
+			// Dispatch to modular deliverable renderers
 			if (activeTab === 'battlecards') {
-				sideCards = art.content?.cards || [];
-				sideCardOrder = sideCards.map((_, i) => i);
-
-				sideDeliverableView.innerHTML = `
-
-						<!-- 3D Perspective Stack Stage -->
-						<div class="relative w-full h-[370px] perspective-1000 my-2" id="side-deck-stage">
-							<!-- Stack items injected below -->
-						</div>
-
-						<!-- Progress Dots -->
-						<div class="flex items-center justify-center gap-1.5 pt-1" id="side-deck-dots"></div>
-					</div>
-				`;
-
-				renderSideStackedDeck();
-				setupSideDeckListeners();
-				updateSideStackPositions();
-				return;
-			}
-
-			// PRESENTATION: SLIDE DECK PREVIEW
-			if (activeTab === 'presentation') {
-				const slides = art.content?.slides || [];
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="space-y-3">
-							${slides.map((s: any) => `
-								<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
-									<div class="flex items-center justify-between">
-										<span class="badge badge-xs badge-neutral font-semibold">${s.tag || `Slide ${s.slide_number}`}</span>
-										<span class="text-[10px] font-mono text-base-content/50">#${s.slide_number}</span>
-									</div>
-									<h4 class="font-bold text-xs text-base-content">${s.title}</h4>
-									<p class="text-[11px] text-base-content/75">${s.subtitle || ''}</p>
-									<ul class="text-[11px] space-y-1 pt-1 text-base-content/85">
-										${(s.bullets || []).map((b: string) => `<li class="flex items-start gap-1.5"><span class="text-primary font-bold">✓</span><span>${b}</span></li>`).join('')}
-									</ul>
-									${s.speaker_note ? `
-										<div class="mt-2 p-2 bg-base-200/60 rounded-md text-[10px] text-base-content/70 italic border border-base-300/60">
-											<span class="font-semibold not-italic">Speaker Note:</span> ${s.speaker_note}
-										</div>
-									` : ''}
-								</div>
-							`).join('')}
-						</div>
-					</div>
-				`;
-				return;
-			}
-
-			// EMAIL: EXECUTIVE PROPOSAL
-			if (activeTab === 'email') {
-				const email = art.content || {};
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-3 shadow-2xs">
-							<div class="border-b border-base-200 pb-2 flex items-center justify-between">
-								<div>
-									<span class="text-[10px] text-base-content/60 font-mono uppercase block">Subject</span>
-									<h4 class="font-bold text-xs text-base-content">${email.subject || 'Proposal & Next Milestones'}</h4>
-								</div>
-								<button id="btn-copy-email" class="btn btn-xs btn-ghost gap-1" title="Copy to clipboard">
-									📋 Copy
-								</button>
-							</div>
-							<div class="text-[11px] text-base-content/85 whitespace-pre-line leading-relaxed bg-base-200/50 p-3.5 rounded-lg border border-base-300/60">
-								${email.body || ''}
-							</div>
-							${email.key_takeaways?.length ? `
-								<div class="flex flex-wrap gap-1 pt-1">
-									${email.key_takeaways.map((t: string) => `<span class="badge badge-xs badge-neutral">${t}</span>`).join('')}
-								</div>
-							` : ''}
-						</div>
-					</div>
-				`;
-
-				const copyBtn = document.getElementById('btn-copy-email');
-				copyBtn?.addEventListener('click', () => {
-					navigator.clipboard.writeText(`${email.subject}\n\n${email.body}`);
-					copyBtn.textContent = 'Copied ✓';
-					setTimeout(() => { copyBtn.textContent = '📋 Copy'; }, 2000);
-				});
-				return;
-			}
-
-			// MAP: MUTUAL ACTION PLAN
-			if (activeTab === 'flowchart') {
-				const map = art.content || {};
-				const stages = map.stages || [];
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="space-y-2.5">
-							${stages.map((st: any) => `
-								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-1.5 shadow-2xs">
-									<div class="flex items-center justify-between">
-										<span class="badge badge-xs ${st.status === 'completed' ? 'badge-success' : 'badge-neutral'} font-semibold">Stage ${st.stage_number}</span>
-										<span class="text-[10px] font-mono text-base-content/60">${st.target_date || ''}</span>
-									</div>
-									<h4 class="font-bold text-xs text-base-content">${st.name}</h4>
-									<p class="text-[11px] text-base-content/75">${st.description || ''}</p>
-									<div class="text-[10px] text-base-content/60 font-mono pt-1 flex justify-between">
-										<span>Owner: ${st.owner || 'AE'}</span>
-										<span>Deliverable: ${st.deliverable || 'Approved'}</span>
-									</div>
-								</div>
-							`).join('')}
-						</div>
-					</div>
-				`;
-				return;
-			}
-
-			// SUITE: BUYER DEAL ROOM
-			if (activeTab === 'suite') {
-				const suite = art;
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="card bg-gradient-to-br from-base-200/80 to-base-300/80 border border-primary/40 p-5 rounded-2xl space-y-3 shadow-xs">
-							<div class="flex items-center justify-between">
-								<span class="badge badge-xs badge-success font-semibold">Active Keycard</span>
-								<span class="font-mono text-[11px] text-base-content/70">${suite.share_id || 'suite_live'}</span>
-							</div>
-							<h4 class="font-bold text-sm text-base-content">Penthouse Suite: ${dealContext.account_name || 'Enterprise'}</h4>
-							<p class="text-[11px] text-base-content/75 leading-relaxed">
-								Encrypted guest deal room for enterprise stakeholders to review objection talk-tracks, verified ROI metrics, and mutual milestones.
-							</p>
-							<a href="/suite/${suite.share_id || 'suite_live'}" class="btn btn-sm btn-neutral w-full font-semibold shadow-xs">
-								Open Guest Suite 🏨
-							</a>
-						</div>
-					</div>
-				`;
-				return;
+				renderBattlecardsView(sideDeliverableView, art);
+			} else if (activeTab === 'competitor') {
+				renderCompetitorView(sideDeliverableView, art, dealContext, handleCrustdataRefresh);
+			} else if (activeTab === 'presentation') {
+				renderPresentationView(sideDeliverableView, art);
+			} else if (activeTab === 'email') {
+				renderEmailView(sideDeliverableView, art);
+			} else if (activeTab === 'flowchart') {
+				renderFlowchartView(sideDeliverableView, art);
+			} else if (activeTab === 'social') {
+				renderSocialView(sideDeliverableView, art, dealContext);
+			} else if (activeTab === 'suite') {
+				renderSuiteView(sideDeliverableView, art, dealContext);
 			}
 		}
 
-		// STACKED BATTLECARDS CAROUSEL LOGIC
-		function renderSideStackedDeck() {
-			const stage = document.getElementById('side-deck-stage');
-			if (!stage) return;
-			stage.innerHTML = '';
-
-			sideCards.forEach((c, idx) => {
-				const tags = c.tags || c.proof_points || ['Verified'];
-				const item = document.createElement('div');
-				item.className = 'side-card-item absolute inset-0 transition-all duration-500 cursor-pointer select-none';
-				item.setAttribute('data-index', idx.toString());
-
-				item.innerHTML = `
-					<div class="flip-card h-full w-full">
-						<div class="flip-card-inner h-full w-full relative">
-							<!-- FRONT -->
-							<div class="absolute inset-0 backface-hidden p-5 rounded-2xl border border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-200 pb-2">
-									<span class="badge badge-xs badge-neutral font-bold uppercase tracking-wider">${c.category || 'Objection'}</span>
-									<span class="text-[10px] font-mono text-base-content/60">Click to Flip 🔄</span>
-								</div>
-
-								<div class="space-y-2 my-auto">
-									<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
-									<h4 class="text-sm font-bold text-base-content leading-snug">
-										"${c.objection_quote || c.objection}"
-									</h4>
-									<p class="text-[11px] text-base-content/75">
-										Persona: ${c.buyer_persona || 'Executive Sponsor'}
-									</p>
-								</div>
-
-								<div class="pt-2 border-t border-base-200 flex items-center justify-between text-[11px]">
-									<div class="flex gap-1">
-										${tags.slice(0, 1).map((t: string) => `<span class="badge badge-xs badge-outline">${t}</span>`).join('')}
-									</div>
-									<span class="font-semibold text-primary">Tap to reveal talk-track →</span>
-								</div>
-							</div>
-
-							<!-- BACK -->
-							<div class="absolute inset-0 backface-hidden rotate-y-180 p-5 rounded-2xl border border-primary/40 bg-base-200 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-300 pb-2">
-									<span class="badge badge-xs badge-success font-bold">Winning Talk-Track</span>
-									<span class="text-[10px] font-mono text-base-content/60">Tap to Flip Back ↺</span>
-								</div>
-
-								<div class="space-y-2 my-auto">
-									<div class="text-[11px] text-base-content leading-relaxed bg-base-100 p-3 rounded-xl border border-base-300 font-medium">
-										${c.winning_response || c.talk_track}
-									</div>
-									<div class="grid grid-cols-2 gap-1.5 text-[10px]">
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<span class="block text-base-content/60 uppercase font-mono">Proof:</span>
-											<span class="font-semibold truncate">${(c.proof_points || ['Validated metrics'])[0]}</span>
-										</div>
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
-											<span class="block text-base-content/60 uppercase font-mono">Metric:</span>
-											<span class="font-semibold">${c.key_metric || '< 60-day break-even'}</span>
-										</div>
-									</div>
-								</div>
-
-								<div class="pt-2 border-t border-base-300 flex items-center justify-between text-[10px]">
-									<span class="text-base-content/70">AE Confidence:</span>
-									<div class="flex gap-1">
-										<button class="btn btn-xs btn-outline py-0 h-5">Practice</button>
-										<button class="btn btn-xs btn-neutral py-0 h-5">Mastered ✓</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				`;
-
-				item.addEventListener('click', (e) => {
-					const target = e.target as HTMLElement;
-					if (target.tagName === 'BUTTON') return;
-					if (sideCardOrder[0] === idx) {
-						const flipCard = item.querySelector('.flip-card-inner');
-						flipCard?.classList.toggle('is-flipped');
-					}
-				});
-
-				stage.appendChild(item);
+		// Crustdata Live Refresh Handler
+		async function handleCrustdataRefresh(): Promise<void> {
+			const comp = storedArtifacts.competitor?.content || {};
+			const res = await fetch('/api/competitor/deep-research', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					competitor: comp.competitor_name || dealContext.competitor || 'Competitor',
+					account_name: dealContext.account_name || 'Enterprise',
+				}),
 			});
-		}
-
-		function updateSideStackPositions() {
-			const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-			items.forEach((card, originalIdx) => {
-				const pos = sideCardOrder.indexOf(originalIdx);
-				const flipCard = card.querySelector('.flip-card-inner');
-
-				if (pos === 0) {
-					card.style.zIndex = '30';
-					card.style.transform = 'translateY(0) scale(1)';
-					card.style.opacity = '1';
-					card.style.pointerEvents = 'auto';
-				} else if (pos === 1) {
-					card.style.zIndex = '20';
-					card.style.transform = 'translateY(14px) scale(0.96)';
-					card.style.opacity = '0.85';
-					card.style.pointerEvents = 'none';
-					flipCard?.classList.remove('is-flipped');
-				} else if (pos === 2) {
-					card.style.zIndex = '10';
-					card.style.transform = 'translateY(28px) scale(0.92)';
-					card.style.opacity = '0.65';
-					card.style.pointerEvents = 'none';
-					flipCard?.classList.remove('is-flipped');
-				} else {
-					card.style.zIndex = '0';
-					card.style.transform = 'translateY(42px) scale(0.88)';
-					card.style.opacity = '0';
-					card.style.pointerEvents = 'none';
-					flipCard?.classList.remove('is-flipped');
+			if (res.ok) {
+				const data = await res.json();
+				if (data.artifact?.content) {
+					if (!storedArtifacts.competitor.content) storedArtifacts.competitor.content = {};
+					storedArtifacts.competitor.content.crustdata_research = data.artifact.content;
+					renderActiveDeliverable();
 				}
-			});
-
-			const badge = document.getElementById('side-deck-badge');
-			if (badge && sideCards.length) {
-				badge.textContent = `Card ${sideCardOrder[0] + 1} of ${sideCards.length}`;
-			}
-
-			const dotsContainer = document.getElementById('side-deck-dots');
-			if (dotsContainer) {
-				dotsContainer.innerHTML = '';
-				sideCards.forEach((_, i) => {
-					const dot = document.createElement('div');
-					dot.className = `w-1.5 h-1.5 rounded-full transition-all ${sideCardOrder[0] === i ? 'bg-primary w-4' : 'bg-base-300'}`;
-					dotsContainer.appendChild(dot);
-				});
 			}
 		}
 
-		function setupSideDeckListeners() {
-			const btnNext = document.getElementById('side-btn-next');
-			const btnPrev = document.getElementById('side-btn-prev');
-			const btnFlip = document.getElementById('side-btn-flip');
-
-			btnNext?.addEventListener('click', () => {
-				if (!sideCards.length) return;
-				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-				const activeCard = items[sideCardOrder[0]];
-				const flipCard = activeCard.querySelector('.flip-card-inner');
-				flipCard?.classList.remove('is-flipped');
-
-				activeCard.style.transform = 'translateX(110%) rotate(12deg) scale(0.9)';
-				activeCard.style.opacity = '0';
-
-				setTimeout(() => {
-					const first = sideCardOrder.shift()!;
-					sideCardOrder.push(first);
-					updateSideStackPositions();
-				}, 250);
-			});
-
-			btnPrev?.addEventListener('click', () => {
-				if (!sideCards.length) return;
-				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-				const lastIdx = sideCardOrder[sideCardOrder.length - 1];
-				const lastCard = items[lastIdx];
-				const flipCard = lastCard.querySelector('.flip-card-inner');
-				flipCard?.classList.remove('is-flipped');
-
-				const last = sideCardOrder.pop()!;
-				sideCardOrder.unshift(last);
-				updateSideStackPositions();
-			});
-
-			btnFlip?.addEventListener('click', () => {
-				if (!sideCards.length) return;
-				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-				const activeCard = items[sideCardOrder[0]];
-				const flipCard = activeCard?.querySelector('.flip-card-inner');
-				flipCard?.classList.toggle('is-flipped');
-			});
-		}
-
-		// Update App Badges on Side Dock
+		// Update Dock Badges
 		function updateSideBadges() {
 			const bc = storedArtifacts.battlecards?.content?.cards?.length || 0;
 			if (appBadgeBc) {
 				appBadgeBc.textContent = bc.toString();
 				if (bc > 0) appBadgeBc.classList.remove('hidden');
+				else appBadgeBc.classList.add('hidden');
+			}
+
+			const comp = storedArtifacts.competitor ? 1 : 0;
+			if (appBadgeComp) {
+				appBadgeComp.textContent = comp.toString();
+				if (comp > 0) appBadgeComp.classList.remove('hidden');
+				else appBadgeComp.classList.add('hidden');
 			}
 
 			const deck = storedArtifacts.presentation?.content?.slides?.length || 0;
 			if (appBadgeDeck) {
 				appBadgeDeck.textContent = deck.toString();
 				if (deck > 0) appBadgeDeck.classList.remove('hidden');
+				else appBadgeDeck.classList.add('hidden');
 			}
 
 			const email = storedArtifacts.email ? 1 : 0;
 			if (appBadgeEmail) {
 				appBadgeEmail.textContent = email.toString();
 				if (email > 0) appBadgeEmail.classList.remove('hidden');
+				else appBadgeEmail.classList.add('hidden');
 			}
 
 			const map = storedArtifacts.flowchart?.content?.stages?.length || 0;
 			if (appBadgeMap) {
 				appBadgeMap.textContent = map.toString();
 				if (map > 0) appBadgeMap.classList.remove('hidden');
+				else appBadgeMap.classList.add('hidden');
+			}
+
+			const social = storedArtifacts.social ? 1 : 0;
+			if (appBadgeSocial) {
+				appBadgeSocial.textContent = social.toString();
+				if (social > 0) appBadgeSocial.classList.remove('hidden');
+				else appBadgeSocial.classList.add('hidden');
 			}
 
 			const suite = storedArtifacts.suite ? 1 : 0;
 			if (appBadgeSuite) {
 				appBadgeSuite.textContent = suite.toString();
 				if (suite > 0) appBadgeSuite.classList.remove('hidden');
+				else appBadgeSuite.classList.add('hidden');
 			}
 		}
 
@@ -728,11 +315,18 @@ import Layout from '../layouts/Layout.astro';
 			if (!chatStream) return;
 			if (welcomeTurn) welcomeTurn.classList.add('hidden');
 
+			const escaped = text
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#039;');
+
 			const turnDiv = document.createElement('div');
 			turnDiv.className = 'flex justify-end';
 			turnDiv.innerHTML = `
-				<div class="p-3.5 sm:p-4 bg-neutral text-neutral-content rounded-2xl text-xs sm:text-sm font-medium leading-relaxed max-w-[80%] shadow-xs">
-					${text}
+				<div class="p-3.5 sm:p-4 bg-neutral text-neutral-content rounded-2xl text-xs sm:text-sm font-medium leading-relaxed max-w-[85%] shadow-xs break-words whitespace-pre-wrap">
+					${escaped}
 				</div>
 			`;
 			chatStream.appendChild(turnDiv);
@@ -759,17 +353,43 @@ import Layout from '../layouts/Layout.astro';
 			return progDiv;
 		}
 
-		// Append Agent Response with Smart Follow-up Questions
+		// Append Agent Response with Markdown & Action Pills
 		function appendAgentTurn(data: any) {
 			if (!chatStream) return;
 			const turnDiv = document.createElement('div');
-			turnDiv.className = 'space-y-3.5 w-full';
+			turnDiv.className = 'space-y-3.5 w-full min-w-0';
 
-			// Update Deal Context
+			if (data.agent_reply) {
+				conversationHistory.push({ role: 'assistant', content: data.agent_reply });
+			}
+
+			// Update Deal Context & Badges
 			if (data.deal_context) {
 				dealContext = { ...dealContext, ...data.deal_context };
 				if (dealTitleBadge) {
 					dealTitleBadge.textContent = `${dealContext.account_name || 'Opportunity'} (${dealContext.deal_size || ''})`;
+				}
+				if (dealStageBadge) {
+					const stage = dealContext.deal_stage || dealContext.stage;
+					if (stage) {
+						dealStageBadge.textContent = stage;
+						dealStageBadge.classList.remove('hidden');
+					}
+				}
+				if (dealHealthBadge) {
+					const health = dealContext.health_status || dealContext.health;
+					if (health) {
+						dealHealthBadge.textContent = health;
+						dealHealthBadge.classList.remove('hidden');
+						dealHealthBadge.className = 'badge badge-xs font-mono font-semibold ';
+						if (health.toLowerCase().includes('risk')) {
+							dealHealthBadge.className += 'badge-error text-white';
+						} else if (health.toLowerCase().includes('strong') || health.toLowerCase().includes('healthy')) {
+							dealHealthBadge.className += 'badge-success text-white';
+						} else {
+							dealHealthBadge.className += 'badge-warning';
+						}
+					}
 				}
 			}
 
@@ -783,6 +403,20 @@ import Layout from '../layouts/Layout.astro';
 				switchAppTab(newKeys[0]);
 			}
 
+			// Tactical Decision Rationale Callout
+			let rationaleHtml = '';
+			if (data.decision_rationale) {
+				rationaleHtml = `
+					<div class="p-3 bg-base-200/90 rounded-xl border border-base-300 text-xs space-y-1.5 font-sans min-w-0 break-words">
+						<div class="flex items-center justify-between text-[11px] font-bold text-base-content/80 uppercase tracking-wider gap-2">
+							<span class="flex items-center gap-1.5 shrink-0">🧠 Tactical Decision Rationale</span>
+							${data.primary_risk ? `<span class="text-error font-medium normal-case truncate">⚠️ Risk: ${data.primary_risk}</span>` : ''}
+						</div>
+						<div class="text-base-content/85 leading-relaxed markdown-content">${renderMarkdown(data.decision_rationale)}</div>
+					</div>
+				`;
+			}
+
 			// Generated deliverables pill banner
 			let generatedPillsHtml = '';
 			if (newKeys.length > 0) {
@@ -792,9 +426,11 @@ import Layout from '../layouts/Layout.astro';
 						${newKeys.map((k) => {
 							const labels: Record<string, string> = {
 								battlecards: '🎴 Battlecards',
+								competitor: '🎯 Competitor Intelligence',
 								presentation: '📊 Pitch Deck',
 								email: '✉️ Proposal Email',
 								flowchart: '🗺️ Mutual Action Plan',
+								social: '🐦 Social Touchpoint',
 								suite: '🏨 Deal Suite'
 							};
 							return `
@@ -829,10 +465,11 @@ import Layout from '../layouts/Layout.astro';
 			}
 
 			turnDiv.innerHTML = `
-				<div class="card bg-base-100 border border-base-200/90 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3">
-					<div class="text-xs sm:text-sm text-base-content leading-relaxed whitespace-pre-line font-medium">
-						${data.agent_reply || 'Plan executed.'}
+				<div class="card bg-base-100 border border-base-200/90 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3 min-w-0 break-words overflow-hidden">
+					<div class="text-xs sm:text-sm text-base-content leading-relaxed font-medium markdown-content min-w-0 break-words">
+						${renderMarkdown(data.agent_reply || 'Plan executed.')}
 					</div>
+					${rationaleHtml}
 					${generatedPillsHtml}
 					${followUpsHtml}
 				</div>
@@ -865,6 +502,7 @@ import Layout from '../layouts/Layout.astro';
 
 			if (chatInput) chatInput.value = '';
 			appendUserMessage(text);
+			conversationHistory.push({ role: 'user', content: text });
 			const progBlock = appendProgressBlock();
 
 			if (sendBtn) {
@@ -879,6 +517,7 @@ import Layout from '../layouts/Layout.astro';
 					body: JSON.stringify({
 						message: text,
 						deal_context: dealContext,
+						history: conversationHistory.slice(-8),
 					}),
 				});
 
@@ -906,24 +545,24 @@ import Layout from '../layouts/Layout.astro';
 			if (chatInput) submitPrompt(chatInput.value);
 		});
 
-		// Starter Chips
-		chips.forEach((chip) => {
-			chip.addEventListener('click', () => {
-				const prompt = chip.getAttribute('data-prompt');
-				if (prompt) submitPrompt(prompt);
-			});
-		});
-
 		// Reset Session
-		resetBtn?.addEventListener('click', () => {
+		resetBtn?.addEventListener('click', async () => {
 			dealContext = {};
 			storedArtifacts = {};
+			conversationHistory = [];
+			try {
+				await fetch('/api/reset', { method: 'POST' });
+			} catch (e) {
+				console.warn('Could not reset server artifacts:', e);
+			}
 			if (chatStream) {
 				chatStream.innerHTML = '';
 				if (welcomeTurn) chatStream.appendChild(welcomeTurn);
 				welcomeTurn?.classList.remove('hidden');
 			}
 			if (dealTitleBadge) dealTitleBadge.textContent = 'New Opportunity';
+			if (dealStageBadge) dealStageBadge.classList.add('hidden');
+			if (dealHealthBadge) dealHealthBadge.classList.add('hidden');
 			updateSideBadges();
 			setSidePanelState(false);
 		});
@@ -949,6 +588,23 @@ import Layout from '../layouts/Layout.astro';
 						if (dealTitleBadge && dealContext.account_name) {
 							dealTitleBadge.textContent = `${dealContext.account_name} (${dealContext.deal_size || ''})`;
 						}
+						if (dealStageBadge && (dealContext.deal_stage || dealContext.stage)) {
+							dealStageBadge.textContent = dealContext.deal_stage || dealContext.stage;
+							dealStageBadge.classList.remove('hidden');
+						}
+						if (dealHealthBadge && (dealContext.health_status || dealContext.health)) {
+							const health = dealContext.health_status || dealContext.health;
+							dealHealthBadge.textContent = health;
+							dealHealthBadge.classList.remove('hidden');
+							dealHealthBadge.className = 'badge badge-xs font-mono font-semibold ';
+							if (health.toLowerCase().includes('risk')) {
+								dealHealthBadge.className += 'badge-error text-white';
+							} else if (health.toLowerCase().includes('strong') || health.toLowerCase().includes('healthy')) {
+								dealHealthBadge.className += 'badge-success text-white';
+							} else {
+								dealHealthBadge.className += 'badge-warning';
+							}
+						}
 					}
 					updateSideBadges();
 				}
@@ -957,8 +613,114 @@ import Layout from '../layouts/Layout.astro';
 			}
 		}
 
-		// Initialize
-		updateSideBadges();
+		// Attached Grounding Sources Management
+		const btnOpenAttachModal = document.getElementById('btn-open-attach-modal');
+		const attachSourceModal = document.getElementById('attach-source-modal') as HTMLDialogElement;
+		const modalSourceType = document.getElementById('modal-source-type') as HTMLSelectElement;
+		const modalSourceUrl = document.getElementById('modal-source-url') as HTMLInputElement;
+		const btnSubmitSource = document.getElementById('btn-submit-source');
+		const activeSourcesList = document.getElementById('active-sources-list');
+
+		btnOpenAttachModal?.addEventListener('click', () => {
+			attachSourceModal?.showModal();
+		});
+
+		async function loadSources() {
+			try {
+				const res = await fetch('/api/sources');
+				if (!res.ok) return;
+				const sources = await res.json();
+				renderActiveSources(sources);
+			} catch (e) {
+				console.warn('Could not load sources:', e);
+			}
+		}
+
+		function renderActiveSources(sources: any[]) {
+			if (!activeSourcesList) return;
+			activeSourcesList.innerHTML = '';
+			if (!Array.isArray(sources) || sources.length === 0) return;
+
+			sources.forEach((s) => {
+				const c = s.content || {};
+				const badge = document.createElement('div');
+				badge.className = 'badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs select-none max-w-[200px] truncate flex items-center shrink-0';
+				const icon = s.source_type === 'github' ? '🐙' : s.source_type === 'pdf' ? '📄' : '🌐';
+				badge.innerHTML = `
+					<span class="shrink-0">${icon}</span>
+					<span class="font-bold truncate max-w-[120px] inline-block">${c.title || c.url_or_path}</span>
+					<span class="text-success-content/80 shrink-0">✓</span>
+					<button type="button" class="btn-remove-source ml-0.5 hover:text-error cursor-pointer font-bold px-0.5 shrink-0" data-id="${s.id || c.url_or_path}" title="Remove source">✕</button>
+				`;
+				activeSourcesList.appendChild(badge);
+			});
+
+			activeSourcesList.querySelectorAll('.btn-remove-source').forEach((btn) => {
+				btn.addEventListener('click', async (e) => {
+					e.stopPropagation();
+					const sid = btn.getAttribute('data-id');
+					if (sid) {
+						try {
+							await fetch('/api/sources/' + encodeURIComponent(sid), { method: 'DELETE' });
+							await loadSources();
+						} catch (err) {
+							console.warn('Failed to delete source:', err);
+						}
+					}
+				});
+			});
+		}
+
+		btnSubmitSource?.addEventListener('click', async () => {
+			const type = modalSourceType?.value || 'github';
+			const url = modalSourceUrl?.value.trim();
+			if (!url) return;
+
+			if (btnSubmitSource) {
+				btnSubmitSource.setAttribute('disabled', 'true');
+				btnSubmitSource.textContent = 'Verifying...';
+			}
+
+			try {
+				const res = await fetch('/api/sources/ingest', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ source_type: type, url_or_path: url }),
+				});
+				if (res.ok) {
+					if (modalSourceUrl) modalSourceUrl.value = '';
+					attachSourceModal?.close();
+					await loadSources();
+				} else {
+					alert('Could not verify source. Check repository or URL.');
+				}
+			} catch (err) {
+				alert('Network error verifying source.');
+			} finally {
+				if (btnSubmitSource) {
+					btnSubmitSource.removeAttribute('disabled');
+					btnSubmitSource.textContent = 'Verify & Attach ↗';
+				}
+			}
+		});
+
+		modalSourceType?.addEventListener('change', () => {
+			const lbl = document.getElementById('modal-url-label');
+			if (!lbl) return;
+			if (modalSourceType.value === 'github') {
+				lbl.textContent = 'Repository URL / Name';
+				modalSourceUrl.placeholder = 'e.g. https://github.com/my-org/core-engine';
+			} else if (modalSourceType.value === 'website') {
+				lbl.textContent = 'Documentation URL';
+				modalSourceUrl.placeholder = 'e.g. https://docs.company.com/architecture';
+			} else {
+				lbl.textContent = 'PDF Path or Document URL';
+				modalSourceUrl.placeholder = 'e.g. https://company.com/soc2-audit.pdf';
+			}
+		});
+
+		// Initial Load
 		loadInitialArtifacts();
+		loadSources();
 	</script>
 </Layout>

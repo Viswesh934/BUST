@@ -10,7 +10,11 @@ from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-DB_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+if os.environ.get("AWS_LAMBDA_FUNCTION_NAME") or os.environ.get("LAMBDA_TASK_ROOT"):
+    DB_DIR = Path("/tmp/bust_data")
+else:
+    DB_DIR = Path(os.environ.get("BUST_DATA_DIR", Path(__file__).resolve().parent.parent.parent / "data"))
+
 DB_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DB_DIR / "bust.db"
 
@@ -204,3 +208,12 @@ def delete_artifact(artifact_id: str) -> bool:
         cursor = conn.execute("DELETE FROM artifacts WHERE id = ?", (artifact_id,))
         conn.commit()
         return cursor.rowcount > 0
+
+
+def clear_all_artifacts() -> int:
+    """Clear all stored artifacts from SQLite for clean demo reset."""
+    with _get_connection() as conn:
+        cursor = conn.execute("DELETE FROM artifacts")
+        conn.commit()
+        return cursor.rowcount
+

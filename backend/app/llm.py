@@ -21,7 +21,12 @@ def get_litellm_client(
         api_key=key,
         base_url=url,
     )
-    return neatlogs.wrap(client)
+    if hasattr(neatlogs, "wrap"):
+        try:
+            return neatlogs.wrap(client)
+        except Exception:
+            pass
+    return client
 
 
 def extract_json(text: str) -> Dict[str, Any]:

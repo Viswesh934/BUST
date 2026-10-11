@@ -2,134 +2,467 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Pitch & ROI Decks" description="Executive Presentations & Widescreen Slide Briefings">
-	<div class="space-y-6 w-full">
-		<!-- Header Toolbar -->
-		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
-			<div>
-				<div class="flex items-center gap-2.5">
-					<h1 class="text-xl font-bold tracking-tight text-base-content">Pitch & ROI Decks</h1>
-					<span class="badge badge-sm badge-neutral" id="deck-counter-badge">Active Repository</span>
+<Layout title="Pitch & ROI Decks — Presentation Mode" description="16:9 Widescreen Executive Slide Deck Studio" fullHeight={true}>
+	<!-- REAL PPT APPLICATION INTERFACE -->
+	<div class="flex flex-col h-full w-full min-h-0 overflow-hidden">
+		
+		<!-- TOP APPLICATION TOOLBAR -->
+		<div class="h-13 border-b border-base-300 px-4 flex items-center justify-between bg-base-100 shrink-0 gap-3">
+			<div class="flex items-center gap-3 min-w-0">
+				<span class="text-xl">📊</span>
+				<div class="min-w-0">
+					<h1 class="text-sm font-bold text-base-content truncate" id="deck-main-title">
+						Executive Presentation Deck
+					</h1>
+					<div class="flex items-center gap-2 text-[11px] text-base-content/60 font-mono">
+						<span id="deck-account-badge">Account: Loading...</span>
+						<span>•</span>
+						<span id="deck-slide-count-badge">0 Slides</span>
+					</div>
 				</div>
-				<p class="text-xs text-base-content/80 mt-1">
-					16:9 executive briefing presentations synthesized autonomously by the AI Sales Agent.
-				</p>
 			</div>
-			<!-- Top-Right Actions -->
-			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-				<a href="/" class="btn btn-sm btn-neutral gap-1.5 font-semibold">
-					<span>← Back to Plan</span>
+
+			<!-- PPT Controls -->
+			<div class="flex items-center gap-2 shrink-0">
+				<!-- Navigation shortcuts -->
+				<div class="flex items-center bg-base-200/80 rounded-lg p-0.5 border border-base-300 gap-0.5">
+					<button id="btn-prev-slide" type="button" class="btn btn-xs btn-ghost px-2 font-mono cursor-pointer" title="Previous Slide (←)">
+						◀ Prev
+					</button>
+					<span class="px-2.5 py-0.5 text-xs font-mono font-bold text-base-content bg-base-100 rounded-md border border-base-300/80 shadow-2xs whitespace-nowrap" id="slide-position-indicator">
+						Slide 1 of 1
+					</span>
+					<button id="btn-next-slide" type="button" class="btn btn-xs btn-ghost px-2 font-mono cursor-pointer" title="Next Slide (→)">
+						Next ▶
+					</button>
+				</div>
+
+				<!-- Present Fullscreen -->
+				<button id="btn-fullscreen" type="button" class="btn btn-xs btn-outline gap-1" title="Toggle Fullscreen (F)">
+					<span>🖥️ Present</span>
+				</button>
+
+				<!-- Real PPT Download -->
+				<button id="btn-download-ppt" type="button" class="btn btn-xs btn-neutral gap-1.5 font-semibold" title="Download standalone presentation deck">
+					<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+					<span>Download Deck</span>
+				</button>
+
+				<!-- Back to Plan -->
+				<a href="/" class="btn btn-xs btn-ghost text-base-content/70 hover:text-base-content">
+					← Plan
 				</a>
 			</div>
 		</div>
 
 		<!-- LOADING STATE -->
-		<div id="loading-state" class="py-16 text-center space-y-3">
-			<span class="loading loading-spinner loading-md text-primary"></span>
-			<p class="text-xs text-base-content/60 font-mono">Loading presentations from agent artifact store...</p>
+		<div id="loading-state" class="flex-1 flex flex-col items-center justify-center p-8 space-y-3">
+			<span class="loading loading-spinner loading-lg text-primary"></span>
+			<p class="text-xs text-base-content/60 font-mono">Loading presentation deck from artifact store...</p>
 		</div>
 
-		<!-- EMPTY STATE (Zero mock data) -->
-		<div id="empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center space-y-4">
+		<!-- EMPTY STATE (No dummy data) -->
+		<div id="empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-8 space-y-4 text-center">
 			<div class="w-16 h-16 rounded-2xl bg-base-200 border-2 border-base-300 flex items-center justify-center text-3xl shadow-xs">
 				📊
 			</div>
 			<div class="max-w-md space-y-1.5">
 				<h3 class="font-bold text-base text-base-content">No Pitch Decks Generated Yet</h3>
 				<p class="text-xs text-base-content/75 leading-relaxed">
-					Executive presentations are generated dynamically from your deal directives. Instruct the AI agent to build a presentation for your active opportunity.
+					Presentations are synthesized dynamically by the AI Sales Agent from your active deal directives. Return to Plan to formulate a pitch deck for your opportunity.
 				</p>
 			</div>
 			<a href="/" class="btn btn-sm btn-neutral font-semibold">
-				Go to Plan ⚡
+				Open Plan Workspace ⚡
 			</a>
 		</div>
 
-		<!-- REAL DECKS CONTAINER (Populated dynamically) -->
-		<div id="decks-container" class="hidden space-y-8">
-			<!-- Dynamically injected -->
+		<!-- REAL PPT WORKSPACE (Left Filmstrip + Right 16:9 Main Stage) -->
+		<div id="ppt-workspace" class="hidden flex-1 min-h-0 flex flex-row overflow-hidden bg-base-200/40">
+			
+			<!-- 1. LEFT FILMSTRIP (Slide Thumbnails) -->
+			<div class="w-64 sm:w-72 border-r border-base-300 bg-base-100 flex flex-col shrink-0 min-h-0">
+				<div class="p-3 border-b border-base-200 flex items-center justify-between text-xs font-bold text-base-content/70 uppercase tracking-wider shrink-0">
+					<span>Slides Filmstrip</span>
+					<span class="badge badge-xs badge-neutral font-mono" id="filmstrip-count">0</span>
+				</div>
+				<div class="flex-1 overflow-y-auto p-3 space-y-3" id="filmstrip-container">
+					<!-- Thumbnails injected via JS -->
+				</div>
+			</div>
+
+			<!-- 2. RIGHT / CENTER MAIN PRESENTATION STAGE -->
+			<div class="flex-1 min-h-0 flex flex-col p-4 sm:p-6 overflow-y-auto items-center justify-center relative">
+				
+				<!-- 16:9 Widescreen Presentation Canvas -->
+				<div id="slide-stage" class="w-full max-w-4xl min-h-[460px] md:min-h-[500px] aspect-[16/9] bg-base-100 rounded-2xl border-2 border-base-300 shadow-2xl p-5 sm:p-8 flex flex-col justify-between transition-all duration-300 select-none relative overflow-hidden shrink-0">
+					
+					<!-- Top Slide Watermark & Header -->
+					<div class="flex items-center justify-between border-b border-base-200/90 pb-3 gap-2">
+						<div class="flex items-center gap-2 min-w-0">
+							<span class="badge badge-sm badge-neutral font-bold tracking-wider uppercase text-[10px] truncate max-w-[150px] inline-block shrink-0" id="current-slide-tag">
+								EXECUTIVE SUMMARY
+							</span>
+							<span class="text-[10px] font-mono text-base-content/50 uppercase tracking-wider truncate">
+								CONFIDENTIAL BRIEFING
+							</span>
+						</div>
+						<div class="flex items-center gap-2 shrink-0">
+							<div class="badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs max-w-[180px] sm:max-w-[220px] truncate flex items-center shrink-0" id="current-slide-source-badge">
+								<span class="opacity-75 shrink-0">Source:</span>
+								<span id="current-slide-source-text" class="font-bold truncate max-w-[100px] sm:max-w-[140px] inline-block">github.com/bust-ai/core</span>
+								<span class="shrink-0">✓</span>
+							</div>
+							<div class="text-[11px] font-mono text-base-content/75 font-bold shrink-0 whitespace-nowrap" id="current-slide-index-badge">
+								SLIDE 1 OF 1
+							</div>
+						</div>
+					</div>
+
+					<!-- Center Slide Content -->
+					<div class="my-auto space-y-3 sm:space-y-4 py-2 flex-1 min-h-0 flex flex-col justify-center">
+						<div class="space-y-1">
+							<h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-base-content tracking-tight leading-snug break-words" id="current-slide-title">
+								Slide Title
+							</h2>
+							<p class="text-xs sm:text-sm text-base-content/75 font-medium leading-relaxed break-words" id="current-slide-subtitle">
+								Slide Subtitle / Executive Takeaway
+							</p>
+						</div>
+
+						<!-- Bullets Container with Internal Scroll if Content is Large -->
+						<div class="grid grid-cols-1 gap-2 sm:gap-2.5 overflow-y-auto max-h-[38vh] sm:max-h-[44vh] pr-1 py-1" id="current-slide-bullets">
+							<!-- Injected via JS -->
+						</div>
+					</div>
+
+					<!-- Bottom Slide Footer -->
+					<div class="pt-3 border-t border-base-200/90 flex items-center justify-between text-[10px] sm:text-[11px] text-base-content/60 font-mono gap-2">
+						<span id="current-slide-footer-account" class="truncate">Enterprise Partnership</span>
+						<span class="shrink-0">BUST Revenue Intelligence</span>
+						<span id="current-slide-footer-page" class="font-bold shrink-0">Slide 1 of 1</span>
+					</div>
+
+				</div>
+
+				<!-- SPEAKER NOTES DRAWER (Collapsible) -->
+				<div class="w-full max-w-4xl mt-3 bg-base-100 border border-base-300 rounded-xl p-3 shadow-xs">
+					<div class="flex items-center justify-between text-xs cursor-pointer select-none" id="toggle-notes-bar">
+						<div class="flex items-center gap-2 font-bold text-base-content">
+							<span>🎙️ AE Speaker Notes</span>
+							<span class="badge badge-xs badge-ghost text-[10px]">Private Talk-Track</span>
+						</div>
+						<span class="text-base-content/60 text-xs" id="notes-chevron">▼</span>
+					</div>
+					<div class="mt-2 text-xs text-base-content/85 leading-relaxed font-sans bg-base-200/50 p-2.5 rounded-lg border border-base-300/60 font-medium" id="current-speaker-notes">
+						No speaker notes recorded for this slide.
+					</div>
+				</div>
+
+			</div>
+
 		</div>
+
 	</div>
 
 	<script>
+		let activeDeck: any = null;
+		let slidesList: any[] = [];
+		let currentSlideIndex: number = 0;
+		let notesOpen: boolean = true;
+
 		const loadingState = document.getElementById('loading-state');
 		const emptyState = document.getElementById('empty-state');
-		const decksContainer = document.getElementById('decks-container');
-		const counterBadge = document.getElementById('deck-counter-badge');
+		const pptWorkspace = document.getElementById('ppt-workspace');
 
-		async function loadPresentations() {
+		// Header elements
+		const deckMainTitle = document.getElementById('deck-main-title');
+		const deckAccountBadge = document.getElementById('deck-account-badge');
+		const deckSlideCountBadge = document.getElementById('deck-slide-count-badge');
+		const slidePosIndicator = document.getElementById('slide-position-indicator');
+		const filmstripCount = document.getElementById('filmstrip-count');
+		const filmstripContainer = document.getElementById('filmstrip-container');
+
+		// Main stage elements
+		const slideStage = document.getElementById('slide-stage');
+		const currentSlideTag = document.getElementById('current-slide-tag');
+		const currentSlideIndexBadge = document.getElementById('current-slide-index-badge');
+		const currentSlideTitle = document.getElementById('current-slide-title');
+		const currentSlideSubtitle = document.getElementById('current-slide-subtitle');
+		const currentSlideBullets = document.getElementById('current-slide-bullets');
+		const currentSlideFooterAccount = document.getElementById('current-slide-footer-account');
+		const currentSlideFooterPage = document.getElementById('current-slide-footer-page');
+		const currentSpeakerNotes = document.getElementById('current-speaker-notes');
+
+		// Buttons
+		const btnPrev = document.getElementById('btn-prev-slide');
+		const btnNext = document.getElementById('btn-next-slide');
+		const btnFullscreen = document.getElementById('btn-fullscreen');
+		const btnDownload = document.getElementById('btn-download-ppt');
+		const toggleNotesBar = document.getElementById('toggle-notes-bar');
+		const notesChevron = document.getElementById('notes-chevron');
+
+		// Fetch real presentations from SQLite store
+		async function loadPresentation() {
 			try {
 				const res = await fetch('/api/artifacts');
-				if (!res.ok) throw new Error('Failed to fetch artifacts');
-				const artifacts = await res.json();
-				const deckArtifacts = artifacts.filter((a: any) => a.type === 'presentation');
+				if (!res.ok) throw new Error('Failed to load artifacts');
+				const all = await res.json();
+				const decks = all.filter((a: any) => a.type === 'presentation');
 
 				if (loadingState) loadingState.classList.add('hidden');
 
-				if (!deckArtifacts.length) {
+				if (!decks.length) {
 					if (emptyState) emptyState.classList.remove('hidden');
 					return;
 				}
 
-				if (decksContainer) decksContainer.classList.remove('hidden');
-				if (counterBadge) counterBadge.textContent = `${deckArtifacts.length} Active Decks`;
+				// Pick most recent deck
+				activeDeck = decks[0];
+				slidesList = activeDeck.content?.slides || [];
 
-				let html = '';
-				deckArtifacts.forEach((art: any) => {
-					const slides = art.content?.slides || [];
-					html += `
-						<div class="card bg-base-100 border-2 border-base-300 p-6 rounded-2xl shadow-sm space-y-5">
-							<div class="flex items-center justify-between border-b border-base-200 pb-3">
-								<div>
-									<h3 class="font-bold text-base text-base-content">${art.title || 'Executive Presentation'}</h3>
-									<span class="text-xs text-base-content/60 font-mono">Account: ${art.deal_context?.account_name || 'Enterprise'} (${slides.length} Slides)</span>
-								</div>
-								<span class="badge badge-xs badge-success font-semibold">Ready</span>
-							</div>
+				if (!slidesList.length) {
+					if (emptyState) emptyState.classList.remove('hidden');
+					return;
+				}
 
-							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-								${slides
-									.map(
-										(s: any) => `
-									<div class="p-5 bg-base-200/80 rounded-xl border border-base-300 space-y-3 flex flex-col justify-between">
-										<div class="space-y-1.5">
-											<div class="flex items-center justify-between">
-												<span class="badge badge-xs badge-neutral font-semibold">${s.tag || `Slide ${s.slide_number}`}</span>
-												<span class="text-[10px] font-mono text-base-content/50">#${s.slide_number}</span>
-											</div>
-											<h4 class="font-bold text-sm text-base-content">${s.title}</h4>
-											${s.subtitle ? `<p class="text-xs text-base-content/75">${s.subtitle}</p>` : ''}
-										</div>
+				if (pptWorkspace) pptWorkspace.classList.remove('hidden');
 
-										<ul class="text-xs text-base-content/90 list-disc list-inside space-y-1 font-medium">
-											${(s.bullets || []).map((b: string) => `<li>${b}</li>`).join('')}
-										</ul>
+				// Setup Header
+				const accountName = activeDeck.deal_context?.account_name || activeDeck.content?.account_name || 'Enterprise';
+				if (deckMainTitle) deckMainTitle.textContent = activeDeck.title || `${accountName} — Commercial Pitch Deck`;
+				if (deckAccountBadge) deckAccountBadge.textContent = `Account: ${accountName}`;
+				if (deckSlideCountBadge) deckSlideCountBadge.textContent = `${slidesList.length} Slides Total`;
+				if (filmstripCount) filmstripCount.textContent = `${slidesList.length} Total`;
 
-										${
-											s.speaker_note
-												? `
-											<div class="p-2.5 bg-base-100 rounded-lg text-[11px] text-base-content/70 border border-base-300/80">
-												<span class="font-semibold text-base-content">Speaker Note:</span> ${s.speaker_note}
-											</div>
-										`
-												: ''
-										}
-									</div>
-								`
-									)
-									.join('')}
-							</div>
-						</div>
-					`;
-				});
+				renderFilmstrip();
+				goToSlide(0);
 
-				if (decksContainer) decksContainer.innerHTML = html;
-			} catch (err) {
+			} catch (e) {
+				console.error(e);
 				if (loadingState) loadingState.classList.add('hidden');
 				if (emptyState) emptyState.classList.remove('hidden');
 			}
 		}
 
-		loadPresentations();
+		// Render Left Filmstrip Thumbnails
+		function renderFilmstrip() {
+			if (!filmstripContainer) return;
+			filmstripContainer.innerHTML = '';
+
+			slidesList.forEach((s: any, idx: number) => {
+				const thumb = document.createElement('div');
+				thumb.className = `filmstrip-thumb p-2.5 rounded-xl border transition-all cursor-pointer select-none space-y-1.5 ${
+					idx === currentSlideIndex
+						? 'border-primary ring-2 ring-primary/40 bg-base-200/90 shadow-sm'
+						: 'border-base-300 bg-base-200/40 hover:bg-base-200 hover:border-base-content/30'
+				}`;
+				thumb.setAttribute('data-index', idx.toString());
+
+				thumb.innerHTML = `
+					<div class="flex items-center justify-between text-[10px] gap-1">
+						<span class="badge badge-xs ${idx === currentSlideIndex ? 'badge-primary font-bold' : 'badge-neutral'} shrink-0">
+							Slide ${idx + 1} of ${slidesList.length}
+						</span>
+						<span class="font-mono text-base-content/60 truncate max-w-[90px] uppercase">
+							${s.tag || `Slide ${idx + 1}`}
+						</span>
+					</div>
+					<div class="text-xs font-bold text-base-content truncate">
+						${s.title}
+					</div>
+					<div class="text-[9px] font-mono text-success flex items-center gap-1 truncate pt-0.5 max-w-[180px]">
+						<span class="shrink-0">🔗</span>
+						<span class="truncate max-w-[150px] inline-block">${s.source || 'Verified Source'}</span>
+					</div>
+				`;
+
+				thumb.addEventListener('click', () => {
+					goToSlide(idx);
+				});
+
+				filmstripContainer.appendChild(thumb);
+			});
+		}
+
+		// Update Active Slide Display
+		function goToSlide(index: number) {
+			if (index < 0 || index >= slidesList.length) return;
+			currentSlideIndex = index;
+			const slide = slidesList[index];
+
+			// Update stage content with prominent Slide X of Y
+			if (currentSlideTag) currentSlideTag.textContent = slide.tag || `SLIDE ${index + 1} OF ${slidesList.length}`;
+			if (currentSlideIndexBadge) currentSlideIndexBadge.textContent = `SLIDE ${index + 1} OF ${slidesList.length}`;
+			const sourceText = document.getElementById('current-slide-source-text');
+			if (sourceText) sourceText.textContent = slide.source || 'Verified Source';
+			if (currentSlideTitle) currentSlideTitle.textContent = slide.title;
+			if (currentSlideSubtitle) currentSlideSubtitle.textContent = slide.subtitle || '';
+
+			// Bullets
+			if (currentSlideBullets) {
+				const bullets = slide.bullets || [];
+				currentSlideBullets.innerHTML = bullets
+					.map(
+						(b: string) => `
+						<div class="flex items-start gap-2.5 p-2 sm:p-2.5 rounded-xl bg-base-200/60 border border-base-300/70 text-xs sm:text-sm font-medium text-base-content/90 min-w-0 break-words">
+							<span class="text-primary font-bold shrink-0 mt-0.5">✓</span>
+							<span class="leading-relaxed break-words">${b}</span>
+						</div>
+					`
+					)
+					.join('');
+			}
+
+			// Footer
+			const accountName = activeDeck.deal_context?.account_name || 'Enterprise Partnership';
+			if (currentSlideFooterAccount) currentSlideFooterAccount.textContent = accountName;
+			if (currentSlideFooterPage) currentSlideFooterPage.textContent = `Slide ${index + 1} of ${slidesList.length}`;
+
+			// Indicator
+			if (slidePosIndicator) slidePosIndicator.textContent = `Slide ${index + 1} of ${slidesList.length}`;
+
+			// Speaker Notes
+			if (currentSpeakerNotes) {
+				currentSpeakerNotes.textContent = slide.speaker_note || 'Present key takeaway with confident operational delivery.';
+			}
+
+			// Update Filmstrip Selection
+			const thumbs = document.querySelectorAll('.filmstrip-thumb');
+			thumbs.forEach((t, i) => {
+				if (i === index) {
+					t.className = 'filmstrip-thumb p-2.5 rounded-xl border transition-all cursor-pointer select-none space-y-1.5 border-primary ring-2 ring-primary/40 bg-base-200/90 shadow-sm';
+					t.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+				} else {
+					t.className = 'filmstrip-thumb p-2.5 rounded-xl border transition-all cursor-pointer select-none space-y-1.5 border-base-300 bg-base-200/40 hover:bg-base-200 hover:border-base-content/30';
+				}
+			});
+		}
+
+		// Button listeners
+		btnPrev?.addEventListener('click', () => goToSlide(currentSlideIndex - 1));
+		btnNext?.addEventListener('click', () => goToSlide(currentSlideIndex + 1));
+
+		// Keyboard Navigation
+		window.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+				goToSlide(currentSlideIndex - 1);
+			} else if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+				goToSlide(currentSlideIndex + 1);
+			} else if (e.key === 'f' || e.key === 'F') {
+				toggleFullscreen();
+			}
+		});
+
+		// Fullscreen toggle
+		function toggleFullscreen() {
+			if (!slideStage) return;
+			if (!document.fullscreenElement) {
+				slideStage.requestFullscreen().catch((err) => console.warn(err));
+			} else {
+				document.exitFullscreen().catch((err) => console.warn(err));
+			}
+		}
+
+		btnFullscreen?.addEventListener('click', toggleFullscreen);
+
+		// Toggle Speaker Notes
+		toggleNotesBar?.addEventListener('click', () => {
+			notesOpen = !notesOpen;
+			if (currentSpeakerNotes) currentSpeakerNotes.classList.toggle('hidden', !notesOpen);
+			if (notesChevron) notesChevron.textContent = notesOpen ? '▼' : '▲';
+		});
+
+		// DOWNLOAD REAL STANDALONE PPT PRESENTATION DECK
+		btnDownload?.addEventListener('click', () => {
+			if (!slidesList.length) return;
+			const accountName = activeDeck.deal_context?.account_name || 'Enterprise';
+			const deckTitle = activeDeck.title || `${accountName} Presentation Deck`;
+
+			const htmlDoc = `<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>${deckTitle}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<style>
+		body { margin:0; padding:0; background:#0f172a; color:#f8fafc; font-family:system-ui,-apple-system,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; }
+		.deck-container { width:90vw; max-width:1200px; aspect-ratio:16/9; background:#1e293b; border-radius:16px; border:2px solid #334155; padding:48px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); }
+		.header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:16px; }
+		.tag { background:#3b82f6; color:#fff; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; text-transform:uppercase; }
+		.confidential { font-size:11px; color:#94a3b8; font-family:monospace; }
+		.title { font-size:36px; font-weight:800; margin:16px 0 8px 0; }
+		.subtitle { font-size:16px; color:#94a3b8; margin-bottom:24px; }
+		.bullet { display:flex; align-items:center; gap:12px; background:#0f172a; border:1px solid #334155; padding:14px 18px; border-radius:12px; margin-bottom:10px; font-size:15px; }
+		.check { color:#10b981; font-weight:bold; }
+		.footer { display:flex; justify-content:space-between; border-top:1px solid #334155; padding-top:14px; font-size:12px; color:#64748b; font-family:monospace; }
+		.controls { margin-top:20px; display:flex; gap:12px; align-items:center; }
+		button { background:#334155; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; }
+		button:hover { background:#475569; }
+		@media print { .controls { display:none; } .deck-container { width:100%; aspect-ratio:16/9; page-break-after:always; } }
+	</style>
+</head>
+<body>
+	<div class="deck-container" id="presentation-stage">
+		<div class="header">
+			<span class="tag" id="slide-tag"></span>
+			<span class="confidential">CONFIDENTIAL • BUST REVENUE ENGINE</span>
+		</div>
+		<div>
+			<h1 class="title" id="slide-title"></h1>
+			<p class="subtitle" id="slide-sub"></p>
+			<div id="slide-bullets"></div>
+		</div>
+		<div class="footer">
+			<span>${accountName}</span>
+			<span id="slide-num"></span>
+		</div>
+	</div>
+
+	<div class="controls">
+		<button onclick="prev()">◀ Previous</button>
+		<span id="pos-label" style="font-family:monospace; font-weight:bold;"></span>
+		<button onclick="next()">Next ▶</button>
+		<button onclick="window.print()">🖨️ Print to PDF</button>
+	</div>
+
+	<script>
+		const slides = ${JSON.stringify(slidesList)};
+		let cur = 0;
+		function render(i) {
+			if (i < 0 || i >= slides.length) return;
+			cur = i;
+			const s = slides[i];
+			document.getElementById('slide-tag').textContent = s.tag || 'Slide ' + (i+1);
+			document.getElementById('slide-title').textContent = s.title;
+			document.getElementById('slide-sub').textContent = s.subtitle || '';
+			document.getElementById('slide-bullets').innerHTML = (s.bullets || []).map(b => '<div class="bullet"><span class="check">✓</span><span>' + b + '</span></div>').join('');
+			document.getElementById('slide-num').textContent = 'Slide ' + (i+1) + ' of ' + slides.length;
+			document.getElementById('pos-label').textContent = (i+1) + ' / ' + slides.length;
+		}
+		function prev() { render(cur - 1); }
+		function next() { render(cur + 1); }
+		window.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowLeft') prev();
+			if (e.key === 'ArrowRight' || e.key === ' ') next();
+		});
+		render(0);
+	<\/script>
+</body>
+</html>`;
+
+			const blob = new Blob([htmlDoc], { type: 'text/html' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `${accountName.replace(/\s+/g, '_')}_Presentation_Deck.html`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		});
+
+		// Initialize
+		loadPresentation();
 	</script>
 </Layout>

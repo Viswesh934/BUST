@@ -20,8 +20,19 @@ const {
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>{title}</title>
 		<meta name="description" content={description} />
+		<script is:inline define:vars={{ backendUrl: import.meta.env.PUBLIC_BACKEND_URL || '' }}>
+			if (backendUrl) {
+				const cleanBase = backendUrl.replace(/\/+$/, '');
+				const originalFetch = window.fetch;
+				window.fetch = function(input, init) {
+					if (typeof input === 'string' && (input.startsWith('/api') || input.startsWith('/health'))) {
+						input = cleanBase + input;
+					}
+					return originalFetch(input, init);
+				};
+			}
+		</script>
 	</head>
 	<body class={fullHeight ? "h-screen max-h-screen overflow-hidden bg-base-100 text-base-content antialiased flex flex-col" : "min-h-screen bg-base-100 text-base-content antialiased flex flex-col"}>
 		<!-- Clean Minimalist Header -->

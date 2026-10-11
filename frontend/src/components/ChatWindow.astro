@@ -1,0 +1,122 @@
+---
+// ChatWindow.astro: Expansive Planner Chat Interface
+---
+
+<div class="flex-1 min-h-0 flex flex-col h-full overflow-hidden">
+	<!-- TOP CHAT BAR -->
+	<div class="w-full max-w-4xl xl:max-w-5xl mx-auto flex items-center justify-between pb-2.5 border-b border-base-300 gap-2 shrink-0 px-2 sm:px-4">
+		<div class="flex items-center gap-2 flex-wrap">
+			<h1 class="text-base font-bold text-base-content">Plan</h1>
+			<span class="text-xs text-base-content/50">•</span>
+			<span class="text-xs font-mono text-base-content/70 truncate max-w-[180px]" id="deal-title-badge">New Opportunity</span>
+			<span class="badge badge-xs badge-neutral hidden font-mono" id="deal-stage-badge">Discovery</span>
+			<span class="badge badge-xs badge-warning hidden font-mono" id="deal-health-badge">Active</span>
+		</div>
+
+		<div class="flex items-center gap-2">
+			<!-- Reset Session -->
+			<button id="btn-reset-session" type="button" class="btn btn-xs btn-ghost text-base-content/60 hover:text-base-content gap-1 cursor-pointer">
+				<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+				<span>Reset</span>
+			</button>
+		</div>
+	</div>
+
+	<!-- EXPANSIVE CONVERSATION STREAM -->
+	<div id="chat-stream" class="flex-1 min-h-0 overflow-y-auto space-y-6 text-xs sm:text-sm p-2 sm:p-4 pb-6 font-sans w-full max-w-4xl xl:max-w-5xl mx-auto">
+		<!-- Welcome Turn -->
+		<div id="welcome-turn" class="py-14 sm:py-20 text-center space-y-4 max-w-2xl mx-auto">
+			<div class="w-12 h-12 rounded-2xl bg-base-200 border border-base-300 mx-auto flex items-center justify-center text-xl font-bold shadow-xs">
+				⚡
+			</div>
+			<div class="space-y-1.5">
+				<h2 class="text-xl sm:text-2xl font-bold text-base-content tracking-tight">
+					Plan your next enterprise deal
+				</h2>
+				<p class="text-xs sm:text-sm text-base-content/75 leading-relaxed">
+					Drop raw discovery notes, customer objections, or deal parameters. The agent analyzes strategy, asks follow-up questions, and synthesizes full sales deliverables to the side.
+				</p>
+			</div>
+
+			<div class="pt-2 text-[11px] sm:text-xs text-base-content/60 font-mono">
+				Ready for deal input • Multi-turn cognitive context active
+			</div>
+		</div>
+	</div>
+
+	<!-- EXPANSIVE BOTTOM PROMPT BAR -->
+	<div class="w-full max-w-4xl xl:max-w-5xl mx-auto shrink-0 pt-2 pb-1 px-2 sm:px-4 bg-base-100 space-y-1.5">
+		<!-- Attached Grounding Sources Tray -->
+		<div id="sources-tray" class="flex items-center gap-1.5 flex-wrap text-[11px] max-w-full overflow-hidden">
+			<button id="btn-open-attach-modal" type="button" class="btn btn-xs btn-outline rounded-lg gap-1 font-mono text-[10px] text-base-content/75 hover:text-base-content cursor-pointer shrink-0">
+				<span>+ Attach Source</span>
+				<span class="text-[9px] opacity-60">(GitHub / Docs / PDF)</span>
+			</button>
+			<div id="active-sources-list" class="flex items-center gap-1.5 flex-wrap min-w-0 max-w-full overflow-hidden">
+				<!-- Injected active source badges -->
+			</div>
+		</div>
+
+		<form id="chat-form" class="card bg-base-200/80 border border-base-300 p-2 sm:p-2.5 rounded-2xl shadow-xs flex flex-row items-center gap-2">
+			<input
+				id="chat-input"
+				type="text"
+				class="input input-sm sm:input-md flex-1 bg-transparent border-0 text-xs sm:text-sm text-base-content focus:outline-none"
+				placeholder="Plan a deal (or paste a GitHub repo/docs link to ground technically...)"
+				autocomplete="off"
+			/>
+			<button id="btn-send-directive" type="submit" class="btn btn-sm btn-neutral px-4 font-semibold shadow-xs rounded-xl cursor-pointer">
+				Plan ⏎
+			</button>
+		</form>
+	</div>
+
+	<!-- ATTACH SOURCE MODAL -->
+	<dialog id="attach-source-modal" class="modal">
+		<div class="modal-box bg-base-100 border-2 border-base-300 rounded-2xl max-w-md p-6 space-y-4">
+			<div class="flex items-center justify-between border-b border-base-200 pb-2.5">
+				<div class="flex items-center gap-2">
+					<span class="text-lg">🔗</span>
+					<h3 class="font-bold text-sm text-base-content">Attach Technical Grounding Source</h3>
+				</div>
+				<form method="dialog">
+					<button class="btn btn-xs btn-circle btn-ghost">✕</button>
+				</form>
+			</div>
+
+			<p class="text-xs text-base-content/75 leading-relaxed">
+				Ground your presentations, architecture slides, and objection battlecards in real company technical sources so deliverables cite verified facts.
+			</p>
+
+			<div class="space-y-3 text-xs">
+				<div>
+					<label class="block font-bold text-base-content mb-1">Source Type</label>
+					<select id="modal-source-type" class="select select-sm select-bordered w-full rounded-xl text-xs">
+						<option value="github">🐙 GitHub Repository (README / Architecture)</option>
+						<option value="website">🌐 Technical Documentation / Website</option>
+						<option value="pdf">📄 Whitepaper / Security Audit (PDF)</option>
+					</select>
+				</div>
+
+				<div>
+					<label class="block font-bold text-base-content mb-1" id="modal-url-label">Repository URL / Name</label>
+					<input
+						id="modal-source-url"
+						type="text"
+						class="input input-sm input-bordered w-full rounded-xl text-xs font-mono"
+						placeholder="e.g. https://github.com/my-org/core-engine"
+					/>
+				</div>
+			</div>
+
+			<div class="flex items-center justify-end gap-2 pt-2 border-t border-base-200">
+				<form method="dialog">
+					<button class="btn btn-sm btn-ghost">Cancel</button>
+				</form>
+				<button id="btn-submit-source" type="button" class="btn btn-sm btn-neutral font-semibold rounded-xl gap-1 cursor-pointer">
+					<span>Verify & Attach ↗</span>
+				</button>
+			</div>
+		</div>
+	</dialog>
+</div>

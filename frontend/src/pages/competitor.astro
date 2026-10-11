@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Competitor Intelligence" description="Executive Competitive Dossier & Crustdata B2B Intelligence">
+	<div class="space-y-6 w-full max-w-5xl mx-auto min-w-0">
+		<!-- Header Toolbar -->
+		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
+			<div>
+				<div class="flex items-center gap-2.5">
+					<h1 class="text-xl font-bold tracking-tight text-base-content flex items-center gap-2">
+						<span>🎯 Competitor Intelligence</span>
+						<span class="badge badge-sm badge-warning font-semibold" id="comp-header-badge">Incumbent</span>
+					</h1>
+					<span class="badge badge-sm badge-neutral font-mono truncate max-w-[140px]" id="comp-name-badge">Loading...</span>
+				</div>
+				<p class="text-xs text-base-content/80 mt-1">
+					Full executive competitive teardown: online public revenue metrics, Crustdata B2B intelligence, bake-off landmines, and head-to-head differentiators.
+				</p>
+			</div>
+			
+			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+				<a href="/" class="btn btn-sm btn-neutral gap-1.5 font-semibold">
+					<span>← Back to Plan</span>
+				</a>
+			</div>
+		</div>
+
+		<!-- LOADING STATE -->
+		<div id="loading-state" class="py-16 text-center space-y-3">
+			<span class="loading loading-spinner loading-md text-primary"></span>
+			<p class="text-xs text-base-content/60 font-mono">Loading competitor dossier from agent artifact store...</p>
+		</div>
+
+		<!-- EMPTY STATE -->
+		<div id="empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center space-y-4">
+			<div class="w-16 h-16 rounded-2xl bg-base-200 border-2 border-base-300 flex items-center justify-center text-3xl shadow-xs">
+				🎯
+			</div>
+			<div class="max-w-md space-y-1.5">
+				<h3 class="font-bold text-base text-base-content">No Competitor Analysis Generated Yet</h3>
+				<p class="text-xs text-base-content/75 leading-relaxed">
+					Direct the AI sales agent in Plan with an incumbent competitor name (e.g. "We are selling against Datadog") to automatically generate revenue intelligence, Crustdata B2B firmographics, and battlecards.
+				</p>
+			</div>
+			<a href="/" class="btn btn-sm btn-neutral font-semibold">
+				Go to Plan ⚡
+			</a>
+		</div>
+
+		<!-- CLEAN TABLE CONTAINER -->
+		<div id="dossier-content" class="hidden min-w-0">
+			<!-- Rendered via renderCompetitorView clean table -->
+		</div>
+	</div>
+
+	<script>
+		import { renderCompetitorView } from '../components/deliverables/competitor';
+
+		const loadingState = document.getElementById('loading-state');
+		const emptyState = document.getElementById('empty-state');
+		const dossierContent = document.getElementById('dossier-content');
+		const compNameBadge = document.getElementById('comp-name-badge');
+
+		async function loadCompetitorArtifact() {
+			try {
+				const res = await fetch('/api/artifacts');
+				if (!res.ok) throw new Error('Failed to fetch artifacts');
+				const list = await res.json();
+				
+				const compArt = Array.isArray(list) 
+					? list.find((a: any) => a.type === 'competitor' || a.envelope_json?.type === 'competitor')
+					: null;
+
+				if (loadingState) loadingState.classList.add('hidden');
+
+				if (!compArt) {
+					if (emptyState) emptyState.classList.remove('hidden');
+					return;
+				}
+
+				const art = compArt.content || (compArt.envelope_json && compArt.envelope_json.content) || compArt;
+				const comp = art.content || art;
+
+				if (compNameBadge) {
+					compNameBadge.textContent = comp.competitor_name || 'Competitor';
+				}
+
+				if (dossierContent) {
+					dossierContent.classList.remove('hidden');
+					renderCompetitorView(dossierContent, { content: comp }, compArt.deal_context || {}, async () => {
+						const refreshRes = await fetch('/api/competitor/deep-research', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								competitor: comp.competitor_name || 'Competitor',
+								account_name: 'Enterprise',
+							}),
+						});
+						if (refreshRes.ok) {
+							const refreshData = await refreshRes.json();
+							if (refreshData.artifact?.content) {
+								comp.crustdata_research = refreshData.artifact.content;
+								renderCompetitorView(dossierContent, { content: comp }, compArt.deal_context || {});
+							}
+						}
+					});
+				}
+
+			} catch (e) {
+				console.error(e);
+				if (loadingState) loadingState.classList.add('hidden');
+				if (emptyState) emptyState.classList.remove('hidden');
+			}
+		}
+
+		loadCompetitorArtifact();
+	</script>
+</Layout>

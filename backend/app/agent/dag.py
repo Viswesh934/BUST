@@ -9,6 +9,8 @@ from app.tools.battlecards import create_battlecards
 from app.tools.flowchart import create_flowchart
 from app.tools.email import create_email
 from app.tools.presentation import create_presentation
+from app.tools.social import create_social_touchpoint
+from app.tools.competitor import analyze_competitor_intelligence
 from app.services.artifact_store import publish_artifact
 
 logger = logging.getLogger(__name__)
@@ -43,7 +45,7 @@ class SalesDAGExecutionEngine:
     Features:
     - Topological readiness resolution
     - Concurrent asynchronous execution of independent nodes
-    - Context pipelining from upstream deliverables to downstream nodes
+    - Deep context pipelining from upstream deliverables and cfo.ai financial metrics
     - Self-healing retry mechanism
     - Full telemetry step records for coding-agent progress reporting
     """
@@ -59,18 +61,26 @@ class SalesDAGExecutionEngine:
     def add_node(self, node: DAGNode) -> None:
         self.nodes[node.id] = node
 
-    def build_plan(self, plan_flags: Dict[str, bool]) -> None:
+    def build_plan(
+        self,
+        plan_flags: Dict[str, Any],
+        tool_briefs: Optional[Dict[str, str]] = None,
+    ) -> None:
         """
-        Dynamically constructs the execution DAG based on agent intent flags.
+        Dynamically constructs the execution DAG based on agent intent flags and tailored briefs.
         Nodes:
         - battlecards: Objection handling cards & differentiators
         - flowchart: 6-stage Mutual Action Plan roadmap
         - email: Follow-up proposal email (depends on battlecards & flowchart)
         - presentation: Executive briefing deck (depends on battlecards & flowchart)
+        - social: Executive touchpoint for X / LinkedIn
         - suite: Luxury Deal Room guest keycard pass (depends on battlecards)
         """
+        briefs = tool_briefs or {}
+
         # Node 1: Battlecards
         if bool(plan_flags.get("create_battlecards", False)):
+            bc_notes = briefs.get("battlecards_brief") or self.user_instruction
             self.add_node(
                 DAGNode(
                     id="node_battlecards",
@@ -79,15 +89,16 @@ class SalesDAGExecutionEngine:
                     depends_on=[],
                     inputs={
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
-                        "notes": self.user_instruction,
+                        "notes": bc_notes,
                         "competitor": self.deal_context.get("competitor", "LegacyVendor"),
-                        "deal_size": self.deal_context.get("deal_size", "$150,000 ARR"),
+                        "deal_size": self.deal_context.get("deal_size", ""),
                     },
                 )
             )
 
         # Node 2: MAP Flowchart
         if bool(plan_flags.get("create_flowchart", False)):
+            fc_notes = briefs.get("flowchart_brief") or self.user_instruction
             self.add_node(
                 DAGNode(
                     id="node_flowchart",
@@ -96,7 +107,7 @@ class SalesDAGExecutionEngine:
                     depends_on=[],
                     inputs={
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
-                        "notes": self.user_instruction,
+                        "notes": fc_notes,
                         "target_date": "Oct 28, 2026",
                     },
                 )
@@ -110,6 +121,7 @@ class SalesDAGExecutionEngine:
             if "node_flowchart" in self.nodes:
                 email_deps.append("node_flowchart")
 
+            email_ctx = briefs.get("email_brief") or self.user_instruction
             self.add_node(
                 DAGNode(
                     id="node_email",
@@ -119,7 +131,7 @@ class SalesDAGExecutionEngine:
                     inputs={
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
                         "recipient": self.deal_context.get("recipient", "Sarah Jenkins (VP Sales Ops)"),
-                        "context": self.user_instruction,
+                        "context": email_ctx,
                         "tone": "Executive Persuasive",
                     },
                 )
@@ -131,6 +143,7 @@ class SalesDAGExecutionEngine:
             if "node_flowchart" in self.nodes:
                 deck_deps.append("node_flowchart")
 
+            deck_ctx = briefs.get("presentation_brief") or self.user_instruction
             self.add_node(
                 DAGNode(
                     id="node_presentation",
@@ -139,13 +152,36 @@ class SalesDAGExecutionEngine:
                     depends_on=deck_deps,
                     inputs={
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
-                        "context": self.user_instruction,
-                        "deal_size": self.deal_context.get("deal_size", "$150,000 ARR"),
+                        "context": deck_ctx,
+                        "deal_size": self.deal_context.get("deal_size", ""),
                     },
                 )
             )
 
-        # Node 5: Deal Room Keycard Suite (depends on Battlecards)
+        # Node 5: Executive Social Touchpoint (depends on Battlecards)
+        if bool(plan_flags.get("create_social", False)):
+            social_deps = []
+            if "node_battlecards" in self.nodes:
+                social_deps.append("node_battlecards")
+
+            social_ctx = briefs.get("social_brief") or self.user_instruction
+            self.add_node(
+                DAGNode(
+                    id="node_social",
+                    name="Executive Social Touchpoint (X/LinkedIn)",
+                    tool_name="create_social",
+                    depends_on=social_deps,
+                    inputs={
+                        "account_name": self.deal_context.get("account_name", "ACME Corp"),
+                        "recipient": self.deal_context.get("recipient", "Executive Sponsor"),
+                        "competitor": self.deal_context.get("competitor", ""),
+                        "deal_size": self.deal_context.get("deal_size", ""),
+                        "context": social_ctx,
+                    },
+                )
+            )
+
+        # Node 6: Deal Room Keycard Suite (depends on Battlecards)
         if bool(plan_flags.get("publish_suite", False)):
             suite_deps = []
             if "node_battlecards" in self.nodes:
@@ -163,52 +199,122 @@ class SalesDAGExecutionEngine:
                 )
             )
 
+        # Node 7: Competitor Intelligence & Financials
+        if bool(plan_flags.get("analyze_competitor", False)):
+            comp_brief = briefs.get("competitor_brief") or self.user_instruction
+            self.add_node(
+                DAGNode(
+                    id="node_competitor",
+                    name="Competitor Intelligence & Financials",
+                    tool_name="analyze_competitor",
+                    depends_on=[],
+                    inputs={
+                        "competitor": self.deal_context.get("competitor") or "Competitor",
+                        "account_name": self.deal_context.get("account_name", "Enterprise"),
+                        "deal_size": self.deal_context.get("deal_size", ""),
+                        "context": comp_brief,
+                    },
+                )
+            )
+
     def _execute_node_sync(self, node: DAGNode) -> Any:
-        """Executes a single tool node with context pipelining and retry support."""
+        """Executes a single tool node with deep context pipelining and retry support."""
         tool = node.tool_name
         inputs = node.inputs
+        cfo_m = self.deal_context.get("cfo_metrics") or {}
+        financial_grounding = ""
+        if cfo_m.get("annual_projected_savings"):
+            financial_grounding = f"Financial Metrics (cfo.ai): Deal ARR: {cfo_m.get('deal_arr')}, Break-Even: {cfo_m.get('payback_period_days')}, Projected Annual Savings: {cfo_m.get('annual_projected_savings')}, ROI: {cfo_m.get('projected_roi')}"
 
-        # Context Pipelining: Enhance inputs using upstream results
-        if tool == "create_email":
-            upstream_notes = [self.user_instruction]
-            if "node_battlecards" in self.nodes and self.nodes["node_battlecards"].result:
-                bc_res = self.nodes["node_battlecards"].result
-                top_card = (bc_res.get("content", {}).get("cards") or [{}])[0]
-                if top_card.get("talk_track"):
-                    upstream_notes.append(f"Primary Objection Response: {top_card.get('talk_track')}")
-            if "node_flowchart" in self.nodes and self.nodes["node_flowchart"].result:
-                fc_res = self.nodes["node_flowchart"].result
-                target_date = fc_res.get("content", {}).get("target_close_date", "Month-End")
-                upstream_notes.append(f"Target MAP Close Date: {target_date}")
-            inputs["context"] = "\n".join(upstream_notes)
-
-        # Execute Tool
+        # Context Pipelining for Battlecards: Include financial model
         if tool == "create_battlecards":
+            if financial_grounding:
+                inputs["notes"] = f"{inputs.get('notes', self.user_instruction)}\n{financial_grounding}"
             return create_battlecards(
                 account_name=inputs["account_name"],
                 notes=inputs["notes"],
                 competitor=inputs.get("competitor", ""),
                 deal_size=inputs.get("deal_size", ""),
             )
+
+        # Context Pipelining for MAP:
         elif tool == "create_flowchart":
             return create_flowchart(
                 account_name=inputs["account_name"],
                 notes=inputs["notes"],
                 target_date=inputs.get("target_date", "Oct 28, 2026"),
             )
+
+        # Context Pipelining for Executive Presentation Deck:
+        elif tool == "create_presentation":
+            deck_notes = [inputs.get("context", self.user_instruction)]
+            if "node_battlecards" in self.nodes and self.nodes["node_battlecards"].result:
+                bc_res = self.nodes["node_battlecards"].result
+                cards = bc_res.get("content", {}).get("cards") or []
+                if cards:
+                    obj_lines = [f"- Countering '{c.get('objection_quote')}' -> {c.get('winning_response') or c.get('talk_track')}" for c in cards[:2]]
+                    deck_notes.append("Key Competitive Talk-Tracks to reflect in value pillars:\n" + "\n".join(obj_lines))
+            if financial_grounding:
+                deck_notes.append(f"Commercial Terms Slide Grounding: {financial_grounding}")
+            try:
+                from app.services.grounding import get_all_grounded_sources
+                sources = get_all_grounded_sources()
+                if sources:
+                    src_lines = [f"- {s.get('content', {}).get('title')} ({s.get('content', {}).get('url_or_path')}): {', '.join(s.get('content', {}).get('key_technical_facts', [])[:2])}" for s in sources]
+                    deck_notes.append("Verified Technical Grounding Sources to cite on slides:\n" + "\n".join(src_lines))
+            except Exception as e:
+                pass
+            inputs["context"] = "\n\n".join(deck_notes)
+
+            return create_presentation(
+                account_name=inputs["account_name"],
+                context=inputs["context"],
+                deal_size=inputs.get("deal_size", ""),
+            )
+
+        # Context Pipelining for Proposal Email:
         elif tool == "create_email":
+            upstream_notes = [inputs.get("context", self.user_instruction)]
+            if "node_battlecards" in self.nodes and self.nodes["node_battlecards"].result:
+                bc_res = self.nodes["node_battlecards"].result
+                top_card = (bc_res.get("content", {}).get("cards") or [{}])[0]
+                if top_card.get("talk_track") or top_card.get("winning_response"):
+                    upstream_notes.append(f"Primary Objection Winning Response: {top_card.get('winning_response') or top_card.get('talk_track')}")
+            if "node_flowchart" in self.nodes and self.nodes["node_flowchart"].result:
+                fc_res = self.nodes["node_flowchart"].result
+                target_date = fc_res.get("content", {}).get("target_close_date", "Month-End")
+                upstream_notes.append(f"Target Joint MAP Close Date: {target_date}")
+            if financial_grounding:
+                upstream_notes.append(f"Financial Justification: {financial_grounding}")
+            inputs["context"] = "\n\n".join(upstream_notes)
+
             return create_email(
                 account_name=inputs["account_name"],
                 recipient=inputs.get("recipient", "Buyer Sponsor"),
-                context=inputs.get("context", self.user_instruction),
+                context=inputs["context"],
                 tone=inputs.get("tone", "Executive Persuasive"),
             )
-        elif tool == "create_presentation":
-            return create_presentation(
+
+        # Context Pipelining for Social Outreach:
+        elif tool == "create_social":
+            social_notes = [inputs.get("context", self.user_instruction)]
+            if "node_battlecards" in self.nodes and self.nodes["node_battlecards"].result:
+                bc_res = self.nodes["node_battlecards"].result
+                top_card = (bc_res.get("content", {}).get("cards") or [{}])[0]
+                if top_card.get("objection_quote"):
+                    social_notes.append(f"Core Prospect Pain: {top_card.get('objection_quote')}")
+            if financial_grounding:
+                social_notes.append(financial_grounding)
+            inputs["context"] = "\n\n".join(social_notes)
+
+            return create_social_touchpoint(
                 account_name=inputs["account_name"],
-                context=inputs.get("context", self.user_instruction),
-                deal_size=inputs.get("deal_size", "$150,000 ARR"),
+                recipient=inputs.get("recipient", "Executive Sponsor"),
+                competitor=inputs.get("competitor", ""),
+                context=inputs["context"],
+                deal_size=inputs.get("deal_size", ""),
             )
+
         elif tool == "publish_suite":
             bc_node = self.nodes.get("node_battlecards")
             bc_id = bc_node.result.get("id") if bc_node and bc_node.result else None
@@ -225,6 +331,13 @@ class SalesDAGExecutionEngine:
                 "suite_name": f"Executive Suite: {inputs['account_name']}",
                 "access_url": f"/suite/suite_{inputs['account_name'].lower().replace(' ', '')}_live",
             }
+        elif tool == "analyze_competitor":
+            return analyze_competitor_intelligence(
+                competitor=inputs.get("competitor", "Competitor"),
+                account_name=inputs.get("account_name", "Enterprise"),
+                deal_size=inputs.get("deal_size", ""),
+                context=inputs.get("context", self.user_instruction),
+            )
         else:
             raise ValueError(f"Unknown tool name: {tool}")
 
@@ -247,7 +360,9 @@ class SalesDAGExecutionEngine:
                     "create_flowchart": "flowchart",
                     "create_email": "email",
                     "create_presentation": "presentation",
+                    "create_social": "social",
                     "publish_suite": "suite",
+                    "analyze_competitor": "competitor",
                 }
                 art_key = artifact_key_map.get(node.tool_name)
                 if art_key and result:
@@ -266,6 +381,10 @@ class SalesDAGExecutionEngine:
                     output_summary = f"Subject: '{subj}' drafted"
                 elif node.tool_name == "publish_suite" and isinstance(result, dict):
                     output_summary = f"Digital Keycard Pass: {result.get('share_id')}"
+                elif node.tool_name == "analyze_competitor" and isinstance(result, dict):
+                    c_name = result.get("content", {}).get("competitor_name", "Competitor")
+                    rev = result.get("content", {}).get("revenue_intelligence", {}).get("revenue_estimate", "")
+                    output_summary = f"{c_name} intelligence analyzed ({rev})"
 
                 self.step_records.append(
                     DAGStepRecord(
@@ -297,7 +416,6 @@ class SalesDAGExecutionEngine:
                     return
                 time.sleep(0.1)
 
-    @neatlogs.span(kind="WORKFLOW", name="sales-dag-orchestration")
     def run(self) -> Dict[str, Any]:
         """
         Executes the DAG graph via topological resolution.

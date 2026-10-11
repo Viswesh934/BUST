@@ -76,7 +76,6 @@ You MUST return valid JSON adhering to this schema:
 """
 
 
-@neatlogs.span(kind="TOOL", name="create_flowchart")
 def create_flowchart(account_name: str, notes: str, target_date: str = "") -> Dict[str, Any]:
     """Generate structured Mutual Action Plan roadmap."""
     settings = get_settings()

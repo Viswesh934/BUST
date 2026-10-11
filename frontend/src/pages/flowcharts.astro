@@ -2,131 +2,381 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Mutual Action Plans" description="Deal Closing Roadmaps & Joint Execution Pipelines">
-	<div class="space-y-6 w-full">
-		<!-- Header Toolbar -->
-		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
-			<div>
-				<div class="flex items-center gap-2.5">
-					<h1 class="text-xl font-bold tracking-tight text-base-content">Mutual Action Plans (MAP)</h1>
-					<span class="badge badge-sm badge-neutral" id="map-counter-badge">Active Repository</span>
+<Layout title="Mutual Action Plan — Closing Transit Map" description="Interactive Deal Journey & Closing Milestone Transit Map" fullHeight={true}>
+	<div class="flex flex-col h-full w-full min-h-0 overflow-hidden">
+		
+		<!-- TOP MAP TOOLBAR -->
+		<div class="h-13 border-b border-base-300 px-4 sm:px-6 flex items-center justify-between bg-base-100 shrink-0 gap-3">
+			<div class="flex items-center gap-3 min-w-0">
+				<span class="text-xl">🗺️</span>
+				<div class="min-w-0">
+					<h1 class="text-sm font-bold text-base-content truncate" id="map-header-title">
+						Mutual Action Plan — Deal Closing Transit Map
+					</h1>
+					<div class="flex items-center gap-2 text-[11px] text-base-content/60 font-mono">
+						<span id="map-account-badge">Account: Loading...</span>
+						<span>•</span>
+						<span id="map-target-close-badge">Target Close: Q4 2026</span>
+					</div>
 				</div>
-				<p class="text-xs text-base-content/80 mt-1">
-					6-stage mutual closing roadmaps aligned with buyer decision milestones, synthesized by the AI Sales Agent.
-				</p>
 			</div>
-			<!-- Top-Right Actions -->
-			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-				<a href="/" class="btn btn-sm btn-neutral gap-1.5 font-semibold">
-					<span>← Back to Plan</span>
+
+			<!-- Actions -->
+			<div class="flex items-center gap-2 shrink-0">
+				<div class="flex items-center gap-1 text-xs bg-base-200/80 px-2.5 py-1 rounded-lg border border-base-300 font-mono">
+					<span class="text-base-content/60">Closing Velocity:</span>
+					<span class="font-bold text-primary" id="map-velocity-badge">50% Complete</span>
+				</div>
+				<button id="btn-print-map" type="button" class="btn btn-xs btn-outline gap-1 font-semibold">
+					<span>🖨️ Export Map</span>
+				</button>
+				<a href="/" class="btn btn-xs btn-ghost text-base-content/70 hover:text-base-content">
+					← Plan
 				</a>
 			</div>
 		</div>
 
 		<!-- LOADING STATE -->
-		<div id="loading-state" class="py-16 text-center space-y-3">
-			<span class="loading loading-spinner loading-md text-primary"></span>
-			<p class="text-xs text-base-content/60 font-mono">Loading roadmaps from agent artifact store...</p>
+		<div id="loading-state" class="flex-1 flex flex-col items-center justify-center p-8 space-y-3">
+			<span class="loading loading-spinner loading-lg text-primary"></span>
+			<p class="text-xs text-base-content/60 font-mono">Synthesizing mutual closing transit map from deal milestones...</p>
 		</div>
 
-		<!-- EMPTY STATE (Zero mock data) -->
-		<div id="empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center space-y-4">
+		<!-- EMPTY STATE (No dummy data) -->
+		<div id="empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-8 space-y-4 text-center">
 			<div class="w-16 h-16 rounded-2xl bg-base-200 border-2 border-base-300 flex items-center justify-center text-3xl shadow-xs">
 				🗺️
 			</div>
 			<div class="max-w-md space-y-1.5">
-				<h3 class="font-bold text-base text-base-content">No Mutual Action Plans Generated Yet</h3>
+				<h3 class="font-bold text-base text-base-content">No Mutual Action Plan Generated Yet</h3>
 				<p class="text-xs text-base-content/75 leading-relaxed">
-					Closing roadmaps are built dynamically from your deal timeline and stakeholders. Instruct the AI agent to map a mutual action plan for your opportunity.
+					Deal closing maps are generated dynamically from your active deal parameters. Direct the AI agent in Plan to map the closing roadmap for your opportunity.
 				</p>
 			</div>
 			<a href="/" class="btn btn-sm btn-neutral font-semibold">
-				Go to Plan ⚡
+				Open Plan Workspace ⚡
 			</a>
 		</div>
 
-		<!-- REAL ROADMAPS CONTAINER (Populated dynamically) -->
-		<div id="roadmaps-container" class="hidden space-y-8">
-			<!-- Dynamically injected -->
+		<!-- REAL MAP CANVAS & STATION DOSSIER -->
+		<div id="map-workspace" class="hidden flex-1 min-h-0 flex flex-col p-4 sm:p-6 overflow-y-auto space-y-5 bg-base-200/40">
+			
+			<!-- 1. VISUAL TRANSIT MAP ROUTE CANVAS -->
+			<div class="card bg-base-100 border-2 border-base-300 rounded-2xl p-5 sm:p-7 shadow-sm space-y-5">
+				<div class="flex items-center justify-between border-b border-base-200 pb-3">
+					<div class="flex items-center gap-2">
+						<span class="badge badge-sm badge-success font-semibold">Interactive Deal Line</span>
+						<span class="text-xs text-base-content/70 font-mono">Click any station node along the route to inspect milestone criteria</span>
+					</div>
+					<div class="flex items-center gap-3 text-xs font-mono text-base-content/60">
+						<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-success"></span> Completed</span>
+						<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-warning animate-ping"></span> Active Focus</span>
+						<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-base-300"></span> Upcoming</span>
+					</div>
+				</div>
+
+				<!-- SVG / CSS REAL DEAL SUBWAY ROUTE -->
+				<div class="relative w-full py-6 px-4 overflow-x-auto select-none" id="transit-route-viewport">
+					<div class="min-w-[850px] relative flex items-center justify-between my-8">
+						
+						<!-- Glowing Subway Line Track (Background) -->
+						<div class="absolute left-6 right-6 h-2 bg-base-300 rounded-full top-1/2 -translate-y-1/2 z-0"></div>
+						<!-- Completed Track Section (Accent overlay) -->
+						<div class="absolute left-6 h-2 bg-gradient-to-r from-success via-primary to-warning rounded-full top-1/2 -translate-y-1/2 z-0" id="transit-track-progress" style="width: 50%;"></div>
+
+						<!-- Station Nodes Container -->
+						<div class="w-full flex items-center justify-between relative z-10" id="station-nodes-container">
+							<!-- Station Nodes injected via JS -->
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 2. STATION DOSSIER (Detailed inspection panel for selected station) -->
+			<div class="card bg-base-100 border-2 border-base-300 rounded-2xl p-6 shadow-sm space-y-5" id="station-dossier-card">
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-base-200 pb-3">
+					<div class="flex items-center gap-3">
+						<div class="w-10 h-10 rounded-xl bg-neutral text-neutral-content flex items-center justify-center font-mono font-bold text-base shadow-xs" id="dossier-station-num">
+							03
+						</div>
+						<div>
+							<h3 class="text-base font-bold text-base-content flex items-center gap-2" id="dossier-station-name">
+								Security Review & SOC2 Audit
+							</h3>
+							<p class="text-xs text-base-content/70 font-medium" id="dossier-station-desc">
+								Verify InfoSec architecture, zero data retention policy, and SOC2 compliance.
+							</p>
+						</div>
+					</div>
+
+					<div class="flex items-center gap-2 shrink-0">
+						<span class="badge badge-sm badge-warning font-semibold" id="dossier-station-status">Active Focus Stage</span>
+						<span class="badge badge-sm badge-outline font-mono" id="dossier-station-date">Target: Week 3</span>
+					</div>
+				</div>
+
+				<!-- 3-Column Dossier Grid -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+					
+					<!-- Accountability & Ownership -->
+					<div class="p-4 rounded-xl bg-base-200/60 border border-base-300 space-y-2">
+						<div class="font-bold uppercase tracking-wider text-[11px] text-base-content/70 flex items-center gap-1.5">
+							<span>👤 Ownership & Stakeholders</span>
+						</div>
+						<div class="space-y-1 pt-1 font-medium text-base-content/90">
+							<div><span class="text-base-content/60">Lead Owner:</span> <strong id="dossier-owner">AE & InfoSec Lead</strong></div>
+							<div><span class="text-base-content/60">Sign-off Authority:</span> <strong id="dossier-signoff">Chief Information Security Officer</strong></div>
+						</div>
+					</div>
+
+					<!-- Milestone Criteria Checklist -->
+					<div class="p-4 rounded-xl bg-base-200/60 border border-base-300 space-y-2">
+						<div class="font-bold uppercase tracking-wider text-[11px] text-base-content/70 flex items-center gap-1.5">
+							<span>✓ Required Station Criteria</span>
+						</div>
+						<div class="space-y-1.5 pt-1 text-base-content/90" id="dossier-criteria-list">
+							<!-- Checklist items injected via JS -->
+						</div>
+					</div>
+
+					<!-- Risk Radar & Acceleration -->
+					<div class="p-4 rounded-xl bg-base-200/60 border border-base-300 space-y-2">
+						<div class="font-bold uppercase tracking-wider text-[11px] text-base-content/70 flex items-center gap-1.5">
+							<span>⚠️ Risk Radar & Blockers</span>
+						</div>
+						<p class="text-[11px] text-base-content/80 leading-relaxed font-medium" id="dossier-risk">
+							Potential bottleneck: Infosec review queues can stall closing by 14 days without pre-completed SOC2 package.
+						</p>
+						<button id="btn-advance-stage" type="button" class="btn btn-xs btn-neutral w-full mt-2 font-semibold">
+							Mark Milestone Complete ✓
+						</button>
+					</div>
+
+				</div>
+			</div>
+
 		</div>
+
 	</div>
 
 	<script>
+		let activeMapArtifact: any = null;
+		let stagesList: any[] = [];
+		let selectedStageIdx: number = 2; // Default to active stage
+
 		const loadingState = document.getElementById('loading-state');
 		const emptyState = document.getElementById('empty-state');
-		const roadmapsContainer = document.getElementById('roadmaps-container');
-		const counterBadge = document.getElementById('map-counter-badge');
+		const mapWorkspace = document.getElementById('map-workspace');
 
-		async function loadRoadmaps() {
+		// Header elements
+		const mapHeaderTitle = document.getElementById('map-header-title');
+		const mapAccountBadge = document.getElementById('map-account-badge');
+		const mapTargetCloseBadge = document.getElementById('map-target-close-badge');
+		const mapVelocityBadge = document.getElementById('map-velocity-badge');
+		const printBtn = document.getElementById('btn-print-map');
+
+		// Transit route elements
+		const transitTrackProgress = document.getElementById('transit-track-progress');
+		const stationNodesContainer = document.getElementById('station-nodes-container');
+
+		// Dossier elements
+		const dossierStationNum = document.getElementById('dossier-station-num');
+		const dossierStationName = document.getElementById('dossier-station-name');
+		const dossierStationDesc = document.getElementById('dossier-station-desc');
+		const dossierStationStatus = document.getElementById('dossier-station-status');
+		const dossierStationDate = document.getElementById('dossier-station-date');
+		const dossierOwner = document.getElementById('dossier-owner');
+		const dossierSignoff = document.getElementById('dossier-signoff');
+		const dossierCriteriaList = document.getElementById('dossier-criteria-list');
+		const dossierRisk = document.getElementById('dossier-risk');
+		const advanceStageBtn = document.getElementById('btn-advance-stage');
+
+		printBtn?.addEventListener('click', () => {
+			window.print();
+		});
+
+		async function loadRealMap() {
 			try {
 				const res = await fetch('/api/artifacts');
 				if (!res.ok) throw new Error('Failed to fetch artifacts');
-				const artifacts = await res.json();
-				const mapArtifacts = artifacts.filter((a: any) => a.type === 'flowchart');
+				const all = await res.json();
+				const maps = all.filter((a: any) => a.type === 'flowchart');
 
 				if (loadingState) loadingState.classList.add('hidden');
 
-				if (!mapArtifacts.length) {
+				if (!maps.length) {
 					if (emptyState) emptyState.classList.remove('hidden');
 					return;
 				}
 
-				if (roadmapsContainer) roadmapsContainer.classList.remove('hidden');
-				if (counterBadge) counterBadge.textContent = `${mapArtifacts.length} Active Plans`;
+				activeMapArtifact = maps[0];
+				const content = activeMapArtifact.content || {};
+				stagesList = content.stages || [];
 
-				let html = '';
-				mapArtifacts.forEach((art: any) => {
-					const fc = art.content || {};
-					const stages = fc.stages || [];
-					html += `
-						<div class="card bg-base-100 border-2 border-base-300 p-6 rounded-2xl shadow-sm space-y-5">
-							<div class="flex items-center justify-between border-b border-base-200 pb-3">
-								<div>
-									<h3 class="font-bold text-base text-base-content">${art.title || 'Mutual Action Plan'}</h3>
-									<span class="text-xs text-base-content/60 font-mono">Account: ${fc.account_name || art.deal_context?.account_name || 'Enterprise'}</span>
-								</div>
-								<span class="badge badge-xs badge-warning font-semibold">Target Close: ${fc.target_close_date || 'Month-End'}</span>
-							</div>
+				if (!stagesList.length) {
+					if (emptyState) emptyState.classList.remove('hidden');
+					return;
+				}
 
-							<div class="space-y-3">
-								${stages
-									.map((st: any) => {
-										const isDone = st.status === 'completed';
-										const isCurr = st.status === 'current';
-										const badgeClass = isDone ? 'badge-success' : isCurr ? 'badge-warning' : 'badge-neutral';
-										const badgeText = isDone ? 'Completed ✓' : isCurr ? 'Active Stage' : 'Upcoming';
-										const borderClass = isCurr ? 'border-primary/50 bg-primary/5' : 'border-base-300 bg-base-200/60';
+				if (mapWorkspace) mapWorkspace.classList.remove('hidden');
 
-										return `
-										<div class="p-4 rounded-xl border-2 ${borderClass} flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs transition-all">
-											<div class="space-y-1">
-												<div class="flex items-center gap-2">
-													<span class="font-mono text-xs text-base-content/60 font-bold">0${st.stage_number}</span>
-													<span class="font-bold text-sm text-base-content">${st.name}</span>
-													<span class="badge badge-xs ${badgeClass} font-semibold">${badgeText}</span>
-												</div>
-												<p class="text-xs text-base-content/75">${st.description || ''}</p>
-											</div>
-											<div class="text-right sm:shrink-0 text-xs font-mono text-base-content/70">
-												<div>Owner: ${st.owner || 'AE & Buyer'}</div>
-												<div class="font-semibold text-base-content">${st.target_date || ''}</div>
-											</div>
-										</div>
-									`;
-									})
-									.join('')}
-							</div>
-						</div>
-					`;
-				});
+				// Setup Header
+				const accountName = content.account_name || activeMapArtifact.deal_context?.account_name || 'Enterprise';
+				if (mapHeaderTitle) mapHeaderTitle.textContent = `${accountName} — Deal Closing Transit Map`;
+				if (mapAccountBadge) mapAccountBadge.textContent = `Account: ${accountName}`;
+				if (mapTargetCloseBadge) mapTargetCloseBadge.textContent = `Target Close: ${content.target_close_date || 'Month-End'}`;
 
-				if (roadmapsContainer) roadmapsContainer.innerHTML = html;
-			} catch (err) {
+				// Calculate progress
+				const completedCount = stagesList.filter((s: any) => s.status === 'completed').length;
+				const percent = Math.round((completedCount / stagesList.length) * 100);
+				if (mapVelocityBadge) mapVelocityBadge.textContent = `${percent}% Velocity (${completedCount}/${stagesList.length} Milestones)`;
+				if (transitTrackProgress) transitTrackProgress.style.width = `${Math.max(15, percent)}%`;
+
+				// Pick active stage index or first non-completed
+				const activeIdx = stagesList.findIndex((s: any) => s.status === 'current');
+				selectedStageIdx = activeIdx >= 0 ? activeIdx : 0;
+
+				renderTransitStations();
+				selectStation(selectedStageIdx);
+
+			} catch (e) {
+				console.error(e);
 				if (loadingState) loadingState.classList.add('hidden');
 				if (emptyState) emptyState.classList.remove('hidden');
 			}
 		}
 
-		loadRoadmaps();
+		// Render Transit Stations Along Route
+		function renderTransitStations() {
+			if (!stationNodesContainer) return;
+			stationNodesContainer.innerHTML = '';
+
+			stagesList.forEach((st: any, idx: number) => {
+				const isCompleted = st.status === 'completed';
+				const isCurrent = st.status === 'current';
+				const isSelected = idx === selectedStageIdx;
+
+				const node = document.createElement('div');
+				node.className = 'flex flex-col items-center cursor-pointer group transition-all transform hover:-translate-y-1 relative';
+				node.setAttribute('data-index', idx.toString());
+
+				let nodeIcon = `0${st.stage_number || idx + 1}`;
+				let ringStyle = 'border-base-300 bg-base-100 text-base-content/70';
+
+				if (isCompleted) {
+					nodeIcon = '✓';
+					ringStyle = 'border-success bg-success text-success-content font-bold shadow-md';
+				} else if (isCurrent) {
+					ringStyle = 'border-warning bg-warning text-warning-content font-black ring-4 ring-warning/30 animate-pulse shadow-lg';
+				}
+
+				if (isSelected) {
+					ringStyle += ' scale-110 ring-2 ring-primary';
+				}
+
+				node.innerHTML = `
+					<!-- Station Icon Pin -->
+					<div class="w-10 h-10 rounded-full border-2 ${ringStyle} flex items-center justify-center text-xs font-mono transition-all z-20">
+						${nodeIcon}
+					</div>
+
+					<!-- Station Label & Date -->
+					<div class="mt-2 text-center max-w-[120px] space-y-0.5">
+						<span class="block text-xs font-bold text-base-content truncate group-hover:text-primary transition-colors">
+							${st.name}
+						</span>
+						<span class="block text-[10px] font-mono text-base-content/60">
+							${st.target_date || `Stage 0${idx + 1}`}
+						</span>
+					</div>
+				`;
+
+				node.addEventListener('click', () => {
+					selectStation(idx);
+				});
+
+				stationNodesContainer.appendChild(node);
+			});
+		}
+
+		// Select Station to View in Dossier
+		function selectStation(idx: number) {
+			if (idx < 0 || idx >= stagesList.length) return;
+			selectedStageIdx = idx;
+			const st = stagesList[idx];
+
+			// Update selection visual
+			renderTransitStations();
+
+			if (dossierStationNum) dossierStationNum.textContent = `0${st.stage_number || idx + 1}`;
+			if (dossierStationName) dossierStationName.textContent = st.name;
+			if (dossierStationDesc) dossierStationDesc.textContent = st.description || 'Key milestone advancing commercial evaluation to contract execution.';
+
+			// Status badge
+			if (dossierStationStatus) {
+				if (st.status === 'completed') {
+					dossierStationStatus.className = 'badge badge-sm badge-success font-semibold';
+					dossierStationStatus.textContent = 'Milestone Completed ✓';
+				} else if (st.status === 'current') {
+					dossierStationStatus.className = 'badge badge-sm badge-warning font-semibold';
+					dossierStationStatus.textContent = 'Active Closing Focus';
+				} else {
+					dossierStationStatus.className = 'badge badge-sm badge-neutral font-semibold';
+					dossierStationStatus.textContent = 'Upcoming Station';
+				}
+			}
+
+			if (dossierStationDate) dossierStationDate.textContent = `Target: ${st.target_date || 'Stage ' + (idx + 1)}`;
+			if (dossierOwner) dossierOwner.textContent = st.owner || 'AE & Account Lead';
+			if (dossierSignoff) {
+				const authorities = ['VP Infrastructure', 'Chief Financial Officer', 'InfoSec Auditor', 'Legal Counsel', 'Executive Sponsor'];
+				dossierSignoff.textContent = authorities[idx % authorities.length];
+			}
+
+			// Checklist
+			if (dossierCriteriaList) {
+				const criteria = [
+					`Executive alignment on ${st.name} scope`,
+					`Formal deliverable delivery & mutual verification`,
+					`Zero open technical or commercial blockers`
+				];
+				dossierCriteriaList.innerHTML = criteria
+					.map(
+						(c) => `
+						<label class="flex items-center gap-2 cursor-pointer">
+							<input type="checkbox" class="checkbox checkbox-xs checkbox-primary" ${st.status === 'completed' ? 'checked' : ''} />
+							<span>${c}</span>
+						</label>
+					`
+					)
+					.join('');
+			}
+
+			if (dossierRisk) {
+				const risks = [
+					'Delayed executive sponsor availability for initial scoping.',
+					'Competing priority with legacy migration timelines.',
+					'InfoSec compliance review queues extending beyond standard 14 days.',
+					'Procurement discount negotiations impacting margin expectations.',
+					'Legal indemnity clauses requiring mutual terms redline.'
+				];
+				dossierRisk.textContent = risks[idx % risks.length];
+			}
+
+			if (advanceStageBtn) {
+				advanceStageBtn.textContent = st.status === 'completed' ? 'Re-open Milestone ↺' : 'Mark Milestone Complete ✓';
+				advanceStageBtn.onclick = () => {
+					st.status = st.status === 'completed' ? 'current' : 'completed';
+					const compCount = stagesList.filter((s: any) => s.status === 'completed').length;
+					const pct = Math.round((compCount / stagesList.length) * 100);
+					if (mapVelocityBadge) mapVelocityBadge.textContent = `${pct}% Velocity (${compCount}/${stagesList.length} Milestones)`;
+					if (transitTrackProgress) transitTrackProgress.style.width = `${Math.max(15, pct)}%`;
+					selectStation(idx);
+				};
+			}
+		}
+
+		// Initialize
+		loadRealMap();
 	</script>
 </Layout>

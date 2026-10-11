@@ -20,6 +20,11 @@ const { id } = Astro.params;
 		<title>Executive Deal Suite — {id}</title>
 		<meta name="description" content="Private Buyer Deal Suite & Digital Keycard Portal" />
 		<link rel="stylesheet" href="/src/styles/global.css" />
+		<script is:inline define:vars={{ id }}>
+			if (window.location.pathname.startsWith('/suite/')) {
+				window.location.replace('/suite?id=' + encodeURIComponent(id));
+			}
+		</script>
 	</head>
 	<body class="min-h-screen bg-base-100 text-base-content antialiased flex flex-col justify-between">
 		
@@ -55,8 +60,8 @@ const { id } = Astro.params;
 						</h1>
 					</div>
 					<div class="flex items-center gap-2">
-						<span class="badge badge-sm badge-neutral font-semibold">Target ARR: $150,000</span>
-						<span class="badge badge-sm badge-warning font-semibold">Closing: Oct 28, 2026</span>
+						<span class="badge badge-sm badge-neutral font-semibold">Verified Keycard Access</span>
+						<span class="badge badge-sm badge-warning font-semibold">Active Review</span>
 					</div>
 				</div>
 				<p class="text-xs text-base-content/85 leading-relaxed font-medium">
