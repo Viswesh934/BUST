@@ -1,0 +1,28 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NX8FKB1T78RARST0KT4YA4",
+  "strategy": "manual-commit",
+  "branch": "feat/p-3",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "frontend/src/pages/deals.astro",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/suite/[id].astro",
+    "frontend/src/pages/suite/index.astro"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 23588224,
+    "output_tokens": 63350,
+    "api_call_count": 155
+  }
+}
