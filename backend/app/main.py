@@ -70,6 +70,7 @@ class AgentChatRequest(BaseModel):
 
 
 @app.get("/health")
+@app.get("/api/health")
 def health() -> Dict[str, str]:
     """Health check endpoint."""
     return {
