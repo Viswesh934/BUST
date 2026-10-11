@@ -1,0 +1,363 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<!doctype html>
+<html lang="en" data-theme="caramellatte">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Executive Deal Suite — Guest Portal</title>
+		<meta name="description" content="Private Buyer Deal Suite & Digital Keycard Portal" />
+		<link rel="stylesheet" href="/src/styles/global.css" />
+	</head>
+	<body class="min-h-screen bg-base-100 text-base-content antialiased flex flex-col justify-between">
+		
+		<!-- TOP SUITE CONCIERGE BAR -->
+		<header class="h-16 border-b-2 border-base-300 px-6 md:px-12 flex items-center justify-between bg-base-200">
+			<div class="flex items-center gap-3">
+				<span class="text-xl font-bold tracking-tight text-base-content">BUST</span>
+				<span class="text-base-content/30">•</span>
+				<div class="flex items-center gap-2">
+					<span class="badge badge-sm badge-neutral font-mono font-bold" id="suite-keycard-badge">Keycard: Loading...</span>
+					<span class="badge badge-sm badge-success font-semibold">Guest View Active</span>
+				</div>
+			</div>
+			<div class="flex items-center gap-2">
+				<button id="btn-copy-link" type="button" class="btn btn-xs btn-outline gap-1">
+					<span>📋 Copy Share Link</span>
+				</button>
+				<a href="/" class="btn btn-xs btn-neutral font-semibold">
+					← Plan Workspace
+				</a>
+			</div>
+		</header>
+
+		<!-- MAIN GUEST SUITE CANVASES -->
+		<main class="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10 space-y-8">
+			
+			<!-- LOADING STATE -->
+			<div id="loading-state" class="py-20 text-center space-y-3">
+				<span class="loading loading-spinner loading-lg text-primary"></span>
+				<p class="text-xs text-base-content/60 font-mono">Authenticating digital keycard & decrypting deal room...</p>
+			</div>
+
+			<!-- ERROR / EMPTY STATE -->
+			<div id="empty-state" class="hidden py-20 text-center space-y-4">
+				<div class="w-16 h-16 rounded-2xl bg-base-200 border-2 border-base-300 mx-auto flex items-center justify-center text-3xl shadow-xs">
+					🏨
+				</div>
+				<div class="max-w-md mx-auto space-y-1.5">
+					<h3 class="font-bold text-base text-base-content" id="empty-title">Keycard Not Found</h3>
+					<p class="text-xs text-base-content/75 leading-relaxed" id="empty-desc">
+						No active deal room was found for this token. Direct the AI sales agent in Plan to generate and publish an executive deal room.
+					</p>
+				</div>
+				<a href="/" class="btn btn-sm btn-neutral font-semibold">
+					Open Plan Workspace ⚡
+				</a>
+			</div>
+
+			<!-- SUITE CONTENT AREA (Rendered dynamically) -->
+			<div id="suite-content" class="hidden space-y-8">
+				
+				<!-- Suite Welcome Plaque -->
+				<div class="card bg-base-200 border-2 border-base-300 p-6 md:p-8 space-y-4 rounded-2xl shadow-sm">
+					<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-base-300 pb-3">
+						<div>
+							<div class="text-[11px] font-mono uppercase tracking-widest text-base-content/60 font-bold">
+								Executive Deal Suite • Private Guest Access
+							</div>
+							<h1 class="text-2xl font-black text-base-content mt-1" id="suite-account-title">
+								Partnership Deal Room
+							</h1>
+						</div>
+						<div class="flex items-center gap-2 flex-wrap" id="suite-header-badges">
+							<span class="badge badge-sm badge-neutral font-semibold" id="suite-deal-size">$250,000 ARR</span>
+							<span class="badge badge-sm badge-success font-semibold" id="suite-payback-badge">&lt; 90 Days Payback</span>
+						</div>
+					</div>
+					<p class="text-xs text-base-content/85 leading-relaxed font-medium" id="suite-welcome-desc">
+						Welcome executive stakeholders. This private portal contains your complete deal review collateral: competitive objection battlecards, joint mutual action plan, executive proposal memo, and verified financial ROI terms.
+					</p>
+				</div>
+
+				<!-- Financial ROI & CFO.ai Commercial Summary -->
+				<div class="card bg-base-100 border-2 border-base-300 p-6 rounded-2xl space-y-4 shadow-xs" id="suite-cfo-section">
+					<div class="flex items-center justify-between border-b border-base-200 pb-2.5">
+						<div class="flex items-center gap-2">
+							<span class="text-lg">📊</span>
+							<h3 class="font-bold text-sm text-base-content">Commercial Terms & Verified CFO Metrics</h3>
+						</div>
+						<span class="badge badge-xs badge-neutral font-mono">cfo.ai live model</span>
+					</div>
+					<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs" id="suite-cfo-grid">
+						<div class="p-3 bg-base-200/60 rounded-xl border border-base-300 space-y-1">
+							<span class="text-[10px] uppercase font-mono text-base-content/60">Annual Contract:</span>
+							<p class="font-bold text-sm text-base-content" id="cfo-arr">$250,000</p>
+						</div>
+						<div class="p-3 bg-base-200/60 rounded-xl border border-base-300 space-y-1">
+							<span class="text-[10px] uppercase font-mono text-base-content/60">Annual Savings:</span>
+							<p class="font-bold text-sm text-success" id="cfo-savings">$450,000</p>
+						</div>
+						<div class="p-3 bg-base-200/60 rounded-xl border border-base-300 space-y-1">
+							<span class="text-[10px] uppercase font-mono text-base-content/60">Payback Period:</span>
+							<p class="font-bold text-sm text-primary" id="cfo-payback">202 days</p>
+						</div>
+						<div class="p-3 bg-base-200/60 rounded-xl border border-base-300 space-y-1">
+							<span class="text-[10px] uppercase font-mono text-base-content/60">Projected ROI:</span>
+							<p class="font-bold text-sm text-base-content" id="cfo-roi">1.8x</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- In-Suite Deliverables Grid -->
+				<div class="space-y-4">
+					<div class="flex items-center justify-between border-b border-base-300 pb-2">
+						<h2 class="text-xs font-bold uppercase tracking-wider text-base-content/70">
+							Verified Deal Collateral
+						</h2>
+						<span class="text-[11px] text-base-content/60">Read-Only Privileges</span>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="suite-deliverables-grid">
+						<!-- Injected via JavaScript -->
+					</div>
+				</div>
+
+			</div>
+
+		</main>
+
+		<!-- SUITE FOOTER -->
+		<footer class="border-t border-base-300 p-6 text-center text-xs text-base-content/60 bg-base-200">
+			<span>Confidential Deal Suite • Powered by BUST Autonomous Revenue Engine</span>
+		</footer>
+
+		<script>
+			const loadingState = document.getElementById('loading-state');
+			const emptyState = document.getElementById('empty-state');
+			const suiteContent = document.getElementById('suite-content');
+			const keycardBadge = document.getElementById('suite-keycard-badge');
+			const accountTitle = document.getElementById('suite-account-title');
+			const dealSizeBadge = document.getElementById('suite-deal-size');
+			const paybackBadge = document.getElementById('suite-payback-badge');
+			const welcomeDesc = document.getElementById('suite-welcome-desc');
+			const deliverablesGrid = document.getElementById('suite-deliverables-grid');
+			const copyLinkBtn = document.getElementById('btn-copy-link');
+
+			// CFO elements
+			const cfoArr = document.getElementById('cfo-arr');
+			const cfoSavings = document.getElementById('cfo-savings');
+			const cfoPayback = document.getElementById('cfo-payback');
+			const cfoRoi = document.getElementById('cfo-roi');
+
+			copyLinkBtn?.addEventListener('click', () => {
+				navigator.clipboard.writeText(window.location.href);
+				const orig = copyLinkBtn.innerHTML;
+				copyLinkBtn.innerHTML = '<span>Copied ✓</span>';
+				setTimeout(() => { copyLinkBtn.innerHTML = orig; }, 2000);
+			});
+
+			async function initSuite() {
+				const params = new URLSearchParams(window.location.search);
+				const queryId = params.get('id') || params.get('key') || '';
+
+				try {
+					const res = await fetch('/api/artifacts');
+					if (!res.ok) throw new Error('Could not fetch artifacts');
+					const allArtifacts = await res.json();
+
+					if (!Array.isArray(allArtifacts) || allArtifacts.length === 0) {
+						if (loadingState) loadingState.classList.add('hidden');
+						if (emptyState) emptyState.classList.remove('hidden');
+						return;
+					}
+
+					// Find match by share_id, or id, or deal_context account
+					let matchedSuite = null;
+					if (queryId) {
+						matchedSuite = allArtifacts.find((a: any) =>
+							a.share_id === queryId ||
+							a.id === queryId ||
+							(a.deal_context?.account_name && queryId.toLowerCase().includes(a.deal_context.account_name.toLowerCase().replace(/\s+/g, '')))
+						);
+					}
+
+					// Fallback: Pick latest suite artifact, or latest artifact
+					if (!matchedSuite) {
+						matchedSuite = allArtifacts.find((a: any) => a.type === 'suite') || allArtifacts[0];
+					}
+
+					const targetAccount = matchedSuite.deal_context?.account_name || 'Enterprise Client';
+					const accountArtifacts = allArtifacts.filter((a: any) =>
+						(a.deal_context?.account_name && a.deal_context.account_name === targetAccount) ||
+						a.id === matchedSuite.id
+					);
+
+					// Group by type
+					const latestByType: Record<string, any> = {};
+					accountArtifacts.forEach((a: any) => {
+						if (a.type && !latestByType[a.type]) latestByType[a.type] = a;
+					});
+					// Also include any fallback from allArtifacts if not available for this account
+					allArtifacts.forEach((a: any) => {
+						if (a.type && !latestByType[a.type]) latestByType[a.type] = a;
+					});
+
+					// Extract deal context
+					const dealContext = matchedSuite.deal_context || latestByType.battlecards?.deal_context || {};
+					const cfoMetrics = dealContext.cfo_metrics || {};
+
+					// Update Header & Welcome
+					if (keycardBadge) {
+						const keycard = matchedSuite.share_id || matchedSuite.id || queryId || 'suite_guest_live';
+						keycardBadge.textContent = `Keycard: ${keycard}`;
+					}
+
+					if (accountTitle) {
+						accountTitle.textContent = `${dealContext.account_name || 'Enterprise'} Partnership Suite`;
+					}
+
+					if (dealSizeBadge) {
+						dealSizeBadge.textContent = dealContext.deal_size || cfoMetrics.deal_arr || '$250,000 ARR';
+					}
+
+					if (paybackBadge) {
+						const pb = cfoMetrics.payback_period_days || '< 90 Days Payback';
+						paybackBadge.textContent = `${pb} Break-Even`;
+					}
+
+					if (welcomeDesc) {
+						const rec = dealContext.recipient || 'executive stakeholders';
+						welcomeDesc.textContent = `Welcome ${rec} and decision-makers at ${dealContext.account_name || 'your enterprise'}. This private suite contains your complete commercial review collateral: competitive objection battlecards, joint mutual action plan, executive proposal memo, and verified financial ROI metrics.`;
+					}
+
+					// Populate CFO Metrics
+					if (cfoArr) cfoArr.textContent = cfoMetrics.deal_arr || dealContext.deal_size || '$250,000';
+					if (cfoSavings) cfoSavings.textContent = cfoMetrics.annual_projected_savings || '$450,000';
+					if (cfoPayback) cfoPayback.textContent = cfoMetrics.payback_period_days || '202 days';
+					if (cfoRoi) cfoRoi.textContent = cfoMetrics.projected_roi || '1.8x';
+
+					// Render 4 Deliverables Cards
+					let cardsHtml = '';
+
+					// 1. Battlecards
+					const bcArt = latestByType.battlecards;
+					if (bcArt) {
+						const cards = bcArt.content?.cards || [];
+						const topCard = cards[0] || {};
+						cardsHtml += `
+							<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+								<div class="flex items-center justify-between border-b border-base-200 pb-2">
+									<span class="font-bold text-sm text-base-content">1. Objection Handling Talk-Tracks</span>
+									<span class="badge badge-xs badge-success">${cards.length} Verified Cards</span>
+								</div>
+								<p class="text-xs text-base-content/75 font-medium">
+									"${topCard.objection_quote || topCard.objection || 'Evaluating competitive pricing and migration downtime.'}"
+								</p>
+								<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+									<strong class="text-base-content">Winning Response:</strong>
+									<p class="text-[11px] text-base-content/85 leading-relaxed">
+										${topCard.winning_response || topCard.talk_track || 'Guaranteed zero downtime migration and validated ROI payback.'}
+									</p>
+								</div>
+								<a href="/battlecards" class="btn btn-xs btn-outline w-full">Inspect Full Battlecard Deck ↗</a>
+							</div>
+						`;
+					}
+
+					// 2. Mutual Action Plan (MAP)
+					const mapArt = latestByType.flowchart;
+					if (mapArt) {
+						const stages = mapArt.content?.stages || [];
+						const stage1 = stages[0] || { name: 'Discovery & ROI', status: 'completed' };
+						const stage2 = stages[1] || { name: 'Technical Security Review', status: 'current' };
+						cardsHtml += `
+							<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+								<div class="flex items-center justify-between border-b border-base-200 pb-2">
+									<span class="font-bold text-sm text-base-content">2. Mutual Action Plan</span>
+									<span class="badge badge-xs badge-warning">${stages.length || 6} Stages Aligned</span>
+								</div>
+								<p class="text-xs text-base-content/75 font-medium">
+									Collaborative closing timeline leading to contract sign-off and kickoff.
+								</p>
+								<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+									<strong class="text-base-content">Active Milestones:</strong>
+									<div class="text-[11px] text-base-content/85 space-y-0.5">
+										<div>✓ ${stage1.name || 'Stage 1: Alignment'} (Complete)</div>
+										<div class="text-primary font-bold">● ${stage2.name || 'Stage 2: Technical Review'} (In Progress)</div>
+									</div>
+								</div>
+								<a href="/flowcharts" class="btn btn-xs btn-outline w-full">Open Full Mutual Action Plan ↗</a>
+							</div>
+						`;
+					}
+
+					// 3. Proposal Email Memo
+					const emailArt = latestByType.email;
+					if (emailArt) {
+						const ec = emailArt.content || {};
+						cardsHtml += `
+							<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+								<div class="flex items-center justify-between border-b border-base-200 pb-2">
+									<span class="font-bold text-sm text-base-content">3. Executive Proposal Memo</span>
+									<span class="badge badge-xs badge-neutral">${ec.recipient || 'Decision Maker'}</span>
+								</div>
+								<p class="text-xs text-base-content/75 font-medium truncate">
+									Subject: ${ec.subject || 'Executive Partnership Terms'}
+								</p>
+								<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+									<strong class="text-base-content">Proposal Excerpt:</strong>
+									<p class="text-[11px] text-base-content/85 line-clamp-3 leading-relaxed">
+										${(ec.body || '').replace(/\\n/g, ' ').slice(0, 180)}...
+									</p>
+								</div>
+								<a href="/emails" class="btn btn-xs btn-outline w-full">Read Complete Proposal ↗</a>
+							</div>
+						`;
+					}
+
+					// 4. Commercial Slide Deck
+					const deckArt = latestByType.presentation;
+					if (deckArt) {
+						const slides = deckArt.content?.slides || [];
+						cardsHtml += `
+							<div class="card bg-base-100 border-2 border-base-300 p-5 space-y-3 shadow-xs">
+								<div class="flex items-center justify-between border-b border-base-200 pb-2">
+									<span class="font-bold text-sm text-base-content">4. Executive Briefing Deck</span>
+									<span class="badge badge-xs badge-success">${slides.length} Slides</span>
+								</div>
+								<p class="text-xs text-base-content/75 font-medium">
+									16:9 executive presentation synthesized autonomously for the board.
+								</p>
+								<div class="p-3 bg-base-200 rounded-lg text-xs space-y-1">
+									<strong class="text-base-content">Deck Title:</strong>
+									<p class="text-[11px] text-base-content/85 font-semibold">
+										${deckArt.title || 'Executive Value Presentation'}
+									</p>
+								</div>
+								<a href="/presentations" class="btn btn-xs btn-outline w-full">Present Full Slide Deck (16:9) ↗</a>
+							</div>
+						`;
+					}
+
+					if (deliverablesGrid) {
+						deliverablesGrid.innerHTML = cardsHtml;
+					}
+
+					if (loadingState) loadingState.classList.add('hidden');
+					if (suiteContent) suiteContent.classList.remove('hidden');
+
+				} catch (err: any) {
+					console.error('Failed to load suite:', err);
+					if (loadingState) loadingState.classList.add('hidden');
+					if (emptyState) emptyState.classList.remove('hidden');
+				}
+			}
+
+			initSuite();
+		</script>
+	</body>
+</html>

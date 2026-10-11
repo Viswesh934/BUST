@@ -362,7 +362,7 @@ import Layout from '../layouts/Layout.astro';
 					fullPageBtnText.textContent = 'Social Hook 🐦';
 				} else if (activeTab === 'suite') {
 					const shareId = storedArtifacts.suite?.share_id || 'suite_live';
-					btnOpenFullPage.href = `/suite/${shareId}`;
+					btnOpenFullPage.href = `/suite?id=${shareId}`;
 					fullPageBtnText.textContent = 'Open Buyer Room ↗';
 				}
 			}
@@ -584,7 +584,7 @@ import Layout from '../layouts/Layout.astro';
 							<p class="text-[11px] text-base-content/75 leading-relaxed">
 								Encrypted guest deal room for enterprise stakeholders to review objection talk-tracks, verified ROI metrics, and mutual milestones.
 							</p>
-							<a href="/suite/${suite.share_id || 'suite_live'}" class="btn btn-sm btn-neutral w-full font-semibold shadow-xs">
+							<a href="/suite?id=${suite.share_id || 'suite_live'}" class="btn btn-sm btn-neutral w-full font-semibold shadow-xs">
 								Open Guest Suite 🏨
 							</a>
 						</div>
