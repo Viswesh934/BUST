@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NY5WZBPCQ2TXBNTZQM6TYC",
+  "session_id": "77ad5304-ab6c-4459-bb55-06cdea62fa7f",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T16:54:16.815535725Z",
+  "branch": "feat/p-3",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "backend/app/agent/dag.py",
+    "backend/app/agent/orchestrator.py",
+    "backend/app/main.py",
+    "backend/app/services/grounding.py",
+    "backend/app/tools/presentation.py",
+    "backend/requirements.txt",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/presentations.astro"
+  ],
+  "agent": "Antigravity",
+  "model": "",
+  "turn_id": "d1c3dcdade8d",
+  "checkpoint_transcript_start": 2044,
+  "transcript_lines_at_start": 2044,
+  "token_usage": {
+    "input_tokens": 60143,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6413386,
+    "output_tokens": 34194,
+    "api_call_count": 52
+  },
+  "session_metrics": {
+    "turn_count": 25
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T16:54:16.66390667Z",
+    "agent_lines": 467,
+    "agent_removed": 16,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 467,
+    "total_lines_changed": 483,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

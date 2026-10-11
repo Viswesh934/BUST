@@ -1,0 +1,5 @@
+how our agent works and are we using cfo.ai
+
+---
+
+we add support to add pdfs or website, or github repo of ours  related to the company to make presentations that are technically accurate and have a source.

@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NY5WZBPCQ2TXBNTZQM6TYC",
+  "strategy": "manual-commit",
+  "branch": "feat/p-3",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "backend/app/agent/dag.py",
+    "backend/app/agent/orchestrator.py",
+    "backend/app/main.py",
+    "backend/app/services/grounding.py",
+    "backend/app/tools/presentation.py",
+    "backend/requirements.txt",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/presentations.astro"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 60143,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6413386,
+    "output_tokens": 34194,
+    "api_call_count": 52
+  }
+}
