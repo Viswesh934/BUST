@@ -1,0 +1,1 @@
+we don't need starter cards and dummy data cause we will show these in demo itself, make ppt page look like real ppt with left and right, download, also map can be a real map and social interactions can look like a social graph
