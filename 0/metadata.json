@@ -1,0 +1,101 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4MREJ0N1EZGSR7VW835SHFK",
+  "session_id": "77ad5304-ab6c-4459-bb55-06cdea62fa7f",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T05:54:58.245898649Z",
+  "branch": "feat/p-3",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    ".gitignore",
+    "backend/app/agent/dag.py",
+    "backend/app/agent/orchestrator.py",
+    "backend/app/llm.py",
+    "backend/app/main.py",
+    "backend/app/services/artifact_store.py",
+    "backend/app/tools/battlecards.py",
+    "backend/app/tools/email.py",
+    "backend/app/tools/flowchart.py",
+    "backend/app/tools/presentation.py",
+    "frontend/astro.config.mjs",
+    "frontend/src/layouts/Layout.astro",
+    "frontend/src/pages/agent.astro",
+    "frontend/src/pages/battlecards.astro",
+    "frontend/src/pages/deals.astro",
+    "frontend/src/pages/emails.astro",
+    "frontend/src/pages/flowcharts.astro",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/presentations.astro"
+  ],
+  "agent": "Antigravity",
+  "model": "",
+  "turn_id": "fa71185c6c08",
+  "token_usage": {
+    "input_tokens": 45360,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3903953,
+    "output_tokens": 27064,
+    "api_call_count": 35
+  },
+  "session_metrics": {
+    "turn_count": 20
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 1831,
+      "user_lines_removed": 2549,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".gitignore": 3,
+        "backend/app/agent/dag.py": 5,
+        "backend/app/agent/orchestrator.py": 114,
+        "backend/app/llm.py": 37,
+        "backend/app/main.py": 1,
+        "backend/app/services/artifact_store.py": 141,
+        "backend/app/tools/battlecards.py": 2,
+        "backend/app/tools/cfo.py": 39,
+        "backend/app/tools/email.py": 2,
+        "backend/app/tools/flowchart.py": 2,
+        "backend/app/tools/presentation.py": 2,
+        "frontend/astro.config.mjs": 3,
+        "frontend/src/layouts/Layout.astro": 19,
+        "frontend/src/pages/battlecards.astro": 254,
+        "frontend/src/pages/deals.astro": 90,
+        "frontend/src/pages/emails.astro": 90,
+        "frontend/src/pages/flowcharts.astro": 101,
+        "frontend/src/pages/index.astro": 828,
+        "frontend/src/pages/presentations.astro": 98
+      },
+      "user_removed_per_file": {
+        "backend/app/agent/dag.py": 5,
+        "backend/app/agent/orchestrator.py": 40,
+        "backend/app/services/artifact_store.py": 38,
+        "backend/app/tools/battlecards.py": 4,
+        "backend/app/tools/email.py": 3,
+        "backend/app/tools/flowchart.py": 3,
+        "backend/app/tools/presentation.py": 3,
+        "frontend/src/layouts/Layout.astro": 107,
+        "frontend/src/pages/agent.astro": 293,
+        "frontend/src/pages/battlecards.astro": 298,
+        "frontend/src/pages/deals.astro": 264,
+        "frontend/src/pages/emails.astro": 223,
+        "frontend/src/pages/flowcharts.astro": 166,
+        "frontend/src/pages/index.astro": 816,
+        "frontend/src/pages/presentations.astro": 286
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 39,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1756,
+      "agent_lines_removed": 2552,
+      "user_added_per_file": {
+        "backend/app/tools/cfo.py": 39
+      }
+    }
+  ]
+}
