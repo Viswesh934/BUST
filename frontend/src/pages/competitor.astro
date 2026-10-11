@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Competitor Intelligence" description="Executive Competitive Dossier & Crustdata B2B Intelligence">
-	<div class="space-y-6 w-full max-w-7xl mx-auto">
+	<div class="space-y-6 w-full max-w-5xl mx-auto min-w-0">
 		<!-- Header Toolbar -->
 		<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-300">
 			<div>
@@ -12,14 +12,13 @@ import Layout from '../layouts/Layout.astro';
 						<span>🎯 Competitor Intelligence</span>
 						<span class="badge badge-sm badge-warning font-semibold" id="comp-header-badge">Incumbent</span>
 					</h1>
-					<span class="badge badge-sm badge-neutral font-mono" id="comp-name-badge">Loading...</span>
+					<span class="badge badge-sm badge-neutral font-mono truncate max-w-[140px]" id="comp-name-badge">Loading...</span>
 				</div>
 				<p class="text-xs text-base-content/80 mt-1">
 					Full executive competitive teardown: online public revenue metrics, Crustdata B2B intelligence, bake-off landmines, and head-to-head differentiators.
 				</p>
 			</div>
 			
-			<!-- Actions -->
 			<div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
 				<a href="/" class="btn btn-sm btn-neutral gap-1.5 font-semibold">
 					<span>← Back to Plan</span>
@@ -28,13 +27,13 @@ import Layout from '../layouts/Layout.astro';
 		</div>
 
 		<!-- LOADING STATE -->
-		<div id="loading-state" class="py-20 text-center space-y-3">
+		<div id="loading-state" class="py-16 text-center space-y-3">
 			<span class="loading loading-spinner loading-md text-primary"></span>
 			<p class="text-xs text-base-content/60 font-mono">Loading competitor dossier from agent artifact store...</p>
 		</div>
 
 		<!-- EMPTY STATE -->
-		<div id="empty-state" class="hidden py-20 flex flex-col items-center justify-center text-center space-y-4">
+		<div id="empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center space-y-4">
 			<div class="w-16 h-16 rounded-2xl bg-base-200 border-2 border-base-300 flex items-center justify-center text-3xl shadow-xs">
 				🎯
 			</div>
@@ -49,68 +48,19 @@ import Layout from '../layouts/Layout.astro';
 			</a>
 		</div>
 
-		<!-- FULL COMPETITIVE DOSSIER CONTENT (3-COLUMN RESPONSIVE GRID) -->
-		<div id="dossier-content" class="hidden space-y-6">
-			
-			<!-- TOP REVENUE & SUMMARY BAR -->
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="dossier-summary-bar">
-				<!-- Injected via JS -->
-			</div>
-
-			<!-- MAIN 2-COLUMN DOSSIER GRID -->
-			<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-				
-				<!-- LEFT COLUMN: CRUSTDATA B2B DEEP RESEARCH (7 COLS) -->
-				<div class="lg:col-span-7 space-y-6">
-					
-					<!-- CRUSTDATA B2B CARD -->
-					<div class="card bg-base-100 border border-primary/40 p-5 rounded-2xl shadow-xs space-y-4" id="crustdata-card">
-						<!-- Injected via JS -->
-					</div>
-
-					<!-- HEAD-TO-HEAD MATRIX -->
-					<div class="card bg-base-100 border border-base-300 p-5 rounded-2xl shadow-xs space-y-3" id="matrix-card">
-						<!-- Injected via JS -->
-					</div>
-
-				</div>
-
-				<!-- RIGHT COLUMN: PRICING TRAPS, LANDMINES & PLAYBOOK (5 COLS) -->
-				<div class="lg:col-span-5 space-y-6">
-					
-					<!-- TACTICAL DISPLACEMENT PLAYBOOK -->
-					<div class="card bg-gradient-to-br from-base-200/90 to-base-100 border border-base-300 p-5 rounded-2xl shadow-xs space-y-2" id="playbook-card">
-						<!-- Injected via JS -->
-					</div>
-
-					<!-- PRICING TRAPS & RENEWALS -->
-					<div class="card bg-base-100 border border-base-300 p-5 rounded-2xl shadow-xs space-y-3" id="traps-card">
-						<!-- Injected via JS -->
-					</div>
-
-					<!-- BAKE-OFF LANDMINES -->
-					<div class="card bg-base-100 border border-base-300 p-5 rounded-2xl shadow-xs space-y-3" id="landmines-card">
-						<!-- Injected via JS -->
-					</div>
-
-				</div>
-
-			</div>
-
+		<!-- CLEAN TABLE CONTAINER -->
+		<div id="dossier-content" class="hidden min-w-0">
+			<!-- Rendered via renderCompetitorView clean table -->
 		</div>
 	</div>
 
 	<script>
+		import { renderCompetitorView } from '../components/deliverables/competitor';
+
 		const loadingState = document.getElementById('loading-state');
 		const emptyState = document.getElementById('empty-state');
 		const dossierContent = document.getElementById('dossier-content');
 		const compNameBadge = document.getElementById('comp-name-badge');
-		const summaryBar = document.getElementById('dossier-summary-bar');
-		const crustdataCard = document.getElementById('crustdata-card');
-		const matrixCard = document.getElementById('matrix-card');
-		const playbookCard = document.getElementById('playbook-card');
-		const trapsCard = document.getElementById('traps-card');
-		const landminesCard = document.getElementById('landmines-card');
 
 		async function loadCompetitorArtifact() {
 			try {
@@ -131,231 +81,29 @@ import Layout from '../layouts/Layout.astro';
 
 				const art = compArt.content || (compArt.envelope_json && compArt.envelope_json.content) || compArt;
 				const comp = art.content || art;
-				const rev = comp.revenue_intelligence || {};
-				const matrix = comp.head_to_head_matrix || [];
-				const vulns = comp.pricing_vulnerabilities || [];
-				const traps = comp.landmine_traps || [];
-				const crust = comp.crustdata_research || {};
-				const crustRes = crust.research || null;
 
 				if (compNameBadge) {
 					compNameBadge.textContent = comp.competitor_name || 'Competitor';
 				}
 
-				if (dossierContent) dossierContent.classList.remove('hidden');
-
-				// 1. Summary Bar
-				if (summaryBar) {
-					summaryBar.innerHTML = `
-						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl shadow-xs">
-							<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Competitor</span>
-							<h3 class="font-bold text-lg text-base-content">${comp.competitor_name || 'Incumbent'}</h3>
-							<span class="text-xs text-base-content/70">${comp.market_category || 'Enterprise Software'}</span>
-						</div>
-
-						<div class="card bg-base-100 border ${rev.has_public_revenue ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-base-300'} p-4 rounded-xl shadow-xs">
-							<div class="flex items-center justify-between">
-								<span class="text-[10px] font-bold uppercase tracking-wider ${rev.has_public_revenue ? 'text-emerald-600 dark:text-emerald-400' : 'text-base-content/60'}">
-									${rev.has_public_revenue ? '● Verified Public Revenue' : 'Online Revenue Status'}
-								</span>
-								<span class="badge badge-xs font-mono font-bold">${rev.valuation_or_status || 'Private'}</span>
-							</div>
-							<div class="font-mono font-bold text-base mt-1 ${rev.has_public_revenue ? 'text-emerald-700 dark:text-emerald-300' : 'text-base-content/85'}">
-								${rev.revenue_estimate || 'Not publicly disclosed'}
-							</div>
-							<span class="text-[10px] text-base-content/60 font-mono mt-0.5 truncate">${rev.source_note || 'Private enterprise filing standard'}</span>
-						</div>
-
-						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl shadow-xs">
-							<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Pricing Model</span>
-							<h3 class="font-bold text-sm text-base-content mt-1 font-mono">${comp.pricing_model || 'Usage-based'}</h3>
-							<span class="text-[10px] text-error font-medium mt-1">⚠️ ${vulns.length || 0} renewal traps identified</span>
-						</div>
-					`;
-				}
-
-				// 2. Crustdata Card
-				if (crustdataCard) {
-					crustdataCard.innerHTML = `
-						<div class="flex items-center justify-between border-b border-base-200 pb-3">
-							<div class="flex items-center gap-2">
-								<span class="text-lg">🌐</span>
-								<div>
-									<h3 class="font-bold text-sm text-base-content uppercase tracking-wider">Crustdata Deep B2B Intelligence</h3>
-									<span class="text-[10px] text-base-content/60 font-mono">${crust.source || 'Crustdata B2B Platform'}</span>
-								</div>
-							</div>
-							<span class="badge badge-sm ${crust.is_live_api ? 'badge-success' : 'badge-primary'} font-mono font-bold">
-								${crust.is_live_api ? '● Live REST API' : (crust.has_api_key_configured ? '● API Key Active' : 'Verified B2B Data')}
-							</span>
-						</div>
-
-						${crustRes ? `
-							<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-								<div class="p-3 bg-base-200/50 rounded-xl border border-base-300 space-y-1.5">
-									<div class="flex items-center justify-between">
-										<span class="text-[11px] font-bold text-base-content/75 uppercase">Headcount Trajectory</span>
-										<span class="badge badge-xs badge-neutral font-mono font-bold">${crustRes.headcount?.total_employees || '1,000+'} (${crustRes.headcount?.yoy_growth_percentage || '+12%'})</span>
-									</div>
-									<p class="text-xs text-base-content/85 leading-relaxed font-medium">
-										${crustRes.headcount?.headcount_signal || 'Workforce metrics active.'}
-									</p>
-									${crustRes.headcount?.department_breakdown ? `
-										<div class="grid grid-cols-3 gap-1.5 pt-2 text-[10px] font-mono text-center">
-											<div class="bg-base-100 p-1.5 rounded border border-base-200">Eng: ${crustRes.headcount.department_breakdown.engineering}</div>
-											<div class="bg-base-100 p-1.5 rounded border border-base-200">Sales: ${crustRes.headcount.department_breakdown.sales_and_marketing}</div>
-											<div class="bg-base-100 p-1.5 rounded border border-base-200">Ops: ${crustRes.headcount.department_breakdown.operations_and_support}</div>
-										</div>
-									` : ''}
-								</div>
-
-								<div class="p-3 bg-base-200/50 rounded-xl border border-base-300 space-y-1.5">
-									<div class="flex items-center justify-between">
-										<span class="text-[11px] font-bold text-base-content/75 uppercase">Capital & Valuation</span>
-										<span class="badge badge-xs badge-outline font-mono">${crustRes.financials_and_funding?.stage_or_status || 'Enterprise'}</span>
-									</div>
-									<div class="text-xs font-mono font-bold text-base-content">
-										${crustRes.financials_and_funding?.valuation_or_market_cap || crustRes.financials_and_funding?.total_funding || 'Public market disclosures'}
-									</div>
-									<p class="text-[11px] text-base-content/70">
-										${crustRes.financials_and_funding?.investor_summary || 'Institutional tier backing.'}
-									</p>
-								</div>
-							</div>
-
-							${crustRes.hiring_signals ? `
-								<div class="p-3 bg-base-200/50 rounded-xl border border-base-300 space-y-2">
-									<div class="flex items-center justify-between">
-										<span class="text-[11px] font-bold text-base-content/75 uppercase">Hiring Velocity & Strategic Vulnerability</span>
-										<span class="badge badge-xs badge-warning font-semibold">Open Jobs: ${crustRes.hiring_signals.open_job_count || 'Active'}</span>
-									</div>
-									<div class="p-2.5 bg-error/10 border border-error/25 rounded-lg text-xs text-error font-medium">
-										⚠️ ${crustRes.hiring_signals.strategic_vulnerability}
-									</div>
-									<div class="flex flex-wrap gap-1.5 pt-1 max-w-full overflow-hidden">
-										${(crustRes.hiring_signals.critical_focus_areas || []).map((f: string) => `
-											<span class="badge badge-xs badge-neutral truncate max-w-[160px] inline-block">${f}</span>
-										`).join('')}
-									</div>
-								</div>
-							` : ''}
-
-							${crustRes.tech_stack_footprint?.length ? `
-								<div class="space-y-1.5 pt-1 max-w-full overflow-hidden">
-									<span class="text-[11px] font-bold text-base-content/70 uppercase">Identified Tech Stack Footprint:</span>
-									<div class="flex flex-wrap gap-1.5">
-										${crustRes.tech_stack_footprint.map((t: string) => `<span class="badge badge-sm badge-neutral font-mono truncate max-w-[120px] inline-block">${t}</span>`).join('')}
-									</div>
-								</div>
-							` : ''}
-						` : `
-							<p class="text-xs text-base-content/75 text-center py-4">No Crustdata profile cached. Run deep research in Plan to pull live firmographics.</p>
-						`}
-					`;
-				}
-
-				// 3. Matrix Card
-				if (matrixCard && matrix.length > 0) {
-					matrixCard.innerHTML = `
-						<div class="flex items-center justify-between border-b border-base-200 pb-2.5">
-							<span class="font-bold text-sm text-base-content uppercase tracking-wider">
-								⚔️ Head-to-Head Differentiators
-							</span>
-							<span class="badge badge-xs badge-success font-semibold">Our Advantage</span>
-						</div>
-						<div class="space-y-3 pt-2">
-							${matrix.map((row: any) => `
-								<div class="bg-base-200/50 p-3 rounded-xl border border-base-300 space-y-2">
-									<div class="flex items-center justify-between">
-										<span class="text-xs font-bold text-base-content uppercase">${row.category}</span>
-										<span class="badge badge-xs badge-success font-semibold">Advantage: Us</span>
-									</div>
-									<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-										<div class="p-2.5 rounded-lg bg-error/10 border border-error/20 text-error">
-											<span class="font-bold block mb-0.5">${comp.competitor_name || 'Them'}:</span>
-											${row.competitor}
-										</div>
-										<div class="p-2.5 rounded-lg bg-success/10 border border-success/20 text-success">
-											<span class="font-bold block mb-0.5">Our Solution:</span>
-											${row.our_solution}
-										</div>
-									</div>
-								</div>
-							`).join('')}
-						</div>
-					`;
-				}
-
-				// 4. Playbook Card
-				if (playbookCard && comp.displacement_playbook) {
-					playbookCard.innerHTML = `
-						<div class="flex items-center justify-between border-b border-base-200 pb-2">
-							<span class="font-bold text-sm text-base-content uppercase tracking-wider">
-								🏆 Tactical Displacement Playbook
-							</span>
-							<span class="badge badge-xs badge-neutral">Strategy</span>
-						</div>
-						<p class="text-xs text-base-content/85 leading-relaxed pt-1.5 whitespace-pre-line font-medium">
-							${comp.displacement_playbook}
-						</p>
-					`;
-				}
-
-				// 5. Pricing Traps Card
-				if (trapsCard && vulns.length > 0) {
-					trapsCard.innerHTML = `
-						<div class="flex items-center justify-between border-b border-base-200 pb-2">
-							<span class="font-bold text-sm text-base-content uppercase tracking-wider">
-								⚠️ Pricing Traps & Renewals
-							</span>
-							<span class="badge badge-xs badge-warning">${vulns.length} Traps</span>
-						</div>
-						<div class="space-y-2 pt-1.5">
-							${vulns.map((v: string) => `
-								<div class="flex items-start gap-2 text-xs text-base-content/85 bg-base-200/60 p-2.5 rounded-xl border border-base-300/60">
-									<span class="text-error font-bold shrink-0">✕</span>
-									<span>${v}</span>
-								</div>
-							`).join('')}
-						</div>
-					`;
-				}
-
-				// 6. Landmines Card
-				if (landminesCard && traps.length > 0) {
-					landminesCard.innerHTML = `
-						<div class="flex items-center justify-between border-b border-base-200 pb-2">
-							<span class="font-bold text-sm text-base-content uppercase tracking-wider">
-								💣 Bake-Off Landmine Traps
-							</span>
-							<span class="text-xs text-base-content/60 font-mono">Arm Prospect</span>
-						</div>
-						<p class="text-xs text-base-content/70">Arm your internal champion with these questions to corner ${comp.competitor_name || 'the vendor'}:</p>
-						<div class="space-y-2.5 pt-1.5">
-							${traps.map((q: string, idx: number) => `
-								<div class="bg-base-200/60 p-3 rounded-xl border border-base-300 space-y-2">
-									<div class="flex items-center justify-between">
-										<span class="badge badge-xs badge-neutral font-mono font-bold">Landmine #${idx + 1}</span>
-										<button type="button" class="btn btn-xs btn-ghost full-copy-btn cursor-pointer" data-text="${encodeURIComponent(q)}">📋 Copy Question</button>
-									</div>
-									<div class="text-xs font-medium text-base-content italic leading-relaxed">
-										"${q}"
-									</div>
-								</div>
-							`).join('')}
-						</div>
-					`;
-
-					landminesCard.querySelectorAll('.full-copy-btn').forEach((btn) => {
-						btn.addEventListener('click', () => {
-							const text = decodeURIComponent(btn.getAttribute('data-text') || '');
-							if (text) {
-								navigator.clipboard.writeText(text);
-								const orig = btn.textContent;
-								btn.textContent = 'Copied ✓';
-								setTimeout(() => { btn.textContent = orig; }, 2000);
-							}
+				if (dossierContent) {
+					dossierContent.classList.remove('hidden');
+					renderCompetitorView(dossierContent, { content: comp }, compArt.deal_context || {}, async () => {
+						const refreshRes = await fetch('/api/competitor/deep-research', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								competitor: comp.competitor_name || 'Competitor',
+								account_name: 'Enterprise',
+							}),
 						});
+						if (refreshRes.ok) {
+							const refreshData = await refreshRes.json();
+							if (refreshData.artifact?.content) {
+								comp.crustdata_research = refreshData.artifact.content;
+								renderCompetitorView(dossierContent, { content: comp }, compArt.deal_context || {});
+							}
+						}
 					});
 				}
 

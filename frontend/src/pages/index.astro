@@ -1,260 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ChatWindow from '../components/ChatWindow.astro';
+import SidePanel from '../components/SidePanel.astro';
+import AppDock from '../components/AppDock.astro';
 ---
 
 <Layout title="BUST — Plan" description="AI Deal Planning & Execution" fullHeight={true}>
-	<!-- MAIN WORKSPACE: ROCK-SOLID CHAT + FLOATING SLIDE-OVER DELIVERABLES + STICKY APP DOCK -->
 	<div class="relative flex flex-1 w-full h-full min-h-0 overflow-hidden">
-		
-		<!-- 1. LEFT BALANCE SPACER: Matches the right dock (w-12) to ensure optical centering -->
+		<!-- 1. LEFT BALANCE SPACER: Matches right dock (w-12) to ensure optical centering -->
 		<div class="w-12 shrink-0 hidden md:block select-none pointer-events-none"></div>
 
-		<!-- 2. CENTER: EXPANSIVE, ROCK-SOLID PLANNER CHAT WINDOW (NEVER MOVES) -->
-		<div class="flex-1 min-h-0 flex flex-col h-full overflow-hidden">
-			
-			<!-- TOP CHAT BAR (Centered and aligned with conversation & input) -->
-			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto flex items-center justify-between pb-2.5 border-b border-base-300 gap-2 shrink-0 px-2 sm:px-4">
-				<div class="flex items-center gap-2 flex-wrap">
-					<h1 class="text-base font-bold text-base-content">Plan</h1>
-					<span class="text-xs text-base-content/50">•</span>
-					<span class="text-xs font-mono text-base-content/70" id="deal-title-badge">New Opportunity</span>
-					<span class="badge badge-xs badge-neutral hidden font-mono" id="deal-stage-badge">Discovery</span>
-					<span class="badge badge-xs badge-warning hidden font-mono" id="deal-health-badge">Active</span>
-				</div>
+		<!-- 2. CENTER: EXPANSIVE PLANNER CHAT WINDOW -->
+		<ChatWindow />
 
-				<div class="flex items-center gap-2">
-					<!-- Reset Session -->
-					<button id="btn-reset-session" type="button" class="btn btn-xs btn-ghost text-base-content/60 hover:text-base-content gap-1">
-						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-						<span>Reset</span>
-					</button>
-				</div>
-			</div>
+		<!-- 3. FLOATING SLIDE-OVER DELIVERABLES PANEL -->
+		<SidePanel />
 
-			<!-- EXPANSIVE CONVERSATION STREAM (Rock-solid centered position, scrolls internally) -->
-			<div id="chat-stream" class="flex-1 min-h-0 overflow-y-auto space-y-6 text-xs sm:text-sm p-2 sm:p-4 pb-6 font-sans w-full max-w-4xl xl:max-w-5xl mx-auto">
-				
-				<!-- Clean Welcome Turn -->
-				<div id="welcome-turn" class="py-14 sm:py-20 text-center space-y-4 max-w-2xl mx-auto">
-					<div class="w-12 h-12 rounded-2xl bg-base-200 border border-base-300 mx-auto flex items-center justify-center text-xl font-bold shadow-xs">
-						⚡
-					</div>
-					<div class="space-y-1.5">
-						<h2 class="text-xl sm:text-2xl font-bold text-base-content tracking-tight">
-							Plan your next enterprise deal
-						</h2>
-						<p class="text-xs sm:text-sm text-base-content/75 leading-relaxed">
-							Drop raw discovery notes, customer objections, or deal parameters. The agent analyzes strategy, asks follow-up questions, and synthesizes full sales deliverables to the side.
-						</p>
-					</div>
-
-					<div class="pt-2 text-[11px] sm:text-xs text-base-content/60 font-mono">
-						Ready for deal input • Multi-turn cognitive context active
-					</div>
-				</div>
-
-			</div>
-
-			<!-- EXPANSIVE BOTTOM PROMPT BAR (Permanently sticky at bottom, never moves with messages) -->
-			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto shrink-0 pt-2 pb-1 px-2 sm:px-4 bg-base-100 space-y-1.5">
-				<!-- Attached Grounding Sources Tray -->
-				<div id="sources-tray" class="flex items-center gap-1.5 flex-wrap text-[11px] max-w-full overflow-hidden">
-					<button id="btn-open-attach-modal" type="button" class="btn btn-xs btn-outline rounded-lg gap-1 font-mono text-[10px] text-base-content/75 hover:text-base-content cursor-pointer shrink-0">
-						<span>+ Attach Source</span>
-						<span class="text-[9px] opacity-60">(GitHub / Docs / PDF)</span>
-					</button>
-					<div id="active-sources-list" class="flex items-center gap-1.5 flex-wrap min-w-0 max-w-full overflow-hidden">
-						<!-- Injected active source badges -->
-					</div>
-				</div>
-
-				<form id="chat-form" class="card bg-base-200/80 border border-base-300 p-2 sm:p-2.5 rounded-2xl shadow-xs flex flex-row items-center gap-2">
-					<input
-						id="chat-input"
-						type="text"
-						class="input input-sm sm:input-md flex-1 bg-transparent border-0 text-xs sm:text-sm text-base-content focus:outline-none"
-						placeholder="Plan a deal (or paste a GitHub repo/docs link to ground technically...)"
-						autocomplete="off"
-					/>
-					<button id="btn-send-directive" type="submit" class="btn btn-sm btn-neutral px-4 font-semibold shadow-xs rounded-xl">
-						Plan ⏎
-					</button>
-				</form>
-			</div>
-
-			<!-- ATTACH SOURCE MODAL -->
-			<dialog id="attach-source-modal" class="modal">
-				<div class="modal-box bg-base-100 border-2 border-base-300 rounded-2xl max-w-md p-6 space-y-4">
-					<div class="flex items-center justify-between border-b border-base-200 pb-2.5">
-						<div class="flex items-center gap-2">
-							<span class="text-lg">🔗</span>
-							<h3 class="font-bold text-sm text-base-content">Attach Technical Grounding Source</h3>
-						</div>
-						<form method="dialog">
-							<button class="btn btn-xs btn-circle btn-ghost">✕</button>
-						</form>
-					</div>
-
-					<p class="text-xs text-base-content/75 leading-relaxed">
-						Ground your presentations, architecture slides, and objection battlecards in real company technical sources so deliverables cite verified facts.
-					</p>
-
-					<div class="space-y-3 text-xs">
-						<div>
-							<label class="block font-bold text-base-content mb-1">Source Type</label>
-							<select id="modal-source-type" class="select select-sm select-bordered w-full rounded-xl text-xs">
-								<option value="github">🐙 GitHub Repository (README / Architecture)</option>
-								<option value="website">🌐 Technical Documentation / Website</option>
-								<option value="pdf">📄 Whitepaper / Security Audit (PDF)</option>
-							</select>
-						</div>
-
-						<div>
-							<label class="block font-bold text-base-content mb-1" id="modal-url-label">Repository URL / Name</label>
-							<input
-								id="modal-source-url"
-								type="text"
-								class="input input-sm input-bordered w-full rounded-xl text-xs font-mono"
-								placeholder="e.g. https://github.com/my-org/core-engine"
-							/>
-						</div>
-					</div>
-
-					<div class="flex items-center justify-end gap-2 pt-2 border-t border-base-200">
-						<form method="dialog">
-							<button class="btn btn-sm btn-ghost">Cancel</button>
-						</form>
-						<button id="btn-submit-source" type="button" class="btn btn-sm btn-neutral font-semibold rounded-xl gap-1">
-							<span>Verify & Attach ↗</span>
-						</button>
-					</div>
-				</div>
-			</dialog>
-
-		</div>
-
-		<!-- 2. FLOATING SLIDE-OVER DELIVERABLES PANEL (Anchored to the right, DOES NOT move the chat) -->
-		<div
-			id="side-panel"
-			class="absolute top-0 right-13 bottom-0 w-[520px] md:w-[580px] xl:w-[640px] max-w-[calc(100vw-4.5rem)] z-40 bg-base-100/98 backdrop-blur-xl border-l border-base-300 shadow-2xl flex flex-col rounded-l-2xl transition-all duration-300 ease-out transform translate-x-[110%] opacity-0 pointer-events-none"
-		>
-			
-			<!-- STICKY SIDE PANEL HEADER -->
-			<div class="sticky top-0 z-30 bg-base-100/95 backdrop-blur-md flex items-center justify-between p-3.5 border-b border-base-200 gap-2 shrink-0">
-				<div class="flex items-center gap-2">
-					<span class="text-sm font-bold text-base-content" id="side-panel-title">🎴 Objection Battlecards</span>
-					<span class="badge badge-xs badge-neutral font-mono" id="side-active-account">Active</span>
-				</div>
-				
-				<div class="flex items-center gap-2">
-					<!-- Prominent "Open Full View ↗" Redirect Link -->
-					<a id="btn-open-full-page" href="/battlecards" class="btn btn-xs btn-neutral gap-1 font-semibold">
-						<span id="full-page-btn-text">Open Full Deck ↗</span>
-					</a>
-					<button id="btn-close-side" type="button" class="btn btn-xs btn-circle btn-ghost text-base-content/70 hover:text-base-content" title="Close Side Panel">
-						✕
-					</button>
-				</div>
-			</div>
-
-			<!-- SIDE CONTENT VIEWPORT (Scrollable) -->
-			<div class="flex-1 overflow-y-auto p-4 space-y-4" id="side-content-area">
-				
-				<!-- Empty Placeholder -->
-				<div id="side-empty-state" class="py-16 text-center space-y-3">
-					<div class="w-12 h-12 rounded-2xl bg-base-200 border border-base-300 mx-auto flex items-center justify-center text-2xl shadow-xs">
-						📑
-					</div>
-					<div class="space-y-1">
-						<h4 class="font-bold text-sm text-base-content" id="side-empty-title">Select an App Icon</h4>
-						<p class="text-xs text-base-content/70 max-w-xs mx-auto leading-relaxed" id="side-empty-desc">
-							Click any app icon on the side dock to inspect generated battlecards, slide decks, proposals, or action plans.
-						</p>
-					</div>
-				</div>
-
-				<!-- Dynamic Content Container -->
-				<div id="side-deliverable-view" class="hidden space-y-4">
-					<!-- Injected via JS -->
-				</div>
-
-			</div>
-
-		</div>
-
-		<!-- 3. STICKY VERTICAL APP ICONS DOCK (Anchored on the far right edge) -->
-		<div class="self-start w-12 flex flex-col items-center py-2.5 px-1 border-l border-base-300 bg-base-200/50 shrink-0 gap-3 z-50 select-none rounded-xl ml-auto">
-			
-			<!-- 🎴 Battlecards App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Objection Battlecards">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="battlecards" id="app-icon-bc">
-					<span>🎴</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-bc">0</span>
-				</button>
-			</div>
-
-			<!-- 🎯 Competitor Intelligence App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Competitor Intelligence & Financials">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="competitor" id="app-icon-comp">
-					<span>🎯</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-comp">0</span>
-				</button>
-			</div>
-
-			<!-- 📊 Pitch Deck App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Pitch & Presentation Decks">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="presentation" id="app-icon-deck">
-					<span>📊</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-deck">0</span>
-				</button>
-			</div>
-
-			<!-- ✉️ Proposal Email App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Deal Follow-Up Emails">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="email" id="app-icon-email">
-					<span>✉️</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-email">0</span>
-				</button>
-			</div>
-
-			<!-- 🗺️ Mutual Action Plan App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Mutual Action Plans (MAP)">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="flowchart" id="app-icon-map">
-					<span>🗺️</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-map">0</span>
-				</button>
-			</div>
-
-			<!-- 🐦 Social Touchpoint App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Executive Social Touchpoints (X / LinkedIn)">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="social" id="app-icon-social">
-					<span>🐦</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-social">0</span>
-				</button>
-			</div>
-
-			<!-- 🏨 Buyer Deal Room App Icon -->
-			<div class="tooltip tooltip-left" data-tip="Buyer Deal Suites">
-				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="suite" id="app-icon-suite">
-					<span>🏨</span>
-					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-suite">0</span>
-				</button>
-			</div>
-
-			<div class="w-6 h-px bg-base-300 my-1 opacity-50"></div>
-
-			<!-- Toggle / Collapse Button -->
-			<div class="tooltip tooltip-left" data-tip="Toggle Deliverables Panel">
-				<button type="button" class="w-8 h-8 rounded-lg text-base-content/60 hover:text-base-content hover:bg-base-200 flex items-center justify-center text-xs transition-all cursor-pointer" id="app-dock-toggle">
-					<span id="app-dock-toggle-icon">◀</span>
-				</button>
-			</div>
-
-		</div>
-
+		<!-- 4. STICKY VERTICAL APP ICONS DOCK -->
+		<AppDock />
 	</div>
 
-	<!-- 3D FLIP CARD & CAROUSEL STYLES -->
+	<!-- 3D FLIP CARD & CAROUSEL UTILITY STYLES -->
 	<style is:global>
 		.perspective-1000 {
 			perspective: 1000px;
@@ -283,18 +49,21 @@ import Layout from '../layouts/Layout.astro';
 
 	<script>
 		import { renderMarkdown } from '../utils/markdown';
+		import { renderCompetitorView } from '../components/deliverables/competitor';
+		import { renderBattlecardsView } from '../components/deliverables/battlecards';
+		import { renderPresentationView } from '../components/deliverables/presentation';
+		import { renderEmailView } from '../components/deliverables/email';
+		import { renderFlowchartView } from '../components/deliverables/flowchart';
+		import { renderSocialView } from '../components/deliverables/social';
+		import { renderSuiteView } from '../components/deliverables/suite';
 
 		let dealContext: any = {};
 		let storedArtifacts: any = {};
 		let activeTab: string = 'battlecards';
 		let sidePanelOpen: boolean = false;
 		let conversationHistory: Array<{ role: string; content: string }> = [];
-		let compActiveSubtab: string = 'overview';
 
-		// Stacked Deck state for side panel
-		let sideCards: any[] = [];
-		let sideCardOrder: number[] = [];
-
+		// Chat DOM elements
 		const chatStream = document.getElementById('chat-stream');
 		const chatForm = document.getElementById('chat-form');
 		const chatInput = document.getElementById('chat-input') as HTMLInputElement;
@@ -305,7 +74,7 @@ import Layout from '../layouts/Layout.astro';
 		const dealStageBadge = document.getElementById('deal-stage-badge');
 		const dealHealthBadge = document.getElementById('deal-health-badge');
 
-		// Side Panel elements
+		// Side Panel DOM elements
 		const sidePanel = document.getElementById('side-panel');
 		const btnCloseSide = document.getElementById('btn-close-side');
 		const sidePanelTitle = document.getElementById('side-panel-title');
@@ -315,7 +84,7 @@ import Layout from '../layouts/Layout.astro';
 		const sideEmptyState = document.getElementById('side-empty-state');
 		const sideDeliverableView = document.getElementById('side-deliverable-view');
 
-		// App Dock elements
+		// App Dock DOM elements
 		const sideAppBtns = document.querySelectorAll('.side-app-btn');
 		const appDockToggle = document.getElementById('app-dock-toggle');
 		const appDockToggleIcon = document.getElementById('app-dock-toggle-icon');
@@ -327,23 +96,21 @@ import Layout from '../layouts/Layout.astro';
 		const appBadgeSocial = document.getElementById('app-badge-social');
 		const appBadgeSuite = document.getElementById('app-badge-suite');
 
-		// Toggle Side Panel State (Floats over without moving the chat)
+		// Side Panel Open/Close Transition
 		function setSidePanelState(open: boolean) {
 			sidePanelOpen = open;
 			if (!sidePanel) return;
+
 			if (open) {
 				sidePanel.classList.remove('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
 				sidePanel.classList.add('translate-x-0', 'opacity-100', 'pointer-events-auto');
 				if (appDockToggleIcon) appDockToggleIcon.textContent = '▶';
+				renderActiveDeliverable();
 			} else {
-				sidePanel.classList.add('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
 				sidePanel.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+				sidePanel.classList.add('translate-x-[110%]', 'opacity-0', 'pointer-events-none');
 				if (appDockToggleIcon) appDockToggleIcon.textContent = '◀';
-				// Clean reset button highlight
-				sideAppBtns.forEach((b) => {
-					b.classList.remove('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
-					b.classList.add('bg-base-100');
-				});
+				sideAppBtns.forEach((b) => b.classList.remove('ring-2', 'ring-primary', 'bg-base-200'));
 			}
 		}
 
@@ -355,30 +122,28 @@ import Layout from '../layouts/Layout.astro';
 			setSidePanelState(false);
 		});
 
-		// Switch Active App Tab (Sticky when clicked)
+		// Switch Active App Tab
 		function switchAppTab(tabKey: string) {
 			if (sidePanelOpen && activeTab === tabKey) {
-				// Sticky toggle: clicking active icon again collapses panel smoothly
 				setSidePanelState(false);
 				return;
 			}
 
 			activeTab = tabKey;
-			setSidePanelState(true);
-
-			// Highlight active app button with clean, sticky active styling
 			sideAppBtns.forEach((btn) => {
 				const key = btn.getAttribute('data-tab');
 				if (key === tabKey) {
-					btn.classList.add('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
-					btn.classList.remove('bg-base-100', 'hover:bg-base-200');
+					btn.classList.add('ring-2', 'ring-primary', 'bg-base-200');
 				} else {
-					btn.classList.remove('bg-neutral', 'text-neutral-content', 'shadow-md', 'scale-105');
-					btn.classList.add('bg-base-100', 'hover:bg-base-200');
+					btn.classList.remove('ring-2', 'ring-primary', 'bg-base-200');
 				}
 			});
 
-			renderActiveDeliverable();
+			if (!sidePanelOpen) {
+				setSidePanelState(true);
+			} else {
+				renderActiveDeliverable();
+			}
 		}
 
 		sideAppBtns.forEach((btn) => {
@@ -416,7 +181,7 @@ import Layout from '../layouts/Layout.astro';
 					fullPageBtnText.textContent = 'Open Full Teardown ↗';
 				} else if (activeTab === 'presentation') {
 					btnOpenFullPage.href = '/presentations';
-					fullPageBtnText.textContent = 'Open Full Slides (16:9) ↗';
+					fullPageBtnText.textContent = 'Open 16:9 Studio ↗';
 				} else if (activeTab === 'email') {
 					btnOpenFullPage.href = '/emails';
 					fullPageBtnText.textContent = 'Open Full Email ↗';
@@ -454,910 +219,52 @@ import Layout from '../layouts/Layout.astro';
 				sideActiveAccount.textContent = dealContext.account_name || 'Active Deal';
 			}
 
-			// BATTLECARDS: STACKED FLIPPABLE CAROUSEL
+			// Dispatch to modular deliverable renderers
 			if (activeTab === 'battlecards') {
-				sideCards = art.content?.cards || [];
-				sideCardOrder = sideCards.map((_, i) => i);
-
-				sideDeliverableView.innerHTML = `
-
-						<!-- 3D Perspective Stack Stage -->
-						<div class="relative w-full h-[370px] perspective-1000 my-2" id="side-deck-stage">
-							<!-- Stack items injected below -->
-						</div>
-
-						<!-- Progress Dots -->
-						<div class="flex items-center justify-center gap-1.5 pt-1" id="side-deck-dots"></div>
-					</div>
-				`;
-
-				renderSideStackedDeck();
-				setupSideDeckListeners();
-				updateSideStackPositions();
-				return;
+				renderBattlecardsView(sideDeliverableView, art);
+			} else if (activeTab === 'competitor') {
+				renderCompetitorView(sideDeliverableView, art, dealContext, handleCrustdataRefresh);
+			} else if (activeTab === 'presentation') {
+				renderPresentationView(sideDeliverableView, art);
+			} else if (activeTab === 'email') {
+				renderEmailView(sideDeliverableView, art);
+			} else if (activeTab === 'flowchart') {
+				renderFlowchartView(sideDeliverableView, art);
+			} else if (activeTab === 'social') {
+				renderSocialView(sideDeliverableView, art, dealContext);
+			} else if (activeTab === 'suite') {
+				renderSuiteView(sideDeliverableView, art, dealContext);
 			}
+		}
 
-			// COMPETITOR: COMPETITIVE INTELLIGENCE & REVENUE
-			if (activeTab === 'competitor') {
-				const comp = art.content || {};
-				const rev = comp.revenue_intelligence || {};
-				const matrix = comp.head_to_head_matrix || [];
-				const vulns = comp.pricing_vulnerabilities || [];
-				const traps = comp.landmine_traps || [];
-				const crust = comp.crustdata_research || {};
-				const crustRes = crust.research || null;
-
-				const revenueBadge = rev.has_public_revenue
-					? `<div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-1">
-							<div class="flex items-center justify-between">
-								<span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-									<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-									Online Public Revenue
-								</span>
-								<span class="badge badge-xs badge-success font-mono font-bold">${rev.valuation_or_status || 'Public'}</span>
-							</div>
-							<div class="font-mono font-bold text-sm text-emerald-700 dark:text-emerald-300">
-								${rev.revenue_estimate}
-							</div>
-							${rev.source_note ? `<div class="text-[10px] text-base-content/60 font-mono">Verified: ${rev.source_note}</div>` : ''}
-					   </div>`
-					: `<div class="p-3 bg-base-200/60 border border-base-300 rounded-xl space-y-1">
-							<div class="flex items-center justify-between">
-								<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60 flex items-center gap-1.5">
-									<span class="w-2 h-2 rounded-full bg-base-content/40"></span>
-									Online Revenue Intelligence
-								</span>
-								<span class="badge badge-xs badge-neutral font-mono">${rev.valuation_or_status || 'Private / Unlisted'}</span>
-							</div>
-							<div class="font-mono text-xs text-base-content/75 font-medium">
-								${rev.revenue_estimate || 'Not publicly disclosed / Private enterprise'}
-							</div>
-							<div class="text-[10px] text-base-content/50 font-mono">Private vendor — revenue not mandated in public SEC filings.</div>
-					   </div>`;
-
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-3 min-w-0 break-words">
-						<!-- SEGMENTED SUB-TABS TO PREVENT SCROLL & CONTENT OVERFLOW -->
-						<div class="flex items-center gap-1.5 overflow-x-auto pb-1.5 border-b border-base-200/90 shrink-0" id="comp-subtabs-bar">
-							<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'overview' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="overview">
-								🌐 Overview & Crustdata
-							</button>
-							${matrix.length > 0 ? `
-								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'matrix' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="matrix">
-									⚔️ Matrix (${matrix.length})
-								</button>
-							` : ''}
-							${vulns.length > 0 ? `
-								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'traps' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="traps">
-									⚠️ Traps (${vulns.length})
-								</button>
-							` : ''}
-							${traps.length > 0 ? `
-								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'landmines' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="landmines">
-									💣 Landmines (${traps.length})
-								</button>
-							` : ''}
-							${comp.displacement_playbook ? `
-								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'playbook' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="playbook">
-									🏆 Playbook
-								</button>
-							` : ''}
-							<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'all' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="all">
-								📋 All Sections
-							</button>
-						</div>
-
-						<!-- 1. OVERVIEW & CRUSTDATA SECTION -->
-						<div id="comp-sec-overview" class="space-y-3 ${compActiveSubtab === 'overview' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
-							<!-- COMPETITOR DOSSIER HEADER -->
-							<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
-								<div class="flex items-start justify-between border-b border-base-200 pb-2 gap-2">
-									<div class="min-w-0">
-										<span class="text-[10px] text-base-content/60 font-mono uppercase block truncate">${comp.market_category || 'Enterprise Software'}</span>
-										<h4 class="font-bold text-sm text-base-content flex items-center gap-1.5 flex-wrap">
-											<span>${comp.competitor_name || 'Competitor'}</span>
-											<span class="badge badge-xs badge-warning font-semibold">Incumbent</span>
-										</h4>
-									</div>
-									<span class="badge badge-xs badge-outline font-mono shrink-0">Pricing: ${comp.pricing_model || 'Usage-based'}</span>
-								</div>
-
-								<!-- REVENUE INTELLIGENCE CARD -->
-								${revenueBadge}
-							</div>
-
-							<!-- CRUSTDATA B2B DEEP RESEARCH -->
-							<div class="card bg-base-100 border border-primary/40 p-3.5 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
-								<div class="flex items-center justify-between border-b border-base-200 pb-2 gap-2">
-									<div class="flex items-center gap-1.5 min-w-0">
-										<span class="text-sm shrink-0">🌐</span>
-										<span class="text-[11px] font-bold text-base-content uppercase tracking-wider truncate">Crustdata Deep B2B Research</span>
-									</div>
-									<span class="badge badge-xs ${crust.is_live_api ? 'badge-success' : 'badge-primary'} font-mono font-bold shrink-0">
-										${crust.is_live_api ? '● Live REST API' : (crust.has_api_key_configured ? '● API Key Active' : 'Crustdata B2B Platform')}
-									</span>
-								</div>
-
-								${crustRes ? `
-									<!-- Headcount & Growth Metrics -->
-									<div class="p-2.5 bg-base-200/50 rounded-lg border border-base-300/50 space-y-1 min-w-0">
-										<div class="flex items-center justify-between gap-2">
-											<span class="text-[10px] font-bold text-base-content/70 uppercase">Headcount Trajectory</span>
-											<span class="badge badge-xs badge-neutral font-mono font-bold shrink-0">${crustRes.headcount?.total_employees || '1,000+'} (${crustRes.headcount?.yoy_growth_percentage || '+12%'})</span>
-										</div>
-										<p class="text-[10px] text-base-content/80 leading-relaxed font-medium break-words">
-											${crustRes.headcount?.headcount_signal || 'Stable enterprise workforce.'}
-										</p>
-										${crustRes.headcount?.department_breakdown ? `
-											<div class="grid grid-cols-3 gap-1 pt-1 text-[9px] font-mono text-center">
-												<div class="bg-base-100 p-1 rounded border border-base-200 truncate">Eng: ${crustRes.headcount.department_breakdown.engineering}</div>
-												<div class="bg-base-100 p-1 rounded border border-base-200 truncate">Sales: ${crustRes.headcount.department_breakdown.sales_and_marketing}</div>
-												<div class="bg-base-100 p-1 rounded border border-base-200 truncate">Ops: ${crustRes.headcount.department_breakdown.operations_and_support}</div>
-											</div>
-										` : ''}
-									</div>
-
-									<!-- Funding & Valuation -->
-									<div class="p-2.5 bg-base-200/50 rounded-lg border border-base-300/50 space-y-1 min-w-0">
-										<div class="flex items-center justify-between gap-2">
-											<span class="text-[10px] font-bold text-base-content/70 uppercase">Capital & Valuation</span>
-											<span class="text-[10px] font-mono font-bold text-base-content shrink-0">${crustRes.financials_and_funding?.stage_or_status || 'Enterprise'}</span>
-										</div>
-										<div class="text-[10px] text-base-content/85 font-mono break-words">
-											${crustRes.financials_and_funding?.valuation_or_market_cap || crustRes.financials_and_funding?.total_funding || 'Public disclosures'}
-										</div>
-									</div>
-
-									<!-- Hiring Signals & Vulnerabilities -->
-									${crustRes.hiring_signals ? `
-										<div class="p-2.5 bg-base-200/50 rounded-lg border border-base-300/50 space-y-1.5 min-w-0">
-											<div class="flex items-center justify-between gap-2">
-												<span class="text-[10px] font-bold text-base-content/70 uppercase truncate">Hiring Signals (${crustRes.hiring_signals.open_job_count || 'Active'})</span>
-												<span class="badge badge-xs badge-warning text-[9px] shrink-0">Vulnerability</span>
-											</div>
-											<p class="text-[10px] text-error font-medium leading-relaxed break-words">
-												⚠️ ${crustRes.hiring_signals.strategic_vulnerability}
-											</p>
-											<div class="space-y-0.5 pt-0.5">
-												${(crustRes.hiring_signals.critical_focus_areas || []).map((f: string) => `
-													<div class="text-[9px] text-base-content/70 flex items-start gap-1 min-w-0">
-														<span class="shrink-0">•</span><span class="break-words">${f}</span>
-													</div>
-												`).join('')}
-											</div>
-										</div>
-									` : ''}
-
-									<!-- Tech Stack Footprint -->
-									${crustRes.tech_stack_footprint?.length ? `
-										<div class="space-y-1 min-w-0">
-											<span class="text-[10px] font-bold text-base-content/60 uppercase">Identified Tech Stack:</span>
-											<div class="flex flex-wrap gap-1 max-w-full overflow-hidden">
-												${crustRes.tech_stack_footprint.map((t: string) => `<span class="badge badge-xs badge-neutral font-mono truncate max-w-[120px] inline-block">${t}</span>`).join('')}
-											</div>
-										</div>
-									` : ''}
-								` : `
-									<div class="text-center py-2 space-y-2">
-										<p class="text-[11px] text-base-content/70 leading-relaxed">
-											Connect to Crustdata B2B MCP to pull live verified headcount, funding rounds, hiring velocity, and key leadership.
-										</p>
-									</div>
-								`}
-
-								<div class="pt-1 flex items-center justify-between border-t border-base-200 gap-2">
-									<span class="text-[9px] text-base-content/50 font-mono truncate max-w-[180px] inline-block">${crust.source || 'Crustdata B2B Platform'}</span>
-									<button type="button" class="btn btn-xs btn-ghost gap-1 cursor-pointer shrink-0" id="btn-run-crustdata-research">
-										${crustRes ? '🔄 Refresh Crustdata' : '⚡ Deep Research (Crustdata)'}
-									</button>
-								</div>
-							</div>
-						</div>
-
-						<!-- 2. HEAD-TO-HEAD MATRIX SECTION -->
-						<div id="comp-sec-matrix" class="space-y-3 ${compActiveSubtab === 'matrix' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
-							${matrix.length > 0 ? `
-								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
-									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
-										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">
-											⚔️ Head-to-Head Differentiators
-										</span>
-										<span class="badge badge-xs badge-success font-semibold">Our Advantage</span>
-									</div>
-									<div class="space-y-2 pt-1 min-w-0">
-										${matrix.map((row: any) => `
-											<div class="bg-base-200/40 p-2.5 rounded-lg border border-base-300/50 space-y-1.5 min-w-0 break-words">
-												<div class="flex items-center justify-between">
-													<span class="text-[10px] font-bold text-base-content uppercase truncate">${row.category}</span>
-													<span class="badge badge-xs badge-success text-[9px] font-bold shrink-0">Advantage: Us</span>
-												</div>
-												<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px]">
-													<div class="p-2 rounded bg-error/10 border border-error/20 text-error break-words">
-														<span class="font-bold block mb-0.5">${comp.competitor_name || 'Them'}:</span>
-														${row.competitor}
-													</div>
-													<div class="p-2 rounded bg-success/10 border border-success/20 text-success break-words">
-														<span class="font-bold block mb-0.5">Our Solution:</span>
-														${row.our_solution}
-													</div>
-												</div>
-											</div>
-										`).join('')}
-									</div>
-								</div>
-							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No head-to-head differentiators recorded.</div>`}
-						</div>
-
-						<!-- 3. PRICING TRAPS & VULNERABILITIES SECTION -->
-						<div id="comp-sec-traps" class="space-y-3 ${compActiveSubtab === 'traps' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
-							${vulns.length > 0 ? `
-								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs min-w-0 break-words overflow-hidden">
-									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
-										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">
-											⚠️ Pricing Traps & Renewals
-										</span>
-										<span class="badge badge-xs badge-warning font-mono">${vulns.length} Traps</span>
-									</div>
-									<div class="space-y-1.5 pt-1 min-w-0">
-										${vulns.map((v: string) => `
-											<div class="flex items-start gap-2 text-[11px] text-base-content/85 bg-base-200/40 p-2.5 rounded-lg border border-base-300/40 break-words">
-												<span class="text-error font-bold text-xs shrink-0 mt-0.5">✕</span>
-												<span class="break-words leading-relaxed">${v}</span>
-											</div>
-										`).join('')}
-									</div>
-								</div>
-							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No pricing traps noted.</div>`}
-						</div>
-
-						<!-- 4. BAKE-OFF LANDMINES SECTION -->
-						<div id="comp-sec-landmines" class="space-y-3 ${compActiveSubtab === 'landmines' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
-							${traps.length > 0 ? `
-								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs min-w-0 break-words overflow-hidden">
-									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
-										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">
-											💣 Bake-Off Landmine Questions
-										</span>
-										<span class="text-[10px] text-base-content/60 font-mono">${traps.length} Questions</span>
-									</div>
-									<p class="text-[10px] text-base-content/65">Arm your internal champion with these questions to corner ${comp.competitor_name || 'the vendor'}:</p>
-									<div class="space-y-2 pt-1 min-w-0">
-										${traps.map((q: string, idx: number) => `
-											<div class="bg-base-200/60 p-2.5 rounded-xl border border-base-300/70 space-y-1.5 min-w-0 break-words">
-												<div class="flex items-center justify-between gap-2">
-													<span class="badge badge-xs badge-neutral font-mono font-bold shrink-0">Landmine #${idx + 1}</span>
-													<button type="button" class="btn btn-xs btn-ghost comp-copy-btn cursor-pointer shrink-0" data-text="${encodeURIComponent(q)}">📋 Copy Question</button>
-												</div>
-												<div class="text-[11px] font-medium text-base-content italic leading-relaxed break-words">
-													"${q}"
-												</div>
-											</div>
-										`).join('')}
-									</div>
-								</div>
-							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No landmine questions formulated.</div>`}
-						</div>
-
-						<!-- 5. TACTICAL PLAYBOOK SECTION -->
-						<div id="comp-sec-playbook" class="space-y-3 ${compActiveSubtab === 'playbook' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
-							${comp.displacement_playbook ? `
-								<div class="card bg-gradient-to-br from-base-200/90 to-base-100 border border-base-300 p-3.5 rounded-xl space-y-1.5 shadow-2xs min-w-0 break-words overflow-hidden">
-									<div class="flex items-center justify-between border-b border-base-200 pb-1">
-										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">🏆 Tactical Displacement Playbook</span>
-										<span class="badge badge-xs badge-neutral">Strategy</span>
-									</div>
-									<div class="text-[11px] text-base-content/85 leading-relaxed pt-1 whitespace-pre-line font-medium break-words">
-										${comp.displacement_playbook}
-									</div>
-								</div>
-							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No displacement playbook generated.</div>`}
-						</div>
-					</div>
-				`;
-
-				// Attach subtab switcher listeners
-				sideDeliverableView.querySelectorAll('.comp-subtab-btn').forEach((btn) => {
-					btn.addEventListener('click', () => {
-						const targetSub = btn.getAttribute('data-subtab') || 'overview';
-						compActiveSubtab = targetSub;
-
-						sideDeliverableView.querySelectorAll('.comp-subtab-btn').forEach((b) => {
-							if (b.getAttribute('data-subtab') === targetSub) {
-								b.className = 'btn btn-xs comp-subtab-btn btn-neutral';
-							} else {
-								b.className = 'btn btn-xs comp-subtab-btn btn-ghost';
-							}
-						});
-
-						const secOverview = document.getElementById('comp-sec-overview');
-						const secMatrix = document.getElementById('comp-sec-matrix');
-						const secTraps = document.getElementById('comp-sec-traps');
-						const secLandmines = document.getElementById('comp-sec-landmines');
-						const secPlaybook = document.getElementById('comp-sec-playbook');
-
-						if (targetSub === 'all') {
-							secOverview?.classList.remove('hidden');
-							secMatrix?.classList.remove('hidden');
-							secTraps?.classList.remove('hidden');
-							secLandmines?.classList.remove('hidden');
-							secPlaybook?.classList.remove('hidden');
-						} else {
-							secOverview?.classList.toggle('hidden', targetSub !== 'overview');
-							secMatrix?.classList.toggle('hidden', targetSub !== 'matrix');
-							secTraps?.classList.toggle('hidden', targetSub !== 'traps');
-							secLandmines?.classList.toggle('hidden', targetSub !== 'landmines');
-							secPlaybook?.classList.toggle('hidden', targetSub !== 'playbook');
-						}
-					});
-				});
-
-				// Attach copy listeners for landmine questions
-				sideDeliverableView.querySelectorAll('.comp-copy-btn').forEach((btn) => {
-					btn.addEventListener('click', () => {
-						const text = decodeURIComponent(btn.getAttribute('data-text') || '');
-						if (text) {
-							navigator.clipboard.writeText(text);
-							const orig = btn.textContent;
-							btn.textContent = 'Copied ✓';
-							setTimeout(() => { btn.textContent = orig; }, 2000);
-						}
-					});
-				});
-
-				// Attach Crustdata Deep Research button listener
-				const btnRunCrust = document.getElementById('btn-run-crustdata-research');
-				btnRunCrust?.addEventListener('click', async () => {
-					btnRunCrust.setAttribute('disabled', 'true');
-					const origHtml = btnRunCrust.innerHTML;
-					btnRunCrust.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Querying Crustdata...';
-					try {
-						const res = await fetch('/api/competitor/deep-research', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({
-								competitor: comp.competitor_name || dealContext.competitor || 'Competitor',
-								account_name: dealContext.account_name || 'Enterprise',
-							}),
-						});
-						if (res.ok) {
-							const data = await res.json();
-							if (data.artifact?.content) {
-								if (!art.content) art.content = {};
-								art.content.crustdata_research = data.artifact.content;
-								renderActiveDeliverable();
-							}
-						}
-					} catch (e) {
-						console.error(e);
-					} finally {
-						btnRunCrust.removeAttribute('disabled');
-						btnRunCrust.innerHTML = origHtml;
-					}
-				});
-
-				return;
-			}
-
-			// PRESENTATION: SLIDE DECK PREVIEW
-			if (activeTab === 'presentation') {
-				const slides = art.content?.slides || [];
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-3 min-w-0 break-words">
-						<!-- Presentation Header Banner -->
-						<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl shadow-2xs flex items-center justify-between gap-2 min-w-0">
-							<div class="space-y-0.5 min-w-0">
-								<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Executive Pitch Deck</span>
-								<div class="text-xs font-bold text-base-content flex items-center gap-1.5 flex-wrap">
-									<span>📊 16:9 Widescreen Studio</span>
-									<span class="badge badge-xs badge-neutral font-mono font-bold">${slides.length} Slides Total</span>
-								</div>
-							</div>
-							<a href="/presentations" class="btn btn-xs btn-neutral gap-1 font-semibold shrink-0">
-								<span>Launch Studio 🖥️</span>
-							</a>
-						</div>
-
-						<!-- Slide Cards List -->
-						<div class="space-y-2.5 min-w-0">
-							${slides.map((s: any, idx: number) => `
-								<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
-									<div class="flex items-center justify-between border-b border-base-200/80 pb-2 gap-2">
-										<span class="badge badge-xs badge-neutral font-semibold truncate">${s.tag || `Slide ${idx + 1}`}</span>
-										<span class="badge badge-xs badge-outline font-mono font-bold shrink-0">Slide ${idx + 1} of ${slides.length}</span>
-									</div>
-									<h4 class="font-bold text-xs text-base-content break-words">${s.title}</h4>
-									${s.subtitle ? `<p class="text-[11px] text-base-content/75 break-words">${s.subtitle}</p>` : ''}
-									<ul class="text-[11px] space-y-1.5 pt-1 text-base-content/85">
-										${(s.bullets || []).map((b: string) => `
-											<li class="flex items-start gap-1.5 leading-relaxed min-w-0">
-												<span class="text-primary font-bold shrink-0 mt-0.5">✓</span>
-												<span class="break-words">${b}</span>
-											</li>
-										`).join('')}
-									</ul>
-									${s.speaker_note ? `
-										<div class="mt-2 p-2.5 bg-base-200/60 rounded-lg text-[10px] text-base-content/75 italic border border-base-300/60 break-words">
-											<span class="font-semibold not-italic">Speaker Note:</span> ${s.speaker_note}
-										</div>
-									` : ''}
-								</div>
-							`).join('')}
-						</div>
-					</div>
-				`;
-				return;
-			}
-
-			// EMAIL: EXECUTIVE PROPOSAL
-			if (activeTab === 'email') {
-				const email = art.content || {};
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-3 shadow-2xs">
-							<div class="border-b border-base-200 pb-2 flex items-center justify-between">
-								<div>
-									<span class="text-[10px] text-base-content/60 font-mono uppercase block">Subject</span>
-									<h4 class="font-bold text-xs text-base-content">${email.subject || 'Proposal & Next Milestones'}</h4>
-								</div>
-								<button id="btn-copy-email" class="btn btn-xs btn-ghost gap-1" title="Copy to clipboard">
-									📋 Copy
-								</button>
-							</div>
-							<div class="text-[11px] text-base-content/85 whitespace-pre-line leading-relaxed bg-base-200/50 p-3.5 rounded-lg border border-base-300/60">
-								${email.body || ''}
-							</div>
-							${email.key_takeaways?.length ? `
-								<div class="flex flex-wrap gap-1 pt-1 max-w-full overflow-hidden">
-									${email.key_takeaways.map((t: string) => `<span class="badge badge-xs badge-neutral truncate max-w-[130px] inline-block">${t}</span>`).join('')}
-								</div>
-							` : ''}
-						</div>
-					</div>
-				`;
-
-				const copyBtn = document.getElementById('btn-copy-email');
-				copyBtn?.addEventListener('click', () => {
-					navigator.clipboard.writeText(`${email.subject}\n\n${email.body}`);
-					copyBtn.textContent = 'Copied ✓';
-					setTimeout(() => { copyBtn.textContent = '📋 Copy'; }, 2000);
-				});
-				return;
-			}
-
-			// MAP: MUTUAL ACTION PLAN
-			if (activeTab === 'flowchart') {
-				const map = art.content || {};
-				const stages = map.stages || [];
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="space-y-2.5">
-							${stages.map((st: any) => `
-								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-1.5 shadow-2xs">
-									<div class="flex items-center justify-between">
-										<span class="badge badge-xs ${st.status === 'completed' ? 'badge-success' : 'badge-neutral'} font-semibold">Stage ${st.stage_number}</span>
-										<span class="text-[10px] font-mono text-base-content/60">${st.target_date || ''}</span>
-									</div>
-									<h4 class="font-bold text-xs text-base-content">${st.name}</h4>
-									<p class="text-[11px] text-base-content/75">${st.description || ''}</p>
-									<div class="text-[10px] text-base-content/60 font-mono pt-1 flex justify-between">
-										<span>Owner: ${st.owner || 'AE'}</span>
-										<span>Deliverable: ${st.deliverable || 'Approved'}</span>
-									</div>
-								</div>
-							`).join('')}
-						</div>
-					</div>
-				`;
-				return;
-			}
-
-			// SOCIAL: BUYER COMMITTEE SOCIAL GRAPH & TOUCHPOINTS
-			if (activeTab === 'social') {
-				const soc = art.content || {};
-				const stakeholders = soc.stakeholders || [
-					{
-						id: 'sponsor',
-						name: soc.recipient || 'Executive Sponsor',
-						role: 'Executive Sponsor',
-						channel: 'X / Twitter DM',
-						handle: `@${(dealContext.account_name || 'account').toLowerCase()}_lead`,
-						avatar_icon: '⚡',
-						dm: soc.executive_dm || '',
-						hook: soc.public_hook || '',
-						influence_level: 'Executive Sponsor'
-					},
-					{
-						id: 'cfo',
-						name: 'Chief Financial Officer',
-						role: 'Economic Buyer',
-						channel: 'LinkedIn InMail',
-						handle: 'in/cfo-board',
-						avatar_icon: '💼',
-						dm: `Re: ${dealContext.account_name || 'Enterprise'} ROI modeling. Our commercial analysis indicates sub-210-day break-even and validated annual savings. Happy to send over our executive 1-page financial impact brief.`,
-						hook: 'Capital efficiency in enterprise SaaS is no longer optional. How modern infrastructure leaders evaluate vendor payback periods.',
-						influence_level: 'Decision Authority'
-					},
-					{
-						id: 'tech_lead',
-						name: 'Principal Infrastructure Architect',
-						role: 'Technical Champion',
-						channel: 'Public X / Thread',
-						handle: `@${(dealContext.account_name || 'account').toLowerCase()}_eng`,
-						avatar_icon: '🛠️',
-						dm: `Saw your work on ${dealContext.account_name || 'the stack'}. We eliminated migration cutover downtime with zero data loss. Would love to compare technical benchmarks.`,
-						hook: 'Migration downtime is an architectural choice, not an inevitability. How decoupled workflows cut cutover risk by 80%.',
-						influence_level: 'Key Evaluator'
-					}
-				];
-
-				let activeStakeholderIdx = 0;
-
-				function renderSocialGraphHtml() {
-					const cur = stakeholders[activeStakeholderIdx] || stakeholders[0];
-					const accountName = dealContext.account_name || soc.account_name || 'Enterprise';
-
-					sideDeliverableView.innerHTML = `
-						<div class="space-y-4 select-none">
-							
-							<!-- INTERACTIVE SOCIAL GRAPH CANVAS -->
-							<div class="card bg-base-100 border border-base-300 p-3 rounded-2xl shadow-xs space-y-3">
-								<div class="flex items-center justify-between border-b border-base-200 pb-2">
-									<div class="flex items-center gap-1.5">
-										<span class="text-xs font-bold text-base-content uppercase tracking-wider">Stakeholder Social Graph</span>
-										<span class="badge badge-xs badge-success font-mono font-bold">Network Map</span>
-									</div>
-									<span class="text-[10px] text-base-content/60 font-mono">Tap node to inspect touchpoints</span>
-								</div>
-
-								<!-- SVG Interactive Social Network Graph Visual -->
-								<div class="relative w-full h-[180px] bg-base-200/50 rounded-xl border border-base-300/60 overflow-hidden flex items-center justify-center">
-									
-									<!-- SVG Connecting Edges -->
-									<svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
-										<line x1="50%" y1="50%" x2="20%" y2="28%" stroke="currentColor" class="text-base-content/25" stroke-width="2" stroke-dasharray="4" />
-										<line x1="50%" y1="50%" x2="80%" y2="28%" stroke="currentColor" class="text-base-content/25" stroke-width="2" stroke-dasharray="4" />
-										<line x1="50%" y1="50%" x2="50%" y2="80%" stroke="currentColor" class="text-base-content/25" stroke-width="2" stroke-dasharray="4" />
-										<line x1="20%" y1="28%" x2="80%" y2="28%" stroke="currentColor" class="text-primary/30" stroke-width="1.5" />
-									</svg>
-
-									<!-- Central Account Node -->
-									<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-center">
-										<div class="w-12 h-12 rounded-2xl bg-neutral text-neutral-content flex items-center justify-center text-lg font-bold shadow-lg border-2 border-base-100">
-											🏢
-										</div>
-										<span class="block mt-1 text-[10px] font-bold text-base-content font-mono truncate max-w-[90px]">
-											${accountName}
-										</span>
-									</div>
-
-									<!-- Stakeholder Node 1 (Top Left: Sponsor) -->
-									<div class="social-node-btn absolute left-[12%] top-[16%] z-20 cursor-pointer flex flex-col items-center transition-all ${activeStakeholderIdx === 0 ? 'scale-110' : 'hover:scale-105 opacity-80'}" data-index="0">
-										<div class="w-10 h-10 rounded-full bg-base-100 border-2 ${activeStakeholderIdx === 0 ? 'border-primary ring-2 ring-primary/40 bg-primary/10 shadow-md' : 'border-base-300 shadow-xs'} flex items-center justify-center text-sm">
-											${stakeholders[0]?.avatar_icon || '⚡'}
-										</div>
-										<span class="mt-1 text-[9px] font-bold text-base-content bg-base-100/90 px-1 rounded truncate max-w-[80px]">
-											${stakeholders[0]?.name?.split(' ')[0] || 'Sponsor'}
-										</span>
-									</div>
-
-									<!-- Stakeholder Node 2 (Top Right: CFO) -->
-									<div class="social-node-btn absolute right-[12%] top-[16%] z-20 cursor-pointer flex flex-col items-center transition-all ${activeStakeholderIdx === 1 ? 'scale-110' : 'hover:scale-105 opacity-80'}" data-index="1">
-										<div class="w-10 h-10 rounded-full bg-base-100 border-2 ${activeStakeholderIdx === 1 ? 'border-primary ring-2 ring-primary/40 bg-primary/10 shadow-md' : 'border-base-300 shadow-xs'} flex items-center justify-center text-sm">
-											${stakeholders[1]?.avatar_icon || '💼'}
-										</div>
-										<span class="mt-1 text-[9px] font-bold text-base-content bg-base-100/90 px-1 rounded truncate max-w-[80px]">
-											${stakeholders[1]?.name?.split(' ')[0] || 'CFO'}
-										</span>
-									</div>
-
-									<!-- Stakeholder Node 3 (Bottom: Tech Lead) -->
-									<div class="social-node-btn absolute left-1/2 bottom-[8%] -translate-x-1/2 z-20 cursor-pointer flex flex-col items-center transition-all ${activeStakeholderIdx === 2 ? 'scale-110' : 'hover:scale-105 opacity-80'}" data-index="2">
-										<div class="w-10 h-10 rounded-full bg-base-100 border-2 ${activeStakeholderIdx === 2 ? 'border-primary ring-2 ring-primary/40 bg-primary/10 shadow-md' : 'border-base-300 shadow-xs'} flex items-center justify-center text-sm">
-											${stakeholders[2]?.avatar_icon || '🛠️'}
-										</div>
-										<span class="mt-1 text-[9px] font-bold text-base-content bg-base-100/90 px-1 rounded truncate max-w-[80px]">
-											${stakeholders[2]?.name?.split(' ')[0] || 'Tech'}
-										</span>
-									</div>
-
-								</div>
-							</div>
-
-							<!-- SELECTED STAKEHOLDER TOUCHPOINT DOSSIER -->
-							<div class="space-y-3">
-								<div class="flex items-center justify-between p-3 rounded-xl bg-base-200/70 border border-base-300">
-									<div class="flex items-center gap-2.5">
-										<div class="w-9 h-9 rounded-full bg-base-100 border border-base-300 flex items-center justify-center text-base shadow-xs">
-											${cur.avatar_icon || '👤'}
-										</div>
-										<div>
-											<h4 class="text-xs font-bold text-base-content">${cur.name}</h4>
-											<p class="text-[10px] text-base-content/70 font-mono">${cur.role} • ${cur.handle || ''}</p>
-										</div>
-									</div>
-									<div class="flex flex-col items-end gap-1">
-										<span class="badge badge-xs badge-neutral font-semibold">${cur.channel || 'Direct'}</span>
-										<span class="badge badge-xs badge-outline text-[9px]">${cur.influence_level || 'Stakeholder'}</span>
-									</div>
-								</div>
-
-								<!-- Direct Message (DM) -->
-								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs">
-									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
-										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">Targeted Direct Message (DM)</span>
-										<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-target-dm">📋 Copy DM</button>
-									</div>
-									<div id="soc-target-dm" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-2.5 rounded-lg border border-base-300/60 font-medium whitespace-pre-line">
-										${cur.dm || cur.touchpoint || soc.executive_dm || ''}
-									</div>
-								</div>
-
-								<!-- Public Engagement Hook -->
-								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs">
-									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
-										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">Public Engagement Hook</span>
-										<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-target-hook">📋 Copy Hook</button>
-									</div>
-									<div id="soc-target-hook" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-2.5 rounded-lg border border-base-300/60 whitespace-pre-line">
-										${cur.hook || soc.public_hook || ''}
-									</div>
-								</div>
-
-								${soc.provocative_question ? `
-									<!-- Provocative Discovery Question -->
-									<div class="card bg-base-100 border border-base-300 p-3 rounded-xl space-y-1.5 shadow-2xs">
-										<div class="flex items-center justify-between border-b border-base-200 pb-1">
-											<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">Discovery Question</span>
-											<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-target-q">📋 Copy</button>
-										</div>
-										<div id="soc-target-q" class="text-[11px] text-base-content/90 leading-relaxed bg-base-200/50 p-2 rounded-lg border border-base-300/60 italic">
-											"${soc.provocative_question}"
-										</div>
-									</div>
-								` : ''}
-							</div>
-
-						</div>
-					`;
-
-					// Attach node switcher listeners
-					sideDeliverableView.querySelectorAll('.social-node-btn').forEach((btn) => {
-						btn.addEventListener('click', () => {
-							const idx = parseInt(btn.getAttribute('data-index') || '0', 10);
-							activeStakeholderIdx = idx;
-							renderSocialGraphHtml();
-						});
-					});
-
-					// Attach copy listeners
-					sideDeliverableView.querySelectorAll('.copy-text-btn').forEach((btn) => {
-						btn.addEventListener('click', () => {
-							const targetId = btn.getAttribute('data-target');
-							const el = document.getElementById(targetId || '');
-							if (el) {
-								navigator.clipboard.writeText(el.textContent?.trim() || '');
-								const orig = btn.textContent;
-								btn.textContent = 'Copied ✓';
-								setTimeout(() => { btn.textContent = orig; }, 2000);
-							}
-						});
-					});
+		// Crustdata Live Refresh Handler
+		async function handleCrustdataRefresh(): Promise<void> {
+			const comp = storedArtifacts.competitor?.content || {};
+			const res = await fetch('/api/competitor/deep-research', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					competitor: comp.competitor_name || dealContext.competitor || 'Competitor',
+					account_name: dealContext.account_name || 'Enterprise',
+				}),
+			});
+			if (res.ok) {
+				const data = await res.json();
+				if (data.artifact?.content) {
+					if (!storedArtifacts.competitor.content) storedArtifacts.competitor.content = {};
+					storedArtifacts.competitor.content.crustdata_research = data.artifact.content;
+					renderActiveDeliverable();
 				}
-
-				renderSocialGraphHtml();
-				return;
-			}
-
-			// SUITE: BUYER DEAL ROOM
-			if (activeTab === 'suite') {
-				const suite = art;
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="card bg-gradient-to-br from-base-200/80 to-base-300/80 border border-primary/40 p-5 rounded-2xl space-y-3 shadow-xs">
-							<div class="flex items-center justify-between">
-								<span class="badge badge-xs badge-success font-semibold">Active Keycard</span>
-								<span class="font-mono text-[11px] text-base-content/70">${suite.share_id || 'suite_live'}</span>
-							</div>
-							<h4 class="font-bold text-sm text-base-content">Penthouse Suite: ${dealContext.account_name || 'Enterprise'}</h4>
-							<p class="text-[11px] text-base-content/75 leading-relaxed">
-								Encrypted guest deal room for enterprise stakeholders to review objection talk-tracks, verified ROI metrics, and mutual milestones.
-							</p>
-							<a href="/suite?id=${suite.share_id || 'suite_live'}" class="btn btn-sm btn-neutral w-full font-semibold shadow-xs">
-								Open Guest Suite 🏨
-							</a>
-						</div>
-					</div>
-				`;
-				return;
 			}
 		}
 
-		// STACKED BATTLECARDS CAROUSEL LOGIC
-		function renderSideStackedDeck() {
-			const stage = document.getElementById('side-deck-stage');
-			if (!stage) return;
-			stage.innerHTML = '';
-
-			sideCards.forEach((c, idx) => {
-				const tags = c.tags || c.proof_points || ['Verified'];
-				const item = document.createElement('div');
-				item.className = 'side-card-item absolute inset-0 transition-all duration-500 cursor-pointer select-none';
-				item.setAttribute('data-index', idx.toString());
-
-				item.innerHTML = `
-					<div class="flip-card h-full w-full">
-						<div class="flip-card-inner h-full w-full relative">
-							<!-- FRONT -->
-							<div class="absolute inset-0 backface-hidden p-5 rounded-2xl border border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-200 pb-2 gap-2">
-									<span class="badge badge-xs badge-neutral font-bold uppercase tracking-wider truncate max-w-[140px] inline-block">${c.category || 'Objection'}</span>
-									<span class="text-[10px] font-mono text-base-content/60 shrink-0">Click to Flip 🔄</span>
-								</div>
-
-								<div class="space-y-2 my-auto min-w-0">
-									<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
-									<h4 class="text-sm font-bold text-base-content leading-snug break-words">
-										"${c.objection_quote || c.objection}"
-									</h4>
-									<p class="text-[11px] text-base-content/75 truncate">
-										Persona: ${c.buyer_persona || 'Executive Sponsor'}
-									</p>
-								</div>
-
-								<div class="pt-2 border-t border-base-200 flex items-center justify-between text-[11px] gap-2">
-									<div class="flex gap-1 max-w-[160px] overflow-hidden">
-										${tags.slice(0, 1).map((t: string) => `<span class="badge badge-xs badge-outline truncate max-w-[130px] inline-block">${t}</span>`).join('')}
-									</div>
-									<span class="font-semibold text-primary shrink-0">Tap for talk-track →</span>
-								</div>
-							</div>
-
-							<!-- BACK -->
-							<div class="absolute inset-0 backface-hidden rotate-y-180 p-5 rounded-2xl border border-primary/40 bg-base-200 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-300 pb-2 gap-2">
-									<span class="badge badge-xs badge-success font-bold shrink-0">Winning Talk-Track</span>
-									<span class="text-[10px] font-mono text-base-content/60 shrink-0">Flip Back ↺</span>
-								</div>
-
-								<div class="space-y-2 my-auto min-w-0">
-									<div class="text-[11px] text-base-content leading-relaxed bg-base-100 p-3 rounded-xl border border-base-300 font-medium break-words max-h-[140px] overflow-y-auto">
-										${c.winning_response || c.talk_track}
-									</div>
-									<div class="grid grid-cols-2 gap-1.5 text-[10px]">
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300 min-w-0">
-											<span class="block text-base-content/60 uppercase font-mono">Proof:</span>
-											<span class="font-semibold truncate block">${(c.proof_points || ['Validated metrics'])[0]}</span>
-										</div>
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300 min-w-0">
-											<span class="block text-base-content/60 uppercase font-mono">Metric:</span>
-											<span class="font-semibold truncate block">${c.key_metric || '< 60-day break-even'}</span>
-										</div>
-									</div>
-								</div>
-
-								<div class="pt-2 border-t border-base-300 flex items-center justify-between text-[10px]">
-									<span class="text-base-content/70">AE Confidence:</span>
-									<div class="flex gap-1">
-										<button class="btn btn-xs btn-outline py-0 h-5">Practice</button>
-										<button class="btn btn-xs btn-neutral py-0 h-5">Mastered ✓</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				`;
-
-				item.addEventListener('click', (e) => {
-					const target = e.target as HTMLElement;
-					if (target.tagName === 'BUTTON') return;
-					if (sideCardOrder[0] === idx) {
-						const flipCard = item.querySelector('.flip-card-inner');
-						flipCard?.classList.toggle('is-flipped');
-					}
-				});
-
-				stage.appendChild(item);
-			});
-		}
-
-		function updateSideStackPositions() {
-			const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-			items.forEach((card, originalIdx) => {
-				const pos = sideCardOrder.indexOf(originalIdx);
-				const flipCard = card.querySelector('.flip-card-inner');
-
-				if (pos === 0) {
-					card.style.zIndex = '30';
-					card.style.transform = 'translateY(0) scale(1)';
-					card.style.opacity = '1';
-					card.style.pointerEvents = 'auto';
-				} else if (pos === 1) {
-					card.style.zIndex = '20';
-					card.style.transform = 'translateY(14px) scale(0.96)';
-					card.style.opacity = '0.85';
-					card.style.pointerEvents = 'none';
-					flipCard?.classList.remove('is-flipped');
-				} else if (pos === 2) {
-					card.style.zIndex = '10';
-					card.style.transform = 'translateY(28px) scale(0.92)';
-					card.style.opacity = '0.65';
-					card.style.pointerEvents = 'none';
-					flipCard?.classList.remove('is-flipped');
-				} else {
-					card.style.zIndex = '0';
-					card.style.transform = 'translateY(42px) scale(0.88)';
-					card.style.opacity = '0';
-					card.style.pointerEvents = 'none';
-					flipCard?.classList.remove('is-flipped');
-				}
-			});
-
-			const badge = document.getElementById('side-deck-badge');
-			if (badge && sideCards.length) {
-				badge.textContent = `Card ${sideCardOrder[0] + 1} of ${sideCards.length}`;
-			}
-
-			const dotsContainer = document.getElementById('side-deck-dots');
-			if (dotsContainer) {
-				dotsContainer.innerHTML = '';
-				sideCards.forEach((_, i) => {
-					const dot = document.createElement('div');
-					dot.className = `w-1.5 h-1.5 rounded-full transition-all ${sideCardOrder[0] === i ? 'bg-primary w-4' : 'bg-base-300'}`;
-					dotsContainer.appendChild(dot);
-				});
-			}
-		}
-
-		function setupSideDeckListeners() {
-			const btnNext = document.getElementById('side-btn-next');
-			const btnPrev = document.getElementById('side-btn-prev');
-			const btnFlip = document.getElementById('side-btn-flip');
-
-			btnNext?.addEventListener('click', () => {
-				if (!sideCards.length) return;
-				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-				const activeCard = items[sideCardOrder[0]];
-				const flipCard = activeCard.querySelector('.flip-card-inner');
-				flipCard?.classList.remove('is-flipped');
-
-				activeCard.style.transform = 'translateX(110%) rotate(12deg) scale(0.9)';
-				activeCard.style.opacity = '0';
-
-				setTimeout(() => {
-					const first = sideCardOrder.shift()!;
-					sideCardOrder.push(first);
-					updateSideStackPositions();
-				}, 250);
-			});
-
-			btnPrev?.addEventListener('click', () => {
-				if (!sideCards.length) return;
-				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-				const lastIdx = sideCardOrder[sideCardOrder.length - 1];
-				const lastCard = items[lastIdx];
-				const flipCard = lastCard.querySelector('.flip-card-inner');
-				flipCard?.classList.remove('is-flipped');
-
-				const last = sideCardOrder.pop()!;
-				sideCardOrder.unshift(last);
-				updateSideStackPositions();
-			});
-
-			btnFlip?.addEventListener('click', () => {
-				if (!sideCards.length) return;
-				const items = Array.from(document.querySelectorAll('.side-card-item')) as HTMLElement[];
-				const activeCard = items[sideCardOrder[0]];
-				const flipCard = activeCard?.querySelector('.flip-card-inner');
-				flipCard?.classList.toggle('is-flipped');
-			});
-		}
-
-		// Update App Badges on Side Dock
+		// Update Dock Badges
 		function updateSideBadges() {
 			const bc = storedArtifacts.battlecards?.content?.cards?.length || 0;
 			if (appBadgeBc) {
 				appBadgeBc.textContent = bc.toString();
 				if (bc > 0) appBadgeBc.classList.remove('hidden');
+				else appBadgeBc.classList.add('hidden');
 			}
 
 			const comp = storedArtifacts.competitor ? 1 : 0;
@@ -1371,12 +278,14 @@ import Layout from '../layouts/Layout.astro';
 			if (appBadgeDeck) {
 				appBadgeDeck.textContent = deck.toString();
 				if (deck > 0) appBadgeDeck.classList.remove('hidden');
+				else appBadgeDeck.classList.add('hidden');
 			}
 
 			const email = storedArtifacts.email ? 1 : 0;
 			if (appBadgeEmail) {
 				appBadgeEmail.textContent = email.toString();
 				if (email > 0) appBadgeEmail.classList.remove('hidden');
+				else appBadgeEmail.classList.add('hidden');
 			}
 
 			const map = storedArtifacts.flowchart?.content?.stages?.length || 0;
@@ -1444,13 +353,12 @@ import Layout from '../layouts/Layout.astro';
 			return progDiv;
 		}
 
-		// Append Agent Response with Smart Follow-up Questions
+		// Append Agent Response with Markdown & Action Pills
 		function appendAgentTurn(data: any) {
 			if (!chatStream) return;
 			const turnDiv = document.createElement('div');
 			turnDiv.className = 'space-y-3.5 w-full min-w-0';
 
-			// Record in conversation history for multi-turn cognitive context
 			if (data.agent_reply) {
 				conversationHistory.push({ role: 'assistant', content: data.agent_reply });
 			}
@@ -1587,7 +495,7 @@ import Layout from '../layouts/Layout.astro';
 			});
 		}
 
-		// Core Submit Prompt with Multi-Turn Context Pipelining
+		// Core Submit Prompt
 		async function submitPrompt(promptText: string) {
 			const text = promptText.trim();
 			if (!text) return;
@@ -1637,7 +545,7 @@ import Layout from '../layouts/Layout.astro';
 			if (chatInput) submitPrompt(chatInput.value);
 		});
 
-		// Reset Session (Clears frontend state and SQLite store)
+		// Reset Session
 		resetBtn?.addEventListener('click', async () => {
 			dealContext = {};
 			storedArtifacts = {};
@@ -1705,7 +613,7 @@ import Layout from '../layouts/Layout.astro';
 			}
 		}
 
-		// Grounding Sources Logic
+		// Attached Grounding Sources Management
 		const btnOpenAttachModal = document.getElementById('btn-open-attach-modal');
 		const attachSourceModal = document.getElementById('attach-source-modal') as HTMLDialogElement;
 		const modalSourceType = document.getElementById('modal-source-type') as HTMLSelectElement;
@@ -1765,7 +673,7 @@ import Layout from '../layouts/Layout.astro';
 
 		btnSubmitSource?.addEventListener('click', async () => {
 			const type = modalSourceType?.value || 'github';
-			const url = modalSourceUrl?.value.trim() || '';
+			const url = modalSourceUrl?.value.trim();
 			if (!url) return;
 
 			if (btnSubmitSource) {
@@ -1780,12 +688,14 @@ import Layout from '../layouts/Layout.astro';
 					body: JSON.stringify({ source_type: type, url_or_path: url }),
 				});
 				if (res.ok) {
-					modalSourceUrl.value = '';
+					if (modalSourceUrl) modalSourceUrl.value = '';
 					attachSourceModal?.close();
 					await loadSources();
+				} else {
+					alert('Could not verify source. Check repository or URL.');
 				}
-			} catch (e) {
-				console.error(e);
+			} catch (err) {
+				alert('Network error verifying source.');
 			} finally {
 				if (btnSubmitSource) {
 					btnSubmitSource.removeAttribute('disabled');
@@ -1794,8 +704,22 @@ import Layout from '../layouts/Layout.astro';
 			}
 		});
 
-		// Initialize
-		updateSideBadges();
+		modalSourceType?.addEventListener('change', () => {
+			const lbl = document.getElementById('modal-url-label');
+			if (!lbl) return;
+			if (modalSourceType.value === 'github') {
+				lbl.textContent = 'Repository URL / Name';
+				modalSourceUrl.placeholder = 'e.g. https://github.com/my-org/core-engine';
+			} else if (modalSourceType.value === 'website') {
+				lbl.textContent = 'Documentation URL';
+				modalSourceUrl.placeholder = 'e.g. https://docs.company.com/architecture';
+			} else {
+				lbl.textContent = 'PDF Path or Document URL';
+				modalSourceUrl.placeholder = 'e.g. https://company.com/soc2-audit.pdf';
+			}
+		});
+
+		// Initial Load
 		loadInitialArtifacts();
 		loadSources();
 	</script>

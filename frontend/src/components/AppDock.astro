@@ -1,0 +1,70 @@
+---
+// AppDock.astro: Sticky Vertical Deliverables Edge Dock
+---
+
+<div class="self-start w-12 flex flex-col items-center py-2.5 px-1 border-l border-base-300 bg-base-200/50 shrink-0 gap-3 z-50 select-none rounded-xl ml-auto">
+	<!-- 🎴 Battlecards App Icon -->
+	<div class="tooltip tooltip-left" data-tip="Objection Battlecards">
+		<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="battlecards" id="app-icon-bc">
+			<span>🎴</span>
+			<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-bc">0</span>
+		</button>
+	</div>
+
+	<!-- 🎯 Competitor Intelligence App Icon -->
+	<div class="tooltip tooltip-left" data-tip="Competitor Intelligence & Financials">
+		<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="competitor" id="app-icon-comp">
+			<span>🎯</span>
+			<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-comp">0</span>
+		</button>
+	</div>
+
+	<!-- 📊 Pitch Deck App Icon -->
+	<div class="tooltip tooltip-left" data-tip="Pitch & Presentation Decks">
+		<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="presentation" id="app-icon-deck">
+			<span>📊</span>
+			<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-deck">0</span>
+		</button>
+	</div>
+
+	<!-- ✉️ Proposal Email App Icon -->
+	<div class="tooltip tooltip-left" data-tip="Deal Follow-Up Emails">
+		<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="email" id="app-icon-email">
+			<span>✉️</span>
+			<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-email">0</span>
+		</button>
+	</div>
+
+	<!-- 🗺️ Mutual Action Plan App Icon -->
+	<div class="tooltip tooltip-left" data-tip="Mutual Action Plans (MAP)">
+		<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="flowchart" id="app-icon-map">
+			<span>🗺️</span>
+			<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-map">0</span>
+		</button>
+	</div>
+
+	<!-- 🐦 Social Touchpoint App Icon -->
+	<div class="tooltip tooltip-left" data-tip="Executive Social Touchpoints (X / LinkedIn)">
+		<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="social" id="app-icon-social">
+			<span>🐦</span>
+			<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-social">0</span>
+		</button>
+	</div>
+
+	<!-- 🏨 Buyer Deal Room App Icon -->
+	<div class="tooltip tooltip-left" data-tip="Buyer Deal Suites">
+		<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="suite" id="app-icon-suite">
+			<span>🏨</span>
+			<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-suite">0</span>
+		</button>
+	</div>
+
+	<div class="w-6 h-px bg-base-300 my-1 opacity-50"></div>
+
+	<!-- Toggle / Collapse Button -->
+	<div class="tooltip tooltip-left" data-tip="Toggle Deliverables Panel">
+		<button type="button" class="w-8 h-8 rounded-lg text-base-content/60 hover:text-base-content hover:bg-base-200 flex items-center justify-center text-xs transition-all cursor-pointer" id="app-dock-toggle">
+			<span id="app-dock-toggle-icon">◀</span>
+		</button>
+	</div>
+</div>
