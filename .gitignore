@@ -25,6 +25,7 @@ venv/
 ENV/
 *.sqlite
 *.db
+*.backup
 backend/data/*.db
 
 # Node

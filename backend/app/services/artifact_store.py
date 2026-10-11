@@ -204,3 +204,12 @@ def delete_artifact(artifact_id: str) -> bool:
         cursor = conn.execute("DELETE FROM artifacts WHERE id = ?", (artifact_id,))
         conn.commit()
         return cursor.rowcount > 0
+
+
+def clear_all_artifacts() -> int:
+    """Clear all stored artifacts from SQLite for clean demo reset."""
+    with _get_connection() as conn:
+        cursor = conn.execute("DELETE FROM artifacts")
+        conn.commit()
+        return cursor.rowcount
+

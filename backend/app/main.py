@@ -12,6 +12,7 @@ from app.config import get_settings
 from app.llm import test_completion
 from app.schemas.battlecards import CreateBattlecardsRequest
 from app.services.artifact_store import (
+    clear_all_artifacts,
     get_artifact,
     get_by_share_id,
     list_artifacts,
@@ -175,6 +176,18 @@ def get_single_artifact(artifact_id: str) -> Dict[str, Any]:
     if not artifact:
         raise HTTPException(status_code=404, detail="Artifact not found")
     return artifact
+
+
+@app.post("/api/reset")
+def reset_artifacts_endpoint() -> Dict[str, Any]:
+    """Clears all stored artifacts from SQLite for a fresh demo."""
+    deleted_count = clear_all_artifacts()
+    logger.info(f"Cleared {deleted_count} artifacts from SQLite store.")
+    return {
+        "status": "success",
+        "message": "All artifacts cleared. Ready for fresh demo.",
+        "deleted_count": deleted_count,
+    }
 
 
 # ==========================================

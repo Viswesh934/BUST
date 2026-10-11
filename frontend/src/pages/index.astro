@@ -48,17 +48,8 @@ import Layout from '../layouts/Layout.astro';
 						</p>
 					</div>
 
-					<!-- Starter Opportunity Chips -->
-					<div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-[11px] sm:text-xs">
-						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="We just wrapped discovery with Datadog ($320k ARR) facing aggressive competitor pricing. Generate competitive battlecards and an executive pitch deck.">
-							⚡ Datadog ($320k): Battlecards + Deck
-						</button>
-						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="We have a $450k ARR deal with Snowflake evaluating us against LegacyCRM. What collateral should we prepare?">
-							❄️ Snowflake ($450k): Strategy & Needs
-						</button>
-						<button class="chat-chip btn btn-xs btn-outline rounded-full font-medium" data-prompt="Create competitive objection handling battlecards for Stripe ($280k ARR) overcoming renewal objections regarding data security.">
-							🛡️ Stripe ($280k): Security Battlecards
-						</button>
+					<div class="pt-2 text-[11px] sm:text-xs text-base-content/60 font-mono">
+						Ready for deal input • Multi-turn cognitive context active
 					</div>
 				</div>
 
@@ -239,7 +230,6 @@ import Layout from '../layouts/Layout.astro';
 		const sendBtn = document.getElementById('btn-send-directive');
 		const resetBtn = document.getElementById('btn-reset-session');
 		const welcomeTurn = document.getElementById('welcome-turn');
-		const chips = document.querySelectorAll('.chat-chip');
 		const dealTitleBadge = document.getElementById('deal-title-badge');
 		const dealStageBadge = document.getElementById('deal-stage-badge');
 		const dealHealthBadge = document.getElementById('deal-health-badge');
@@ -504,69 +494,200 @@ import Layout from '../layouts/Layout.astro';
 				return;
 			}
 
-			// SOCIAL: EXECUTIVE TOUCHPOINT FOR X & LINKEDIN
+			// SOCIAL: BUYER COMMITTEE SOCIAL GRAPH & TOUCHPOINTS
 			if (activeTab === 'social') {
 				const soc = art.content || {};
-				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="sticky top-12 z-20 bg-base-100/95 backdrop-blur-md flex items-center justify-between py-2 border-b border-base-200">
-							<div>
-								<h3 class="font-bold text-sm text-base-content">Executive Social Touchpoint</h3>
-								<span class="text-[11px] text-base-content/60 font-mono">Platform: ${soc.platform || 'X (Twitter) & LinkedIn'}</span>
-							</div>
-							<span class="badge badge-xs badge-neutral">Warm Outreach</span>
-						</div>
+				const stakeholders = soc.stakeholders || [
+					{
+						id: 'sponsor',
+						name: soc.recipient || 'Executive Sponsor',
+						role: 'Executive Sponsor',
+						channel: 'X / Twitter DM',
+						handle: `@${(dealContext.account_name || 'account').toLowerCase()}_lead`,
+						avatar_icon: '⚡',
+						dm: soc.executive_dm || '',
+						hook: soc.public_hook || '',
+						influence_level: 'Executive Sponsor'
+					},
+					{
+						id: 'cfo',
+						name: 'Chief Financial Officer',
+						role: 'Economic Buyer',
+						channel: 'LinkedIn InMail',
+						handle: 'in/cfo-board',
+						avatar_icon: '💼',
+						dm: `Re: ${dealContext.account_name || 'Enterprise'} ROI modeling. Our commercial analysis indicates sub-210-day break-even and validated annual savings. Happy to send over our executive 1-page financial impact brief.`,
+						hook: 'Capital efficiency in enterprise SaaS is no longer optional. How modern infrastructure leaders evaluate vendor payback periods.',
+						influence_level: 'Decision Authority'
+					},
+					{
+						id: 'tech_lead',
+						name: 'Principal Infrastructure Architect',
+						role: 'Technical Champion',
+						channel: 'Public X / Thread',
+						handle: `@${(dealContext.account_name || 'account').toLowerCase()}_eng`,
+						avatar_icon: '🛠️',
+						dm: `Saw your work on ${dealContext.account_name || 'the stack'}. We eliminated migration cutover downtime with zero data loss. Would love to compare technical benchmarks.`,
+						hook: 'Migration downtime is an architectural choice, not an inevitability. How decoupled workflows cut cutover risk by 80%.',
+						influence_level: 'Key Evaluator'
+					}
+				];
 
-						<!-- Executive Direct Message -->
-						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
-							<div class="flex items-center justify-between border-b border-base-200 pb-2">
-								<span class="text-[11px] font-bold text-base-content uppercase tracking-wider">Direct Message (DM)</span>
-								<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-dm-text">📋 Copy DM</button>
-							</div>
-							<div id="soc-dm-text" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-3 rounded-lg border border-base-300/60 font-medium whitespace-pre-line">
-								${soc.executive_dm || ''}
-							</div>
-						</div>
+				let activeStakeholderIdx = 0;
 
-						<!-- Public Engagement Hook -->
-						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
-							<div class="flex items-center justify-between border-b border-base-200 pb-2">
-								<span class="text-[11px] font-bold text-base-content uppercase tracking-wider">Public Quote / Reply Hook</span>
-								<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-hook-text">📋 Copy Hook</button>
-							</div>
-							<div id="soc-hook-text" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-3 rounded-lg border border-base-300/60 whitespace-pre-line">
-								${soc.public_hook || ''}
-							</div>
-						</div>
+				function renderSocialGraphHtml() {
+					const cur = stakeholders[activeStakeholderIdx] || stakeholders[0];
+					const accountName = dealContext.account_name || soc.account_name || 'Enterprise';
 
-						<!-- Provocative Discovery Question -->
-						${soc.provocative_question ? `
-							<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
+					sideDeliverableView.innerHTML = `
+						<div class="space-y-4 select-none">
+							
+							<!-- INTERACTIVE SOCIAL GRAPH CANVAS -->
+							<div class="card bg-base-100 border border-base-300 p-3 rounded-2xl shadow-xs space-y-3">
 								<div class="flex items-center justify-between border-b border-base-200 pb-2">
-									<span class="text-[11px] font-bold text-base-content uppercase tracking-wider">Provocative Question Hook</span>
-									<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-q-text">📋 Copy</button>
+									<div class="flex items-center gap-1.5">
+										<span class="text-xs font-bold text-base-content uppercase tracking-wider">Stakeholder Social Graph</span>
+										<span class="badge badge-xs badge-success font-mono font-bold">Network Map</span>
+									</div>
+									<span class="text-[10px] text-base-content/60 font-mono">Tap node to inspect touchpoints</span>
 								</div>
-								<div id="soc-q-text" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-3 rounded-lg border border-base-300/60 italic">
-									"${soc.provocative_question}"
+
+								<!-- SVG Interactive Social Network Graph Visual -->
+								<div class="relative w-full h-[180px] bg-base-200/50 rounded-xl border border-base-300/60 overflow-hidden flex items-center justify-center">
+									
+									<!-- SVG Connecting Edges -->
+									<svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
+										<line x1="50%" y1="50%" x2="20%" y2="28%" stroke="currentColor" class="text-base-content/25" stroke-width="2" stroke-dasharray="4" />
+										<line x1="50%" y1="50%" x2="80%" y2="28%" stroke="currentColor" class="text-base-content/25" stroke-width="2" stroke-dasharray="4" />
+										<line x1="50%" y1="50%" x2="50%" y2="80%" stroke="currentColor" class="text-base-content/25" stroke-width="2" stroke-dasharray="4" />
+										<line x1="20%" y1="28%" x2="80%" y2="28%" stroke="currentColor" class="text-primary/30" stroke-width="1.5" />
+									</svg>
+
+									<!-- Central Account Node -->
+									<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-center">
+										<div class="w-12 h-12 rounded-2xl bg-neutral text-neutral-content flex items-center justify-center text-lg font-bold shadow-lg border-2 border-base-100">
+											🏢
+										</div>
+										<span class="block mt-1 text-[10px] font-bold text-base-content font-mono truncate max-w-[90px]">
+											${accountName}
+										</span>
+									</div>
+
+									<!-- Stakeholder Node 1 (Top Left: Sponsor) -->
+									<div class="social-node-btn absolute left-[12%] top-[16%] z-20 cursor-pointer flex flex-col items-center transition-all ${activeStakeholderIdx === 0 ? 'scale-110' : 'hover:scale-105 opacity-80'}" data-index="0">
+										<div class="w-10 h-10 rounded-full bg-base-100 border-2 ${activeStakeholderIdx === 0 ? 'border-primary ring-2 ring-primary/40 bg-primary/10 shadow-md' : 'border-base-300 shadow-xs'} flex items-center justify-center text-sm">
+											${stakeholders[0]?.avatar_icon || '⚡'}
+										</div>
+										<span class="mt-1 text-[9px] font-bold text-base-content bg-base-100/90 px-1 rounded truncate max-w-[80px]">
+											${stakeholders[0]?.name?.split(' ')[0] || 'Sponsor'}
+										</span>
+									</div>
+
+									<!-- Stakeholder Node 2 (Top Right: CFO) -->
+									<div class="social-node-btn absolute right-[12%] top-[16%] z-20 cursor-pointer flex flex-col items-center transition-all ${activeStakeholderIdx === 1 ? 'scale-110' : 'hover:scale-105 opacity-80'}" data-index="1">
+										<div class="w-10 h-10 rounded-full bg-base-100 border-2 ${activeStakeholderIdx === 1 ? 'border-primary ring-2 ring-primary/40 bg-primary/10 shadow-md' : 'border-base-300 shadow-xs'} flex items-center justify-center text-sm">
+											${stakeholders[1]?.avatar_icon || '💼'}
+										</div>
+										<span class="mt-1 text-[9px] font-bold text-base-content bg-base-100/90 px-1 rounded truncate max-w-[80px]">
+											${stakeholders[1]?.name?.split(' ')[0] || 'CFO'}
+										</span>
+									</div>
+
+									<!-- Stakeholder Node 3 (Bottom: Tech Lead) -->
+									<div class="social-node-btn absolute left-1/2 bottom-[8%] -translate-x-1/2 z-20 cursor-pointer flex flex-col items-center transition-all ${activeStakeholderIdx === 2 ? 'scale-110' : 'hover:scale-105 opacity-80'}" data-index="2">
+										<div class="w-10 h-10 rounded-full bg-base-100 border-2 ${activeStakeholderIdx === 2 ? 'border-primary ring-2 ring-primary/40 bg-primary/10 shadow-md' : 'border-base-300 shadow-xs'} flex items-center justify-center text-sm">
+											${stakeholders[2]?.avatar_icon || '🛠️'}
+										</div>
+										<span class="mt-1 text-[9px] font-bold text-base-content bg-base-100/90 px-1 rounded truncate max-w-[80px]">
+											${stakeholders[2]?.name?.split(' ')[0] || 'Tech'}
+										</span>
+									</div>
+
 								</div>
 							</div>
-						` : ''}
-					</div>
-				`;
 
-				sideDeliverableView.querySelectorAll('.copy-text-btn').forEach((btn) => {
-					btn.addEventListener('click', () => {
-						const targetId = btn.getAttribute('data-target');
-						const el = document.getElementById(targetId || '');
-						if (el) {
-							navigator.clipboard.writeText(el.textContent?.trim() || '');
-							const orig = btn.textContent;
-							btn.textContent = 'Copied ✓';
-							setTimeout(() => { btn.textContent = orig; }, 2000);
-						}
+							<!-- SELECTED STAKEHOLDER TOUCHPOINT DOSSIER -->
+							<div class="space-y-3">
+								<div class="flex items-center justify-between p-3 rounded-xl bg-base-200/70 border border-base-300">
+									<div class="flex items-center gap-2.5">
+										<div class="w-9 h-9 rounded-full bg-base-100 border border-base-300 flex items-center justify-center text-base shadow-xs">
+											${cur.avatar_icon || '👤'}
+										</div>
+										<div>
+											<h4 class="text-xs font-bold text-base-content">${cur.name}</h4>
+											<p class="text-[10px] text-base-content/70 font-mono">${cur.role} • ${cur.handle || ''}</p>
+										</div>
+									</div>
+									<div class="flex flex-col items-end gap-1">
+										<span class="badge badge-xs badge-neutral font-semibold">${cur.channel || 'Direct'}</span>
+										<span class="badge badge-xs badge-outline text-[9px]">${cur.influence_level || 'Stakeholder'}</span>
+									</div>
+								</div>
+
+								<!-- Direct Message (DM) -->
+								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs">
+									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
+										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">Targeted Direct Message (DM)</span>
+										<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-target-dm">📋 Copy DM</button>
+									</div>
+									<div id="soc-target-dm" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-2.5 rounded-lg border border-base-300/60 font-medium whitespace-pre-line">
+										${cur.dm || cur.touchpoint || soc.executive_dm || ''}
+									</div>
+								</div>
+
+								<!-- Public Engagement Hook -->
+								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs">
+									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
+										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">Public Engagement Hook</span>
+										<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-target-hook">📋 Copy Hook</button>
+									</div>
+									<div id="soc-target-hook" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-2.5 rounded-lg border border-base-300/60 whitespace-pre-line">
+										${cur.hook || soc.public_hook || ''}
+									</div>
+								</div>
+
+								${soc.provocative_question ? `
+									<!-- Provocative Discovery Question -->
+									<div class="card bg-base-100 border border-base-300 p-3 rounded-xl space-y-1.5 shadow-2xs">
+										<div class="flex items-center justify-between border-b border-base-200 pb-1">
+											<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">Discovery Question</span>
+											<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-target-q">📋 Copy</button>
+										</div>
+										<div id="soc-target-q" class="text-[11px] text-base-content/90 leading-relaxed bg-base-200/50 p-2 rounded-lg border border-base-300/60 italic">
+											"${soc.provocative_question}"
+										</div>
+									</div>
+								` : ''}
+							</div>
+
+						</div>
+					`;
+
+					// Attach node switcher listeners
+					sideDeliverableView.querySelectorAll('.social-node-btn').forEach((btn) => {
+						btn.addEventListener('click', () => {
+							const idx = parseInt(btn.getAttribute('data-index') || '0', 10);
+							activeStakeholderIdx = idx;
+							renderSocialGraphHtml();
+						});
 					});
-				});
 
+					// Attach copy listeners
+					sideDeliverableView.querySelectorAll('.copy-text-btn').forEach((btn) => {
+						btn.addEventListener('click', () => {
+							const targetId = btn.getAttribute('data-target');
+							const el = document.getElementById(targetId || '');
+							if (el) {
+								navigator.clipboard.writeText(el.textContent?.trim() || '');
+								const orig = btn.textContent;
+								btn.textContent = 'Copied ✓';
+								setTimeout(() => { btn.textContent = orig; }, 2000);
+							}
+						});
+					});
+				}
+
+				renderSocialGraphHtml();
 				return;
 			}
 
@@ -1044,19 +1165,16 @@ import Layout from '../layouts/Layout.astro';
 			if (chatInput) submitPrompt(chatInput.value);
 		});
 
-		// Starter Chips
-		chips.forEach((chip) => {
-			chip.addEventListener('click', () => {
-				const prompt = chip.getAttribute('data-prompt');
-				if (prompt) submitPrompt(prompt);
-			});
-		});
-
-		// Reset Session
-		resetBtn?.addEventListener('click', () => {
+		// Reset Session (Clears frontend state and SQLite store)
+		resetBtn?.addEventListener('click', async () => {
 			dealContext = {};
 			storedArtifacts = {};
 			conversationHistory = [];
+			try {
+				await fetch('/api/reset', { method: 'POST' });
+			} catch (e) {
+				console.warn('Could not reset server artifacts:', e);
+			}
 			if (chatStream) {
 				chatStream.innerHTML = '';
 				if (welcomeTurn) chatStream.appendChild(welcomeTurn);
