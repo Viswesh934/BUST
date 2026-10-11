@@ -14,10 +14,12 @@ import Layout from '../layouts/Layout.astro';
 			
 			<!-- TOP CHAT BAR (Centered and aligned with conversation & input) -->
 			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto flex items-center justify-between pb-2.5 border-b border-base-300 gap-2 shrink-0 px-2 sm:px-4">
-				<div class="flex items-center gap-2">
+				<div class="flex items-center gap-2 flex-wrap">
 					<h1 class="text-base font-bold text-base-content">Plan</h1>
 					<span class="text-xs text-base-content/50">•</span>
 					<span class="text-xs font-mono text-base-content/70" id="deal-title-badge">New Opportunity</span>
+					<span class="badge badge-xs badge-neutral hidden font-mono" id="deal-stage-badge">Discovery</span>
+					<span class="badge badge-xs badge-warning hidden font-mono" id="deal-health-badge">Active</span>
 				</div>
 
 				<div class="flex items-center gap-2">
@@ -164,6 +166,14 @@ import Layout from '../layouts/Layout.astro';
 				</button>
 			</div>
 
+			<!-- 🐦 Social Touchpoint App Icon -->
+			<div class="tooltip tooltip-left" data-tip="Executive Social Touchpoints (X / LinkedIn)">
+				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="social" id="app-icon-social">
+					<span>🐦</span>
+					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-social">0</span>
+				</button>
+			</div>
+
 			<!-- 🏨 Buyer Deal Room App Icon -->
 			<div class="tooltip tooltip-left" data-tip="Buyer Deal Suites">
 				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="suite" id="app-icon-suite">
@@ -217,6 +227,7 @@ import Layout from '../layouts/Layout.astro';
 		let storedArtifacts: any = {};
 		let activeTab: string = 'battlecards';
 		let sidePanelOpen: boolean = false;
+		let conversationHistory: Array<{ role: string; content: string }> = [];
 
 		// Stacked Deck state for side panel
 		let sideCards: any[] = [];
@@ -230,6 +241,8 @@ import Layout from '../layouts/Layout.astro';
 		const welcomeTurn = document.getElementById('welcome-turn');
 		const chips = document.querySelectorAll('.chat-chip');
 		const dealTitleBadge = document.getElementById('deal-title-badge');
+		const dealStageBadge = document.getElementById('deal-stage-badge');
+		const dealHealthBadge = document.getElementById('deal-health-badge');
 
 		// Side Panel elements
 		const sidePanel = document.getElementById('side-panel');
@@ -249,6 +262,7 @@ import Layout from '../layouts/Layout.astro';
 		const appBadgeDeck = document.getElementById('app-badge-deck');
 		const appBadgeEmail = document.getElementById('app-badge-email');
 		const appBadgeMap = document.getElementById('app-badge-map');
+		const appBadgeSocial = document.getElementById('app-badge-social');
 		const appBadgeSuite = document.getElementById('app-badge-suite');
 
 		// Toggle Side Panel State (Floats over without moving the chat)
@@ -321,6 +335,7 @@ import Layout from '../layouts/Layout.astro';
 				presentation: '📊 Pitch Presentation Deck',
 				email: '✉️ Executive Proposal Email',
 				flowchart: '🗺️ Mutual Action Plan (MAP)',
+				social: '🐦 Executive Social Touchpoint (X / LinkedIn)',
 				suite: '🏨 Buyer Deal Room Suite'
 			};
 
@@ -342,6 +357,9 @@ import Layout from '../layouts/Layout.astro';
 				} else if (activeTab === 'flowchart') {
 					btnOpenFullPage.href = '/flowcharts';
 					fullPageBtnText.textContent = 'Open Full MAP ↗';
+				} else if (activeTab === 'social') {
+					btnOpenFullPage.href = '#';
+					fullPageBtnText.textContent = 'Social Hook 🐦';
 				} else if (activeTab === 'suite') {
 					const shareId = storedArtifacts.suite?.share_id || 'suite_live';
 					btnOpenFullPage.href = `/suite/${shareId}`;
@@ -483,6 +501,72 @@ import Layout from '../layouts/Layout.astro';
 						</div>
 					</div>
 				`;
+				return;
+			}
+
+			// SOCIAL: EXECUTIVE TOUCHPOINT FOR X & LINKEDIN
+			if (activeTab === 'social') {
+				const soc = art.content || {};
+				sideDeliverableView.innerHTML = `
+					<div class="space-y-4">
+						<div class="sticky top-12 z-20 bg-base-100/95 backdrop-blur-md flex items-center justify-between py-2 border-b border-base-200">
+							<div>
+								<h3 class="font-bold text-sm text-base-content">Executive Social Touchpoint</h3>
+								<span class="text-[11px] text-base-content/60 font-mono">Platform: ${soc.platform || 'X (Twitter) & LinkedIn'}</span>
+							</div>
+							<span class="badge badge-xs badge-neutral">Warm Outreach</span>
+						</div>
+
+						<!-- Executive Direct Message -->
+						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
+							<div class="flex items-center justify-between border-b border-base-200 pb-2">
+								<span class="text-[11px] font-bold text-base-content uppercase tracking-wider">Direct Message (DM)</span>
+								<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-dm-text">📋 Copy DM</button>
+							</div>
+							<div id="soc-dm-text" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-3 rounded-lg border border-base-300/60 font-medium whitespace-pre-line">
+								${soc.executive_dm || ''}
+							</div>
+						</div>
+
+						<!-- Public Engagement Hook -->
+						<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
+							<div class="flex items-center justify-between border-b border-base-200 pb-2">
+								<span class="text-[11px] font-bold text-base-content uppercase tracking-wider">Public Quote / Reply Hook</span>
+								<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-hook-text">📋 Copy Hook</button>
+							</div>
+							<div id="soc-hook-text" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-3 rounded-lg border border-base-300/60 whitespace-pre-line">
+								${soc.public_hook || ''}
+							</div>
+						</div>
+
+						<!-- Provocative Discovery Question -->
+						${soc.provocative_question ? `
+							<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
+								<div class="flex items-center justify-between border-b border-base-200 pb-2">
+									<span class="text-[11px] font-bold text-base-content uppercase tracking-wider">Provocative Question Hook</span>
+									<button type="button" class="btn btn-xs btn-ghost copy-text-btn cursor-pointer" data-target="soc-q-text">📋 Copy</button>
+								</div>
+								<div id="soc-q-text" class="text-xs text-base-content/90 leading-relaxed bg-base-200/50 p-3 rounded-lg border border-base-300/60 italic">
+									"${soc.provocative_question}"
+								</div>
+							</div>
+						` : ''}
+					</div>
+				`;
+
+				sideDeliverableView.querySelectorAll('.copy-text-btn').forEach((btn) => {
+					btn.addEventListener('click', () => {
+						const targetId = btn.getAttribute('data-target');
+						const el = document.getElementById(targetId || '');
+						if (el) {
+							navigator.clipboard.writeText(el.textContent?.trim() || '');
+							const orig = btn.textContent;
+							btn.textContent = 'Copied ✓';
+							setTimeout(() => { btn.textContent = orig; }, 2000);
+						}
+					});
+				});
+
 				return;
 			}
 
@@ -714,12 +798,21 @@ import Layout from '../layouts/Layout.astro';
 			if (appBadgeMap) {
 				appBadgeMap.textContent = map.toString();
 				if (map > 0) appBadgeMap.classList.remove('hidden');
+				else appBadgeMap.classList.add('hidden');
+			}
+
+			const social = storedArtifacts.social ? 1 : 0;
+			if (appBadgeSocial) {
+				appBadgeSocial.textContent = social.toString();
+				if (social > 0) appBadgeSocial.classList.remove('hidden');
+				else appBadgeSocial.classList.add('hidden');
 			}
 
 			const suite = storedArtifacts.suite ? 1 : 0;
 			if (appBadgeSuite) {
 				appBadgeSuite.textContent = suite.toString();
 				if (suite > 0) appBadgeSuite.classList.remove('hidden');
+				else appBadgeSuite.classList.add('hidden');
 			}
 		}
 
@@ -765,11 +858,38 @@ import Layout from '../layouts/Layout.astro';
 			const turnDiv = document.createElement('div');
 			turnDiv.className = 'space-y-3.5 w-full';
 
-			// Update Deal Context
+			// Record in conversation history for multi-turn cognitive context
+			if (data.agent_reply) {
+				conversationHistory.push({ role: 'assistant', content: data.agent_reply });
+			}
+
+			// Update Deal Context & Badges
 			if (data.deal_context) {
 				dealContext = { ...dealContext, ...data.deal_context };
 				if (dealTitleBadge) {
 					dealTitleBadge.textContent = `${dealContext.account_name || 'Opportunity'} (${dealContext.deal_size || ''})`;
+				}
+				if (dealStageBadge) {
+					const stage = dealContext.deal_stage || dealContext.stage;
+					if (stage) {
+						dealStageBadge.textContent = stage;
+						dealStageBadge.classList.remove('hidden');
+					}
+				}
+				if (dealHealthBadge) {
+					const health = dealContext.health_status || dealContext.health;
+					if (health) {
+						dealHealthBadge.textContent = health;
+						dealHealthBadge.classList.remove('hidden');
+						dealHealthBadge.className = 'badge badge-xs font-mono font-semibold ';
+						if (health.toLowerCase().includes('risk')) {
+							dealHealthBadge.className += 'badge-error text-white';
+						} else if (health.toLowerCase().includes('strong') || health.toLowerCase().includes('healthy')) {
+							dealHealthBadge.className += 'badge-success text-white';
+						} else {
+							dealHealthBadge.className += 'badge-warning';
+						}
+					}
 				}
 			}
 
@@ -781,6 +901,20 @@ import Layout from '../layouts/Layout.astro';
 				updateSideBadges();
 				setSidePanelState(true);
 				switchAppTab(newKeys[0]);
+			}
+
+			// Tactical Decision Rationale Callout
+			let rationaleHtml = '';
+			if (data.decision_rationale) {
+				rationaleHtml = `
+					<div class="p-3 bg-base-200/90 rounded-xl border border-base-300 text-xs space-y-1.5 font-sans">
+						<div class="flex items-center justify-between text-[11px] font-bold text-base-content/80 uppercase tracking-wider">
+							<span class="flex items-center gap-1.5">🧠 Tactical Decision Rationale</span>
+							${data.primary_risk ? `<span class="text-error font-medium normal-case">⚠️ Risk: ${data.primary_risk}</span>` : ''}
+						</div>
+						<p class="text-base-content/85 leading-relaxed">${data.decision_rationale}</p>
+					</div>
+				`;
 			}
 
 			// Generated deliverables pill banner
@@ -795,6 +929,7 @@ import Layout from '../layouts/Layout.astro';
 								presentation: '📊 Pitch Deck',
 								email: '✉️ Proposal Email',
 								flowchart: '🗺️ Mutual Action Plan',
+								social: '🐦 Social Touchpoint',
 								suite: '🏨 Deal Suite'
 							};
 							return `
@@ -833,6 +968,7 @@ import Layout from '../layouts/Layout.astro';
 					<div class="text-xs sm:text-sm text-base-content leading-relaxed whitespace-pre-line font-medium">
 						${data.agent_reply || 'Plan executed.'}
 					</div>
+					${rationaleHtml}
 					${generatedPillsHtml}
 					${followUpsHtml}
 				</div>
@@ -858,13 +994,14 @@ import Layout from '../layouts/Layout.astro';
 			});
 		}
 
-		// Core Submit Prompt
+		// Core Submit Prompt with Multi-Turn Context Pipelining
 		async function submitPrompt(promptText: string) {
 			const text = promptText.trim();
 			if (!text) return;
 
 			if (chatInput) chatInput.value = '';
 			appendUserMessage(text);
+			conversationHistory.push({ role: 'user', content: text });
 			const progBlock = appendProgressBlock();
 
 			if (sendBtn) {
@@ -879,6 +1016,7 @@ import Layout from '../layouts/Layout.astro';
 					body: JSON.stringify({
 						message: text,
 						deal_context: dealContext,
+						history: conversationHistory.slice(-8),
 					}),
 				});
 
@@ -918,12 +1056,15 @@ import Layout from '../layouts/Layout.astro';
 		resetBtn?.addEventListener('click', () => {
 			dealContext = {};
 			storedArtifacts = {};
+			conversationHistory = [];
 			if (chatStream) {
 				chatStream.innerHTML = '';
 				if (welcomeTurn) chatStream.appendChild(welcomeTurn);
 				welcomeTurn?.classList.remove('hidden');
 			}
 			if (dealTitleBadge) dealTitleBadge.textContent = 'New Opportunity';
+			if (dealStageBadge) dealStageBadge.classList.add('hidden');
+			if (dealHealthBadge) dealHealthBadge.classList.add('hidden');
 			updateSideBadges();
 			setSidePanelState(false);
 		});
@@ -948,6 +1089,23 @@ import Layout from '../layouts/Layout.astro';
 						dealContext = { ...dealContext, ...mostRecent.deal_context };
 						if (dealTitleBadge && dealContext.account_name) {
 							dealTitleBadge.textContent = `${dealContext.account_name} (${dealContext.deal_size || ''})`;
+						}
+						if (dealStageBadge && (dealContext.deal_stage || dealContext.stage)) {
+							dealStageBadge.textContent = dealContext.deal_stage || dealContext.stage;
+							dealStageBadge.classList.remove('hidden');
+						}
+						if (dealHealthBadge && (dealContext.health_status || dealContext.health)) {
+							const health = dealContext.health_status || dealContext.health;
+							dealHealthBadge.textContent = health;
+							dealHealthBadge.classList.remove('hidden');
+							dealHealthBadge.className = 'badge badge-xs font-mono font-semibold ';
+							if (health.toLowerCase().includes('risk')) {
+								dealHealthBadge.className += 'badge-error text-white';
+							} else if (health.toLowerCase().includes('strong') || health.toLowerCase().includes('healthy')) {
+								dealHealthBadge.className += 'badge-success text-white';
+							} else {
+								dealHealthBadge.className += 'badge-warning';
+							}
 						}
 					}
 					updateSideBadges();

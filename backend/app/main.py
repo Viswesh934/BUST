@@ -66,6 +66,7 @@ class TestLLMRequest(BaseModel):
 class AgentChatRequest(BaseModel):
     message: str
     deal_context: Optional[Dict[str, Any]] = None
+    history: Optional[List[Dict[str, str]]] = None
 
 
 @app.get("/health")
@@ -90,6 +91,7 @@ def agent_chat_endpoint(req: AgentChatRequest) -> Dict[str, Any]:
         result = run_agent_turn(
             user_message=req.message,
             deal_context=req.deal_context,
+            history=req.history,
         )
         return result
     except Exception as exc:
