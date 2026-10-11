@@ -2,6 +2,7 @@ import json
 import logging
 import neatlogs
 import re
+import uuid
 from typing import Dict, Any, List, Optional
 from app.config import get_settings
 from app.llm import get_litellm_client, extract_json
@@ -22,13 +23,15 @@ Available Tools to Execute:
 4. "create_email": High-impact executive proposal / follow-up email tailored to the economic buyer or champion.
 5. "create_social": Executive touchpoint for X (Twitter) & LinkedIn (direct message hook, public angle, provocative question).
 6. "publish_suite": Digital encrypted guest keycard deal room suite for enterprise stakeholders.
+7. "analyze_competitor": In-depth competitor teardown, online public revenue analysis (or undisclosed/private handling), pricing traps, bake-off landmines, and deep B2B sales research powered by Crustdata (headcount growth, funding, hiring signals, and tech stack).
 
 Decision Rules:
 1. Multi-turn Memory: If user refers to previous context (e.g., "they asked about pricing", "draft the deck for them", "what should we say?"), preserve and build on the account, competitor, and objections discussed in previous turns.
 2. Context Updates: Extract and update deal_stage, deal_health, key_objections, primary_risk, recipient, deal_size, and competitor.
 3. Selective Tool Execution:
-   - If the user explicitly asks for collateral (e.g., "make battlecards", "create deck", "draft proposal", "make social hook", "build MAP", "generate all"): set that decision flag to true.
+   - If the user explicitly asks for collateral (e.g., "make battlecards", "create deck", "draft proposal", "make social hook", "build MAP", "analyze competitor", "revenue numbers", "crustdata", "deep research", "generate all"): set that decision flag to true.
    - If the user provides new objections or competitor threats and needs collateral: synthesize a tailored battlecards briefing to counter them.
+   - If the user asks about competitor intelligence, teardown, revenue, or deep sales research (Crustdata firmographics, headcount, funding, hiring signals): set "analyze_competitor" to true.
    - If the user shares raw discovery notes or asks strategy/tactical questions: analyze the deal dynamics, provide strategic advice in "strategic_reply", and suggest companion actions via "follow_ups" without triggering unwanted tools.
 4. Tool Briefings: For every tool flagged true in "decisions", you MUST write a rich, tailored "tool_briefs" entry weaving the prospect's actual pains, quotes, competitor threats, and CFO metrics so the tool produces deeply personalized output.
 5. Strategic Reply: Write an executive-grade advisory reply addressing the sales rep directly. Explain your strategic diagnosis of the deal, the rationale behind any decisions taken, how you mitigated key risks, and what move to make next.
@@ -51,7 +54,8 @@ Return strictly valid JSON adhering to this schema:
     "create_flowchart": false,
     "create_email": false,
     "create_social": false,
-    "publish_suite": false
+    "publish_suite": false,
+    "analyze_competitor": false
   },
   "decision_rationale": "<1-2 sentences explaining WHY these specific moves were made>",
   "tool_briefs": {
@@ -59,7 +63,8 @@ Return strictly valid JSON adhering to this schema:
     "presentation_brief": null,
     "flowchart_brief": null,
     "email_brief": null,
-    "social_brief": null
+    "social_brief": null,
+    "competitor_brief": null
   },
   "strategic_reply": "<Executive advisory directly addressing the user>",
   "follow_ups": [
@@ -69,7 +74,6 @@ Return strictly valid JSON adhering to this schema:
 """
 
 
-@neatlogs.span(kind="WORKFLOW", name="agent-conversational-orchestrator")
 def run_agent_turn(
     user_message: str,
     deal_context: Optional[Dict[str, Any]] = None,
@@ -91,7 +95,7 @@ def run_agent_turn(
     # 1. Base Context Ingestion
     ctx = dict(deal_context or {})
     account_name = ctx.get("account_name", "Enterprise Account")
-    deal_size = ctx.get("deal_size", "$150,000 ARR")
+    deal_size = ctx.get("deal_size", "")
     competitor = ctx.get("competitor", "LegacyVendor")
     recipient = ctx.get("recipient", "Buyer Sponsor")
     deal_stage = ctx.get("deal_stage", "Discovery")
@@ -194,10 +198,11 @@ CFO Financial Grounding: Deal ARR {cfo_context.get('deal_arr')}, Payback {cfo_co
         wants_map = any(k in msg_lower for k in ["map", "roadmap", "plan", "flowchart", "milestone"])
         wants_social = any(k in msg_lower for k in ["social", "twitter", "x", "dm", "linkedin", "touchpoint"])
         wants_suite = any(k in msg_lower for k in ["suite", "room", "keycard"])
+        wants_comp = any(k in msg_lower for k in ["competitor", "competition", "teardown", "landmine", "revenue", "bake-off", "bakeoff", "versus", " vs ", "crust", "crustdata", "deep research", "firmographics", "headcount", "hiring"])
         wants_all = any(k in msg_lower for k in ["all", "everything", "complete"])
 
         if wants_all:
-            wants_bc = wants_deck = wants_email = wants_map = wants_suite = True
+            wants_bc = wants_deck = wants_email = wants_map = wants_suite = wants_comp = True
 
         plan = {
             "deal_state_updates": {
@@ -217,6 +222,7 @@ CFO Financial Grounding: Deal ARR {cfo_context.get('deal_arr')}, Payback {cfo_co
                 "create_email": wants_email,
                 "create_social": wants_social,
                 "publish_suite": wants_suite,
+                "analyze_competitor": wants_comp,
             },
             "decision_rationale": f"Directly responded to sales instruction for {account_name}.",
             "tool_briefs": {
@@ -225,11 +231,13 @@ CFO Financial Grounding: Deal ARR {cfo_context.get('deal_arr')}, Payback {cfo_co
                 "flowchart_brief": f"Account: {account_name}. Target close roadmap. Notes: {user_message}.",
                 "email_brief": f"Account: {account_name}. To: {recipient}. Notes: {user_message}.",
                 "social_brief": f"Account: {account_name}. To: {recipient}. Notes: {user_message}.",
+                "competitor_brief": f"Competitor: {competitor}. Target: {account_name}. Notes: {user_message}.",
             },
             "strategic_reply": f"Assessed opportunity for **{account_name}** ({deal_size}). Formulated tactical sales collateral aligned with your objectives.",
             "follow_ups": [
                 {"label": "📊 Executive Pitch Deck", "prompt": f"Generate a 4-slide executive presentation for {account_name}."},
                 {"label": "🎴 Objection Battlecards", "prompt": f"Create competitive objection battlecards for {account_name} vs {competitor}."},
+                {"label": "🎯 Competitor Intelligence", "prompt": f"Analyze competitive intelligence and online revenue for {competitor}."},
                 {"label": "🗺️ Mutual Action Plan", "prompt": f"Build a 6-stage Mutual Action Plan closing roadmap for {account_name}."},
                 {"label": "✉️ Proposal Email", "prompt": f"Draft an executive proposal follow-up email for {recipient} at {account_name}."},
             ],
@@ -292,6 +300,8 @@ CFO Financial Grounding: Deal ARR {cfo_context.get('deal_arr')}, Payback {cfo_co
     # 8. Filter and Refine Follow-ups
     default_follow_ups = [
         {"label": "📊 Executive Pitch Deck", "prompt": f"Create an executive presentation deck for {account_name} ({deal_size})."},
+        {"label": "🎯 Competitor Intelligence", "prompt": f"Analyze competitive intelligence and online revenue for {competitor}."},
+        {"label": "🔍 Crustdata Deep Research", "prompt": f"Perform deep sales research and firmographics on {competitor} using Crustdata."},
         {"label": "🎴 Objection Battlecards", "prompt": f"Generate competitive objection battlecards for {account_name} vs {competitor}."},
         {"label": "🗺️ Mutual Action Plan", "prompt": f"Build a 6-stage Mutual Action Plan closing roadmap for {account_name}."},
         {"label": "✉️ Proposal Email", "prompt": f"Draft an executive proposal follow-up email for {recipient} at {account_name}."},
@@ -304,6 +314,8 @@ CFO Financial Grounding: Deal ARR {cfo_context.get('deal_arr')}, Payback {cfo_co
     for fu in raw_follow_ups:
         lbl = fu.get("label", "").lower()
         if "battlecard" in lbl and "create_battlecards" in actions_taken:
+            continue
+        if ("competitor" in lbl or "intelligence" in lbl or "teardown" in lbl) and "analyze_competitor" in actions_taken:
             continue
         if ("deck" in lbl or "presentation" in lbl or "ppt" in lbl) and "create_presentation" in actions_taken:
             continue

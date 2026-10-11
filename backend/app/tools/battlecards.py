@@ -47,7 +47,6 @@ You MUST return valid JSON adhering strictly to this JSON format:
 """
 
 
-@neatlogs.span(kind="TOOL", name="create_battlecards")
 def create_battlecards(
     account_name: str,
     notes: str,

@@ -81,7 +81,6 @@ You MUST return strictly valid JSON matching this schema:
 """
 
 
-@neatlogs.span(kind="TOOL", name="create_social_touchpoint")
 def create_social_touchpoint(
     account_name: str,
     recipient: str = "Executive Sponsor",

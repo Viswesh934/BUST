@@ -10,7 +10,11 @@ from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-DB_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+if os.environ.get("AWS_LAMBDA_FUNCTION_NAME") or os.environ.get("LAMBDA_TASK_ROOT"):
+    DB_DIR = Path("/tmp/bust_data")
+else:
+    DB_DIR = Path(os.environ.get("BUST_DATA_DIR", Path(__file__).resolve().parent.parent.parent / "data"))
+
 DB_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DB_DIR / "bust.db"
 

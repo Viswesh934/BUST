@@ -23,7 +23,6 @@ You MUST return valid JSON adhering to this schema:
 """
 
 
-@neatlogs.span(kind="TOOL", name="create_email")
 def create_email(account_name: str, recipient: str, context: str, tone: str = "Executive") -> Dict[str, Any]:
     """Generate structured follow-up proposal email."""
     settings = get_settings()

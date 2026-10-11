@@ -10,6 +10,7 @@ from app.tools.flowchart import create_flowchart
 from app.tools.email import create_email
 from app.tools.presentation import create_presentation
 from app.tools.social import create_social_touchpoint
+from app.tools.competitor import analyze_competitor_intelligence
 from app.services.artifact_store import publish_artifact
 
 logger = logging.getLogger(__name__)
@@ -90,7 +91,7 @@ class SalesDAGExecutionEngine:
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
                         "notes": bc_notes,
                         "competitor": self.deal_context.get("competitor", "LegacyVendor"),
-                        "deal_size": self.deal_context.get("deal_size", "$150,000 ARR"),
+                        "deal_size": self.deal_context.get("deal_size", ""),
                     },
                 )
             )
@@ -152,7 +153,7 @@ class SalesDAGExecutionEngine:
                     inputs={
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
                         "context": deck_ctx,
-                        "deal_size": self.deal_context.get("deal_size", "$150,000 ARR"),
+                        "deal_size": self.deal_context.get("deal_size", ""),
                     },
                 )
             )
@@ -174,7 +175,7 @@ class SalesDAGExecutionEngine:
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
                         "recipient": self.deal_context.get("recipient", "Executive Sponsor"),
                         "competitor": self.deal_context.get("competitor", ""),
-                        "deal_size": self.deal_context.get("deal_size", "$150,000 ARR"),
+                        "deal_size": self.deal_context.get("deal_size", ""),
                         "context": social_ctx,
                     },
                 )
@@ -194,6 +195,24 @@ class SalesDAGExecutionEngine:
                     depends_on=suite_deps,
                     inputs={
                         "account_name": self.deal_context.get("account_name", "ACME Corp"),
+                    },
+                )
+            )
+
+        # Node 7: Competitor Intelligence & Financials
+        if bool(plan_flags.get("analyze_competitor", False)):
+            comp_brief = briefs.get("competitor_brief") or self.user_instruction
+            self.add_node(
+                DAGNode(
+                    id="node_competitor",
+                    name="Competitor Intelligence & Financials",
+                    tool_name="analyze_competitor",
+                    depends_on=[],
+                    inputs={
+                        "competitor": self.deal_context.get("competitor") or "Competitor",
+                        "account_name": self.deal_context.get("account_name", "Enterprise"),
+                        "deal_size": self.deal_context.get("deal_size", ""),
+                        "context": comp_brief,
                     },
                 )
             )
@@ -250,7 +269,7 @@ class SalesDAGExecutionEngine:
             return create_presentation(
                 account_name=inputs["account_name"],
                 context=inputs["context"],
-                deal_size=inputs.get("deal_size", "$150,000 ARR"),
+                deal_size=inputs.get("deal_size", ""),
             )
 
         # Context Pipelining for Proposal Email:
@@ -312,6 +331,13 @@ class SalesDAGExecutionEngine:
                 "suite_name": f"Executive Suite: {inputs['account_name']}",
                 "access_url": f"/suite/suite_{inputs['account_name'].lower().replace(' ', '')}_live",
             }
+        elif tool == "analyze_competitor":
+            return analyze_competitor_intelligence(
+                competitor=inputs.get("competitor", "Competitor"),
+                account_name=inputs.get("account_name", "Enterprise"),
+                deal_size=inputs.get("deal_size", ""),
+                context=inputs.get("context", self.user_instruction),
+            )
         else:
             raise ValueError(f"Unknown tool name: {tool}")
 
@@ -336,6 +362,7 @@ class SalesDAGExecutionEngine:
                     "create_presentation": "presentation",
                     "create_social": "social",
                     "publish_suite": "suite",
+                    "analyze_competitor": "competitor",
                 }
                 art_key = artifact_key_map.get(node.tool_name)
                 if art_key and result:
@@ -354,6 +381,10 @@ class SalesDAGExecutionEngine:
                     output_summary = f"Subject: '{subj}' drafted"
                 elif node.tool_name == "publish_suite" and isinstance(result, dict):
                     output_summary = f"Digital Keycard Pass: {result.get('share_id')}"
+                elif node.tool_name == "analyze_competitor" and isinstance(result, dict):
+                    c_name = result.get("content", {}).get("competitor_name", "Competitor")
+                    rev = result.get("content", {}).get("revenue_intelligence", {}).get("revenue_estimate", "")
+                    output_summary = f"{c_name} intelligence analyzed ({rev})"
 
                 self.step_records.append(
                     DAGStepRecord(
@@ -385,7 +416,6 @@ class SalesDAGExecutionEngine:
                     return
                 time.sleep(0.1)
 
-    @neatlogs.span(kind="WORKFLOW", name="sales-dag-orchestration")
     def run(self) -> Dict[str, Any]:
         """
         Executes the DAG graph via topological resolution.

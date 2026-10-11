@@ -25,14 +25,14 @@ import Layout from '../layouts/Layout.astro';
 			<!-- PPT Controls -->
 			<div class="flex items-center gap-2 shrink-0">
 				<!-- Navigation shortcuts -->
-				<div class="flex items-center bg-base-200/80 rounded-lg p-0.5 border border-base-300">
-					<button id="btn-prev-slide" type="button" class="btn btn-xs btn-ghost px-2 font-mono" title="Previous Slide (←)">
+				<div class="flex items-center bg-base-200/80 rounded-lg p-0.5 border border-base-300 gap-0.5">
+					<button id="btn-prev-slide" type="button" class="btn btn-xs btn-ghost px-2 font-mono cursor-pointer" title="Previous Slide (←)">
 						◀ Prev
 					</button>
-					<span class="px-2 text-xs font-mono font-bold text-base-content/75" id="slide-position-indicator">
-						1 / 1
+					<span class="px-2.5 py-0.5 text-xs font-mono font-bold text-base-content bg-base-100 rounded-md border border-base-300/80 shadow-2xs whitespace-nowrap" id="slide-position-indicator">
+						Slide 1 of 1
 					</span>
-					<button id="btn-next-slide" type="button" class="btn btn-xs btn-ghost px-2 font-mono" title="Next Slide (→)">
+					<button id="btn-next-slide" type="button" class="btn btn-xs btn-ghost px-2 font-mono cursor-pointer" title="Next Slide (→)">
 						Next ▶
 					</button>
 				</div>
@@ -95,52 +95,52 @@ import Layout from '../layouts/Layout.astro';
 			<div class="flex-1 min-h-0 flex flex-col p-4 sm:p-6 overflow-y-auto items-center justify-center relative">
 				
 				<!-- 16:9 Widescreen Presentation Canvas -->
-				<div id="slide-stage" class="w-full max-w-4xl aspect-[16/9] bg-base-100 rounded-2xl border-2 border-base-300 shadow-2xl p-6 sm:p-10 flex flex-col justify-between transition-all duration-300 select-none relative overflow-hidden">
+				<div id="slide-stage" class="w-full max-w-4xl min-h-[460px] md:min-h-[500px] aspect-[16/9] bg-base-100 rounded-2xl border-2 border-base-300 shadow-2xl p-5 sm:p-8 flex flex-col justify-between transition-all duration-300 select-none relative overflow-hidden shrink-0">
 					
 					<!-- Top Slide Watermark & Header -->
-					<div class="flex items-center justify-between border-b border-base-200/90 pb-3">
-						<div class="flex items-center gap-2">
-							<span class="badge badge-sm badge-neutral font-bold tracking-wider uppercase text-[10px]" id="current-slide-tag">
+					<div class="flex items-center justify-between border-b border-base-200/90 pb-3 gap-2">
+						<div class="flex items-center gap-2 min-w-0">
+							<span class="badge badge-sm badge-neutral font-bold tracking-wider uppercase text-[10px] truncate max-w-[150px] inline-block shrink-0" id="current-slide-tag">
 								EXECUTIVE SUMMARY
 							</span>
-							<span class="text-[10px] font-mono text-base-content/50 uppercase tracking-wider">
+							<span class="text-[10px] font-mono text-base-content/50 uppercase tracking-wider truncate">
 								CONFIDENTIAL BRIEFING
 							</span>
 						</div>
-						<div class="flex items-center gap-2">
-							<div class="badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs" id="current-slide-source-badge">
-								<span class="opacity-75">Source:</span>
-								<span id="current-slide-source-text" class="font-bold">github.com/bust-ai/core</span>
-								<span>✓</span>
+						<div class="flex items-center gap-2 shrink-0">
+							<div class="badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs max-w-[180px] sm:max-w-[220px] truncate flex items-center shrink-0" id="current-slide-source-badge">
+								<span class="opacity-75 shrink-0">Source:</span>
+								<span id="current-slide-source-text" class="font-bold truncate max-w-[100px] sm:max-w-[140px] inline-block">github.com/bust-ai/core</span>
+								<span class="shrink-0">✓</span>
 							</div>
-							<div class="text-[11px] font-mono text-base-content/60 font-semibold" id="current-slide-index-badge">
-								SLIDE 01
+							<div class="text-[11px] font-mono text-base-content/75 font-bold shrink-0 whitespace-nowrap" id="current-slide-index-badge">
+								SLIDE 1 OF 1
 							</div>
 						</div>
 					</div>
 
 					<!-- Center Slide Content -->
-					<div class="my-auto space-y-4 sm:space-y-6">
-						<div class="space-y-1.5">
-							<h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-base-content tracking-tight leading-snug" id="current-slide-title">
+					<div class="my-auto space-y-3 sm:space-y-4 py-2 flex-1 min-h-0 flex flex-col justify-center">
+						<div class="space-y-1">
+							<h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-base-content tracking-tight leading-snug break-words" id="current-slide-title">
 								Slide Title
 							</h2>
-							<p class="text-xs sm:text-sm text-base-content/75 font-medium leading-relaxed" id="current-slide-subtitle">
+							<p class="text-xs sm:text-sm text-base-content/75 font-medium leading-relaxed break-words" id="current-slide-subtitle">
 								Slide Subtitle / Executive Takeaway
 							</p>
 						</div>
 
-						<!-- Bullets Container -->
-						<div class="grid grid-cols-1 gap-2.5 sm:gap-3" id="current-slide-bullets">
+						<!-- Bullets Container with Internal Scroll if Content is Large -->
+						<div class="grid grid-cols-1 gap-2 sm:gap-2.5 overflow-y-auto max-h-[38vh] sm:max-h-[44vh] pr-1 py-1" id="current-slide-bullets">
 							<!-- Injected via JS -->
 						</div>
 					</div>
 
 					<!-- Bottom Slide Footer -->
-					<div class="pt-3 border-t border-base-200/90 flex items-center justify-between text-[10px] sm:text-[11px] text-base-content/60 font-mono">
-						<span id="current-slide-footer-account">Enterprise Partnership</span>
-						<span>BUST Revenue Intelligence</span>
-						<span id="current-slide-footer-page">Page 1</span>
+					<div class="pt-3 border-t border-base-200/90 flex items-center justify-between text-[10px] sm:text-[11px] text-base-content/60 font-mono gap-2">
+						<span id="current-slide-footer-account" class="truncate">Enterprise Partnership</span>
+						<span class="shrink-0">BUST Revenue Intelligence</span>
+						<span id="current-slide-footer-page" class="font-bold shrink-0">Slide 1 of 1</span>
 					</div>
 
 				</div>
@@ -232,8 +232,8 @@ import Layout from '../layouts/Layout.astro';
 				const accountName = activeDeck.deal_context?.account_name || activeDeck.content?.account_name || 'Enterprise';
 				if (deckMainTitle) deckMainTitle.textContent = activeDeck.title || `${accountName} — Commercial Pitch Deck`;
 				if (deckAccountBadge) deckAccountBadge.textContent = `Account: ${accountName}`;
-				if (deckSlideCountBadge) deckSlideCountBadge.textContent = `${slidesList.length} Slides`;
-				if (filmstripCount) filmstripCount.textContent = slidesList.length.toString();
+				if (deckSlideCountBadge) deckSlideCountBadge.textContent = `${slidesList.length} Slides Total`;
+				if (filmstripCount) filmstripCount.textContent = `${slidesList.length} Total`;
 
 				renderFilmstrip();
 				goToSlide(0);
@@ -260,20 +260,20 @@ import Layout from '../layouts/Layout.astro';
 				thumb.setAttribute('data-index', idx.toString());
 
 				thumb.innerHTML = `
-					<div class="flex items-center justify-between text-[10px]">
-						<span class="badge badge-xs ${idx === currentSlideIndex ? 'badge-primary font-bold' : 'badge-neutral'}">
-							0${idx + 1}
+					<div class="flex items-center justify-between text-[10px] gap-1">
+						<span class="badge badge-xs ${idx === currentSlideIndex ? 'badge-primary font-bold' : 'badge-neutral'} shrink-0">
+							Slide ${idx + 1} of ${slidesList.length}
 						</span>
-						<span class="font-mono text-base-content/60 truncate max-w-[120px] uppercase">
+						<span class="font-mono text-base-content/60 truncate max-w-[90px] uppercase">
 							${s.tag || `Slide ${idx + 1}`}
 						</span>
 					</div>
 					<div class="text-xs font-bold text-base-content truncate">
 						${s.title}
 					</div>
-					<div class="text-[9px] font-mono text-success flex items-center gap-1 truncate pt-0.5">
-						<span>🔗</span>
-						<span class="truncate">${s.source || 'Verified Source'}</span>
+					<div class="text-[9px] font-mono text-success flex items-center gap-1 truncate pt-0.5 max-w-[180px]">
+						<span class="shrink-0">🔗</span>
+						<span class="truncate max-w-[150px] inline-block">${s.source || 'Verified Source'}</span>
 					</div>
 				`;
 
@@ -291,9 +291,9 @@ import Layout from '../layouts/Layout.astro';
 			currentSlideIndex = index;
 			const slide = slidesList[index];
 
-			// Update stage content
-			if (currentSlideTag) currentSlideTag.textContent = slide.tag || `SLIDE 0${index + 1}`;
-			if (currentSlideIndexBadge) currentSlideIndexBadge.textContent = `SLIDE 0${index + 1}`;
+			// Update stage content with prominent Slide X of Y
+			if (currentSlideTag) currentSlideTag.textContent = slide.tag || `SLIDE ${index + 1} OF ${slidesList.length}`;
+			if (currentSlideIndexBadge) currentSlideIndexBadge.textContent = `SLIDE ${index + 1} OF ${slidesList.length}`;
 			const sourceText = document.getElementById('current-slide-source-text');
 			if (sourceText) sourceText.textContent = slide.source || 'Verified Source';
 			if (currentSlideTitle) currentSlideTitle.textContent = slide.title;
@@ -305,9 +305,9 @@ import Layout from '../layouts/Layout.astro';
 				currentSlideBullets.innerHTML = bullets
 					.map(
 						(b: string) => `
-						<div class="flex items-start gap-2.5 p-2 sm:p-2.5 rounded-xl bg-base-200/60 border border-base-300/70 text-xs sm:text-sm font-medium text-base-content/90">
+						<div class="flex items-start gap-2.5 p-2 sm:p-2.5 rounded-xl bg-base-200/60 border border-base-300/70 text-xs sm:text-sm font-medium text-base-content/90 min-w-0 break-words">
 							<span class="text-primary font-bold shrink-0 mt-0.5">✓</span>
-							<span class="leading-relaxed">${b}</span>
+							<span class="leading-relaxed break-words">${b}</span>
 						</div>
 					`
 					)
@@ -320,7 +320,7 @@ import Layout from '../layouts/Layout.astro';
 			if (currentSlideFooterPage) currentSlideFooterPage.textContent = `Slide ${index + 1} of ${slidesList.length}`;
 
 			// Indicator
-			if (slidePosIndicator) slidePosIndicator.textContent = `${index + 1} / ${slidesList.length}`;
+			if (slidePosIndicator) slidePosIndicator.textContent = `Slide ${index + 1} of ${slidesList.length}`;
 
 			// Speaker Notes
 			if (currentSpeakerNotes) {

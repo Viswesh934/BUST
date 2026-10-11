@@ -86,7 +86,6 @@ def extract_pdf_text_from_bytes(pdf_bytes: bytes) -> str:
         return ""
 
 
-@neatlogs.span(kind="TOOL", name="ingest_grounding_source")
 def ingest_grounding_source(
     source_type: str,
     url_or_path: str,
@@ -194,3 +193,16 @@ def get_all_grounded_sources() -> List[Dict[str, Any]]:
     """Retrieve all ingested technical sources from SQLite store."""
     all_arts = list_artifacts()
     return [a for a in all_arts if a.get("type") == "source"]
+
+
+def delete_grounding_source(source_id: str) -> bool:
+    """Delete a technical source by ID or URL/title from SQLite store."""
+    from app.services.artifact_store import delete_artifact
+    if delete_artifact(source_id):
+        return True
+    sources = get_all_grounded_sources()
+    for s in sources:
+        if s.get("id") == source_id or s.get("content", {}).get("url_or_path") == source_id or s.get("title") == source_id:
+            return delete_artifact(s.get("id"))
+    return False
+

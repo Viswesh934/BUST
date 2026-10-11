@@ -58,12 +58,12 @@ import Layout from '../layouts/Layout.astro';
 			<!-- EXPANSIVE BOTTOM PROMPT BAR (Permanently sticky at bottom, never moves with messages) -->
 			<div class="w-full max-w-4xl xl:max-w-5xl mx-auto shrink-0 pt-2 pb-1 px-2 sm:px-4 bg-base-100 space-y-1.5">
 				<!-- Attached Grounding Sources Tray -->
-				<div id="sources-tray" class="flex items-center gap-1.5 flex-wrap text-[11px]">
-					<button id="btn-open-attach-modal" type="button" class="btn btn-xs btn-outline rounded-lg gap-1 font-mono text-[10px] text-base-content/75 hover:text-base-content cursor-pointer">
+				<div id="sources-tray" class="flex items-center gap-1.5 flex-wrap text-[11px] max-w-full overflow-hidden">
+					<button id="btn-open-attach-modal" type="button" class="btn btn-xs btn-outline rounded-lg gap-1 font-mono text-[10px] text-base-content/75 hover:text-base-content cursor-pointer shrink-0">
 						<span>+ Attach Source</span>
 						<span class="text-[9px] opacity-60">(GitHub / Docs / PDF)</span>
 					</button>
-					<div id="active-sources-list" class="flex items-center gap-1.5 flex-wrap">
+					<div id="active-sources-list" class="flex items-center gap-1.5 flex-wrap min-w-0 max-w-full overflow-hidden">
 						<!-- Injected active source badges -->
 					</div>
 				</div>
@@ -136,7 +136,7 @@ import Layout from '../layouts/Layout.astro';
 		<!-- 2. FLOATING SLIDE-OVER DELIVERABLES PANEL (Anchored to the right, DOES NOT move the chat) -->
 		<div
 			id="side-panel"
-			class="absolute top-0 right-13 bottom-0 w-[470px] max-w-[calc(100vw-4.5rem)] z-40 bg-base-100/98 backdrop-blur-xl border-l border-base-300 shadow-2xl flex flex-col rounded-l-2xl transition-all duration-300 ease-out transform translate-x-[110%] opacity-0 pointer-events-none"
+			class="absolute top-0 right-13 bottom-0 w-[520px] md:w-[580px] xl:w-[640px] max-w-[calc(100vw-4.5rem)] z-40 bg-base-100/98 backdrop-blur-xl border-l border-base-300 shadow-2xl flex flex-col rounded-l-2xl transition-all duration-300 ease-out transform translate-x-[110%] opacity-0 pointer-events-none"
 		>
 			
 			<!-- STICKY SIDE PANEL HEADER -->
@@ -190,6 +190,14 @@ import Layout from '../layouts/Layout.astro';
 				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="battlecards" id="app-icon-bc">
 					<span>🎴</span>
 					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-bc">0</span>
+				</button>
+			</div>
+
+			<!-- 🎯 Competitor Intelligence App Icon -->
+			<div class="tooltip tooltip-left" data-tip="Competitor Intelligence & Financials">
+				<button type="button" class="side-app-btn relative w-10 h-10 rounded-xl bg-base-100 hover:bg-base-200 border border-base-300 flex items-center justify-center text-lg transition-all shadow-xs active:scale-95 cursor-pointer" data-tab="competitor" id="app-icon-comp">
+					<span>🎯</span>
+					<span class="badge badge-xs badge-neutral absolute -top-1 -right-1 hidden" id="app-badge-comp">0</span>
 				</button>
 			</div>
 
@@ -274,11 +282,14 @@ import Layout from '../layouts/Layout.astro';
 	</style>
 
 	<script>
+		import { renderMarkdown } from '../utils/markdown';
+
 		let dealContext: any = {};
 		let storedArtifacts: any = {};
 		let activeTab: string = 'battlecards';
 		let sidePanelOpen: boolean = false;
 		let conversationHistory: Array<{ role: string; content: string }> = [];
+		let compActiveSubtab: string = 'overview';
 
 		// Stacked Deck state for side panel
 		let sideCards: any[] = [];
@@ -309,6 +320,7 @@ import Layout from '../layouts/Layout.astro';
 		const appDockToggle = document.getElementById('app-dock-toggle');
 		const appDockToggleIcon = document.getElementById('app-dock-toggle-icon');
 		const appBadgeBc = document.getElementById('app-badge-bc');
+		const appBadgeComp = document.getElementById('app-badge-comp');
 		const appBadgeDeck = document.getElementById('app-badge-deck');
 		const appBadgeEmail = document.getElementById('app-badge-email');
 		const appBadgeMap = document.getElementById('app-badge-map');
@@ -382,6 +394,7 @@ import Layout from '../layouts/Layout.astro';
 
 			const titles: Record<string, string> = {
 				battlecards: '🎴 Objection Battlecards',
+				competitor: '🎯 Competitor Intelligence',
 				presentation: '📊 Pitch Presentation Deck',
 				email: '✉️ Executive Proposal Email',
 				flowchart: '🗺️ Mutual Action Plan (MAP)',
@@ -398,6 +411,9 @@ import Layout from '../layouts/Layout.astro';
 				if (activeTab === 'battlecards') {
 					btnOpenFullPage.href = '/battlecards';
 					fullPageBtnText.textContent = 'Open Full Deck ↗';
+				} else if (activeTab === 'competitor') {
+					btnOpenFullPage.href = '/competitor';
+					fullPageBtnText.textContent = 'Open Full Teardown ↗';
 				} else if (activeTab === 'presentation') {
 					btnOpenFullPage.href = '/presentations';
 					fullPageBtnText.textContent = 'Open Full Slides (16:9) ↗';
@@ -461,25 +477,406 @@ import Layout from '../layouts/Layout.astro';
 				return;
 			}
 
+			// COMPETITOR: COMPETITIVE INTELLIGENCE & REVENUE
+			if (activeTab === 'competitor') {
+				const comp = art.content || {};
+				const rev = comp.revenue_intelligence || {};
+				const matrix = comp.head_to_head_matrix || [];
+				const vulns = comp.pricing_vulnerabilities || [];
+				const traps = comp.landmine_traps || [];
+				const crust = comp.crustdata_research || {};
+				const crustRes = crust.research || null;
+
+				const revenueBadge = rev.has_public_revenue
+					? `<div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-1">
+							<div class="flex items-center justify-between">
+								<span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+									<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+									Online Public Revenue
+								</span>
+								<span class="badge badge-xs badge-success font-mono font-bold">${rev.valuation_or_status || 'Public'}</span>
+							</div>
+							<div class="font-mono font-bold text-sm text-emerald-700 dark:text-emerald-300">
+								${rev.revenue_estimate}
+							</div>
+							${rev.source_note ? `<div class="text-[10px] text-base-content/60 font-mono">Verified: ${rev.source_note}</div>` : ''}
+					   </div>`
+					: `<div class="p-3 bg-base-200/60 border border-base-300 rounded-xl space-y-1">
+							<div class="flex items-center justify-between">
+								<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60 flex items-center gap-1.5">
+									<span class="w-2 h-2 rounded-full bg-base-content/40"></span>
+									Online Revenue Intelligence
+								</span>
+								<span class="badge badge-xs badge-neutral font-mono">${rev.valuation_or_status || 'Private / Unlisted'}</span>
+							</div>
+							<div class="font-mono text-xs text-base-content/75 font-medium">
+								${rev.revenue_estimate || 'Not publicly disclosed / Private enterprise'}
+							</div>
+							<div class="text-[10px] text-base-content/50 font-mono">Private vendor — revenue not mandated in public SEC filings.</div>
+					   </div>`;
+
+				sideDeliverableView.innerHTML = `
+					<div class="space-y-3 min-w-0 break-words">
+						<!-- SEGMENTED SUB-TABS TO PREVENT SCROLL & CONTENT OVERFLOW -->
+						<div class="flex items-center gap-1.5 overflow-x-auto pb-1.5 border-b border-base-200/90 shrink-0" id="comp-subtabs-bar">
+							<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'overview' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="overview">
+								🌐 Overview & Crustdata
+							</button>
+							${matrix.length > 0 ? `
+								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'matrix' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="matrix">
+									⚔️ Matrix (${matrix.length})
+								</button>
+							` : ''}
+							${vulns.length > 0 ? `
+								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'traps' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="traps">
+									⚠️ Traps (${vulns.length})
+								</button>
+							` : ''}
+							${traps.length > 0 ? `
+								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'landmines' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="landmines">
+									💣 Landmines (${traps.length})
+								</button>
+							` : ''}
+							${comp.displacement_playbook ? `
+								<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'playbook' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="playbook">
+									🏆 Playbook
+								</button>
+							` : ''}
+							<button type="button" class="btn btn-xs comp-subtab-btn ${compActiveSubtab === 'all' ? 'btn-neutral' : 'btn-ghost'}" data-subtab="all">
+								📋 All Sections
+							</button>
+						</div>
+
+						<!-- 1. OVERVIEW & CRUSTDATA SECTION -->
+						<div id="comp-sec-overview" class="space-y-3 ${compActiveSubtab === 'overview' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
+							<!-- COMPETITOR DOSSIER HEADER -->
+							<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
+								<div class="flex items-start justify-between border-b border-base-200 pb-2 gap-2">
+									<div class="min-w-0">
+										<span class="text-[10px] text-base-content/60 font-mono uppercase block truncate">${comp.market_category || 'Enterprise Software'}</span>
+										<h4 class="font-bold text-sm text-base-content flex items-center gap-1.5 flex-wrap">
+											<span>${comp.competitor_name || 'Competitor'}</span>
+											<span class="badge badge-xs badge-warning font-semibold">Incumbent</span>
+										</h4>
+									</div>
+									<span class="badge badge-xs badge-outline font-mono shrink-0">Pricing: ${comp.pricing_model || 'Usage-based'}</span>
+								</div>
+
+								<!-- REVENUE INTELLIGENCE CARD -->
+								${revenueBadge}
+							</div>
+
+							<!-- CRUSTDATA B2B DEEP RESEARCH -->
+							<div class="card bg-base-100 border border-primary/40 p-3.5 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
+								<div class="flex items-center justify-between border-b border-base-200 pb-2 gap-2">
+									<div class="flex items-center gap-1.5 min-w-0">
+										<span class="text-sm shrink-0">🌐</span>
+										<span class="text-[11px] font-bold text-base-content uppercase tracking-wider truncate">Crustdata Deep B2B Research</span>
+									</div>
+									<span class="badge badge-xs ${crust.is_live_api ? 'badge-success' : 'badge-primary'} font-mono font-bold shrink-0">
+										${crust.is_live_api ? '● Live REST API' : (crust.has_api_key_configured ? '● API Key Active' : 'Crustdata B2B Platform')}
+									</span>
+								</div>
+
+								${crustRes ? `
+									<!-- Headcount & Growth Metrics -->
+									<div class="p-2.5 bg-base-200/50 rounded-lg border border-base-300/50 space-y-1 min-w-0">
+										<div class="flex items-center justify-between gap-2">
+											<span class="text-[10px] font-bold text-base-content/70 uppercase">Headcount Trajectory</span>
+											<span class="badge badge-xs badge-neutral font-mono font-bold shrink-0">${crustRes.headcount?.total_employees || '1,000+'} (${crustRes.headcount?.yoy_growth_percentage || '+12%'})</span>
+										</div>
+										<p class="text-[10px] text-base-content/80 leading-relaxed font-medium break-words">
+											${crustRes.headcount?.headcount_signal || 'Stable enterprise workforce.'}
+										</p>
+										${crustRes.headcount?.department_breakdown ? `
+											<div class="grid grid-cols-3 gap-1 pt-1 text-[9px] font-mono text-center">
+												<div class="bg-base-100 p-1 rounded border border-base-200 truncate">Eng: ${crustRes.headcount.department_breakdown.engineering}</div>
+												<div class="bg-base-100 p-1 rounded border border-base-200 truncate">Sales: ${crustRes.headcount.department_breakdown.sales_and_marketing}</div>
+												<div class="bg-base-100 p-1 rounded border border-base-200 truncate">Ops: ${crustRes.headcount.department_breakdown.operations_and_support}</div>
+											</div>
+										` : ''}
+									</div>
+
+									<!-- Funding & Valuation -->
+									<div class="p-2.5 bg-base-200/50 rounded-lg border border-base-300/50 space-y-1 min-w-0">
+										<div class="flex items-center justify-between gap-2">
+											<span class="text-[10px] font-bold text-base-content/70 uppercase">Capital & Valuation</span>
+											<span class="text-[10px] font-mono font-bold text-base-content shrink-0">${crustRes.financials_and_funding?.stage_or_status || 'Enterprise'}</span>
+										</div>
+										<div class="text-[10px] text-base-content/85 font-mono break-words">
+											${crustRes.financials_and_funding?.valuation_or_market_cap || crustRes.financials_and_funding?.total_funding || 'Public disclosures'}
+										</div>
+									</div>
+
+									<!-- Hiring Signals & Vulnerabilities -->
+									${crustRes.hiring_signals ? `
+										<div class="p-2.5 bg-base-200/50 rounded-lg border border-base-300/50 space-y-1.5 min-w-0">
+											<div class="flex items-center justify-between gap-2">
+												<span class="text-[10px] font-bold text-base-content/70 uppercase truncate">Hiring Signals (${crustRes.hiring_signals.open_job_count || 'Active'})</span>
+												<span class="badge badge-xs badge-warning text-[9px] shrink-0">Vulnerability</span>
+											</div>
+											<p class="text-[10px] text-error font-medium leading-relaxed break-words">
+												⚠️ ${crustRes.hiring_signals.strategic_vulnerability}
+											</p>
+											<div class="space-y-0.5 pt-0.5">
+												${(crustRes.hiring_signals.critical_focus_areas || []).map((f: string) => `
+													<div class="text-[9px] text-base-content/70 flex items-start gap-1 min-w-0">
+														<span class="shrink-0">•</span><span class="break-words">${f}</span>
+													</div>
+												`).join('')}
+											</div>
+										</div>
+									` : ''}
+
+									<!-- Tech Stack Footprint -->
+									${crustRes.tech_stack_footprint?.length ? `
+										<div class="space-y-1 min-w-0">
+											<span class="text-[10px] font-bold text-base-content/60 uppercase">Identified Tech Stack:</span>
+											<div class="flex flex-wrap gap-1 max-w-full overflow-hidden">
+												${crustRes.tech_stack_footprint.map((t: string) => `<span class="badge badge-xs badge-neutral font-mono truncate max-w-[120px] inline-block">${t}</span>`).join('')}
+											</div>
+										</div>
+									` : ''}
+								` : `
+									<div class="text-center py-2 space-y-2">
+										<p class="text-[11px] text-base-content/70 leading-relaxed">
+											Connect to Crustdata B2B MCP to pull live verified headcount, funding rounds, hiring velocity, and key leadership.
+										</p>
+									</div>
+								`}
+
+								<div class="pt-1 flex items-center justify-between border-t border-base-200 gap-2">
+									<span class="text-[9px] text-base-content/50 font-mono truncate max-w-[180px] inline-block">${crust.source || 'Crustdata B2B Platform'}</span>
+									<button type="button" class="btn btn-xs btn-ghost gap-1 cursor-pointer shrink-0" id="btn-run-crustdata-research">
+										${crustRes ? '🔄 Refresh Crustdata' : '⚡ Deep Research (Crustdata)'}
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- 2. HEAD-TO-HEAD MATRIX SECTION -->
+						<div id="comp-sec-matrix" class="space-y-3 ${compActiveSubtab === 'matrix' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
+							${matrix.length > 0 ? `
+								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
+									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
+										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">
+											⚔️ Head-to-Head Differentiators
+										</span>
+										<span class="badge badge-xs badge-success font-semibold">Our Advantage</span>
+									</div>
+									<div class="space-y-2 pt-1 min-w-0">
+										${matrix.map((row: any) => `
+											<div class="bg-base-200/40 p-2.5 rounded-lg border border-base-300/50 space-y-1.5 min-w-0 break-words">
+												<div class="flex items-center justify-between">
+													<span class="text-[10px] font-bold text-base-content uppercase truncate">${row.category}</span>
+													<span class="badge badge-xs badge-success text-[9px] font-bold shrink-0">Advantage: Us</span>
+												</div>
+												<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px]">
+													<div class="p-2 rounded bg-error/10 border border-error/20 text-error break-words">
+														<span class="font-bold block mb-0.5">${comp.competitor_name || 'Them'}:</span>
+														${row.competitor}
+													</div>
+													<div class="p-2 rounded bg-success/10 border border-success/20 text-success break-words">
+														<span class="font-bold block mb-0.5">Our Solution:</span>
+														${row.our_solution}
+													</div>
+												</div>
+											</div>
+										`).join('')}
+									</div>
+								</div>
+							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No head-to-head differentiators recorded.</div>`}
+						</div>
+
+						<!-- 3. PRICING TRAPS & VULNERABILITIES SECTION -->
+						<div id="comp-sec-traps" class="space-y-3 ${compActiveSubtab === 'traps' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
+							${vulns.length > 0 ? `
+								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs min-w-0 break-words overflow-hidden">
+									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
+										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">
+											⚠️ Pricing Traps & Renewals
+										</span>
+										<span class="badge badge-xs badge-warning font-mono">${vulns.length} Traps</span>
+									</div>
+									<div class="space-y-1.5 pt-1 min-w-0">
+										${vulns.map((v: string) => `
+											<div class="flex items-start gap-2 text-[11px] text-base-content/85 bg-base-200/40 p-2.5 rounded-lg border border-base-300/40 break-words">
+												<span class="text-error font-bold text-xs shrink-0 mt-0.5">✕</span>
+												<span class="break-words leading-relaxed">${v}</span>
+											</div>
+										`).join('')}
+									</div>
+								</div>
+							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No pricing traps noted.</div>`}
+						</div>
+
+						<!-- 4. BAKE-OFF LANDMINES SECTION -->
+						<div id="comp-sec-landmines" class="space-y-3 ${compActiveSubtab === 'landmines' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
+							${traps.length > 0 ? `
+								<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl space-y-2 shadow-2xs min-w-0 break-words overflow-hidden">
+									<div class="flex items-center justify-between border-b border-base-200 pb-1.5">
+										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">
+											💣 Bake-Off Landmine Questions
+										</span>
+										<span class="text-[10px] text-base-content/60 font-mono">${traps.length} Questions</span>
+									</div>
+									<p class="text-[10px] text-base-content/65">Arm your internal champion with these questions to corner ${comp.competitor_name || 'the vendor'}:</p>
+									<div class="space-y-2 pt-1 min-w-0">
+										${traps.map((q: string, idx: number) => `
+											<div class="bg-base-200/60 p-2.5 rounded-xl border border-base-300/70 space-y-1.5 min-w-0 break-words">
+												<div class="flex items-center justify-between gap-2">
+													<span class="badge badge-xs badge-neutral font-mono font-bold shrink-0">Landmine #${idx + 1}</span>
+													<button type="button" class="btn btn-xs btn-ghost comp-copy-btn cursor-pointer shrink-0" data-text="${encodeURIComponent(q)}">📋 Copy Question</button>
+												</div>
+												<div class="text-[11px] font-medium text-base-content italic leading-relaxed break-words">
+													"${q}"
+												</div>
+											</div>
+										`).join('')}
+									</div>
+								</div>
+							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No landmine questions formulated.</div>`}
+						</div>
+
+						<!-- 5. TACTICAL PLAYBOOK SECTION -->
+						<div id="comp-sec-playbook" class="space-y-3 ${compActiveSubtab === 'playbook' || compActiveSubtab === 'all' ? '' : 'hidden'} min-w-0">
+							${comp.displacement_playbook ? `
+								<div class="card bg-gradient-to-br from-base-200/90 to-base-100 border border-base-300 p-3.5 rounded-xl space-y-1.5 shadow-2xs min-w-0 break-words overflow-hidden">
+									<div class="flex items-center justify-between border-b border-base-200 pb-1">
+										<span class="text-[10px] font-bold text-base-content uppercase tracking-wider">🏆 Tactical Displacement Playbook</span>
+										<span class="badge badge-xs badge-neutral">Strategy</span>
+									</div>
+									<div class="text-[11px] text-base-content/85 leading-relaxed pt-1 whitespace-pre-line font-medium break-words">
+										${comp.displacement_playbook}
+									</div>
+								</div>
+							` : `<div class="p-4 bg-base-200/50 rounded-xl text-center text-xs text-base-content/60">No displacement playbook generated.</div>`}
+						</div>
+					</div>
+				`;
+
+				// Attach subtab switcher listeners
+				sideDeliverableView.querySelectorAll('.comp-subtab-btn').forEach((btn) => {
+					btn.addEventListener('click', () => {
+						const targetSub = btn.getAttribute('data-subtab') || 'overview';
+						compActiveSubtab = targetSub;
+
+						sideDeliverableView.querySelectorAll('.comp-subtab-btn').forEach((b) => {
+							if (b.getAttribute('data-subtab') === targetSub) {
+								b.className = 'btn btn-xs comp-subtab-btn btn-neutral';
+							} else {
+								b.className = 'btn btn-xs comp-subtab-btn btn-ghost';
+							}
+						});
+
+						const secOverview = document.getElementById('comp-sec-overview');
+						const secMatrix = document.getElementById('comp-sec-matrix');
+						const secTraps = document.getElementById('comp-sec-traps');
+						const secLandmines = document.getElementById('comp-sec-landmines');
+						const secPlaybook = document.getElementById('comp-sec-playbook');
+
+						if (targetSub === 'all') {
+							secOverview?.classList.remove('hidden');
+							secMatrix?.classList.remove('hidden');
+							secTraps?.classList.remove('hidden');
+							secLandmines?.classList.remove('hidden');
+							secPlaybook?.classList.remove('hidden');
+						} else {
+							secOverview?.classList.toggle('hidden', targetSub !== 'overview');
+							secMatrix?.classList.toggle('hidden', targetSub !== 'matrix');
+							secTraps?.classList.toggle('hidden', targetSub !== 'traps');
+							secLandmines?.classList.toggle('hidden', targetSub !== 'landmines');
+							secPlaybook?.classList.toggle('hidden', targetSub !== 'playbook');
+						}
+					});
+				});
+
+				// Attach copy listeners for landmine questions
+				sideDeliverableView.querySelectorAll('.comp-copy-btn').forEach((btn) => {
+					btn.addEventListener('click', () => {
+						const text = decodeURIComponent(btn.getAttribute('data-text') || '');
+						if (text) {
+							navigator.clipboard.writeText(text);
+							const orig = btn.textContent;
+							btn.textContent = 'Copied ✓';
+							setTimeout(() => { btn.textContent = orig; }, 2000);
+						}
+					});
+				});
+
+				// Attach Crustdata Deep Research button listener
+				const btnRunCrust = document.getElementById('btn-run-crustdata-research');
+				btnRunCrust?.addEventListener('click', async () => {
+					btnRunCrust.setAttribute('disabled', 'true');
+					const origHtml = btnRunCrust.innerHTML;
+					btnRunCrust.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Querying Crustdata...';
+					try {
+						const res = await fetch('/api/competitor/deep-research', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								competitor: comp.competitor_name || dealContext.competitor || 'Competitor',
+								account_name: dealContext.account_name || 'Enterprise',
+							}),
+						});
+						if (res.ok) {
+							const data = await res.json();
+							if (data.artifact?.content) {
+								if (!art.content) art.content = {};
+								art.content.crustdata_research = data.artifact.content;
+								renderActiveDeliverable();
+							}
+						}
+					} catch (e) {
+						console.error(e);
+					} finally {
+						btnRunCrust.removeAttribute('disabled');
+						btnRunCrust.innerHTML = origHtml;
+					}
+				});
+
+				return;
+			}
+
 			// PRESENTATION: SLIDE DECK PREVIEW
 			if (activeTab === 'presentation') {
 				const slides = art.content?.slides || [];
 				sideDeliverableView.innerHTML = `
-					<div class="space-y-4">
-						<div class="space-y-3">
-							${slides.map((s: any) => `
-								<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2 shadow-2xs">
-									<div class="flex items-center justify-between">
-										<span class="badge badge-xs badge-neutral font-semibold">${s.tag || `Slide ${s.slide_number}`}</span>
-										<span class="text-[10px] font-mono text-base-content/50">#${s.slide_number}</span>
+					<div class="space-y-3 min-w-0 break-words">
+						<!-- Presentation Header Banner -->
+						<div class="card bg-base-100 border border-base-300 p-3.5 rounded-xl shadow-2xs flex items-center justify-between gap-2 min-w-0">
+							<div class="space-y-0.5 min-w-0">
+								<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Executive Pitch Deck</span>
+								<div class="text-xs font-bold text-base-content flex items-center gap-1.5 flex-wrap">
+									<span>📊 16:9 Widescreen Studio</span>
+									<span class="badge badge-xs badge-neutral font-mono font-bold">${slides.length} Slides Total</span>
+								</div>
+							</div>
+							<a href="/presentations" class="btn btn-xs btn-neutral gap-1 font-semibold shrink-0">
+								<span>Launch Studio 🖥️</span>
+							</a>
+						</div>
+
+						<!-- Slide Cards List -->
+						<div class="space-y-2.5 min-w-0">
+							${slides.map((s: any, idx: number) => `
+								<div class="card bg-base-100 border border-base-300 p-4 rounded-xl space-y-2.5 shadow-2xs min-w-0 break-words overflow-hidden">
+									<div class="flex items-center justify-between border-b border-base-200/80 pb-2 gap-2">
+										<span class="badge badge-xs badge-neutral font-semibold truncate">${s.tag || `Slide ${idx + 1}`}</span>
+										<span class="badge badge-xs badge-outline font-mono font-bold shrink-0">Slide ${idx + 1} of ${slides.length}</span>
 									</div>
-									<h4 class="font-bold text-xs text-base-content">${s.title}</h4>
-									<p class="text-[11px] text-base-content/75">${s.subtitle || ''}</p>
-									<ul class="text-[11px] space-y-1 pt-1 text-base-content/85">
-										${(s.bullets || []).map((b: string) => `<li class="flex items-start gap-1.5"><span class="text-primary font-bold">✓</span><span>${b}</span></li>`).join('')}
+									<h4 class="font-bold text-xs text-base-content break-words">${s.title}</h4>
+									${s.subtitle ? `<p class="text-[11px] text-base-content/75 break-words">${s.subtitle}</p>` : ''}
+									<ul class="text-[11px] space-y-1.5 pt-1 text-base-content/85">
+										${(s.bullets || []).map((b: string) => `
+											<li class="flex items-start gap-1.5 leading-relaxed min-w-0">
+												<span class="text-primary font-bold shrink-0 mt-0.5">✓</span>
+												<span class="break-words">${b}</span>
+											</li>
+										`).join('')}
 									</ul>
 									${s.speaker_note ? `
-										<div class="mt-2 p-2 bg-base-200/60 rounded-md text-[10px] text-base-content/70 italic border border-base-300/60">
+										<div class="mt-2 p-2.5 bg-base-200/60 rounded-lg text-[10px] text-base-content/75 italic border border-base-300/60 break-words">
 											<span class="font-semibold not-italic">Speaker Note:</span> ${s.speaker_note}
 										</div>
 									` : ''}
@@ -510,8 +907,8 @@ import Layout from '../layouts/Layout.astro';
 								${email.body || ''}
 							</div>
 							${email.key_takeaways?.length ? `
-								<div class="flex flex-wrap gap-1 pt-1">
-									${email.key_takeaways.map((t: string) => `<span class="badge badge-xs badge-neutral">${t}</span>`).join('')}
+								<div class="flex flex-wrap gap-1 pt-1 max-w-full overflow-hidden">
+									${email.key_takeaways.map((t: string) => `<span class="badge badge-xs badge-neutral truncate max-w-[130px] inline-block">${t}</span>`).join('')}
 								</div>
 							` : ''}
 						</div>
@@ -792,48 +1189,48 @@ import Layout from '../layouts/Layout.astro';
 						<div class="flip-card-inner h-full w-full relative">
 							<!-- FRONT -->
 							<div class="absolute inset-0 backface-hidden p-5 rounded-2xl border border-base-300 bg-base-100 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-200 pb-2">
-									<span class="badge badge-xs badge-neutral font-bold uppercase tracking-wider">${c.category || 'Objection'}</span>
-									<span class="text-[10px] font-mono text-base-content/60">Click to Flip 🔄</span>
+								<div class="flex items-center justify-between border-b border-base-200 pb-2 gap-2">
+									<span class="badge badge-xs badge-neutral font-bold uppercase tracking-wider truncate max-w-[140px] inline-block">${c.category || 'Objection'}</span>
+									<span class="text-[10px] font-mono text-base-content/60 shrink-0">Click to Flip 🔄</span>
 								</div>
 
-								<div class="space-y-2 my-auto">
+								<div class="space-y-2 my-auto min-w-0">
 									<span class="text-[10px] font-bold uppercase tracking-wider text-base-content/60">Prospect Objection:</span>
-									<h4 class="text-sm font-bold text-base-content leading-snug">
+									<h4 class="text-sm font-bold text-base-content leading-snug break-words">
 										"${c.objection_quote || c.objection}"
 									</h4>
-									<p class="text-[11px] text-base-content/75">
+									<p class="text-[11px] text-base-content/75 truncate">
 										Persona: ${c.buyer_persona || 'Executive Sponsor'}
 									</p>
 								</div>
 
-								<div class="pt-2 border-t border-base-200 flex items-center justify-between text-[11px]">
-									<div class="flex gap-1">
-										${tags.slice(0, 1).map((t: string) => `<span class="badge badge-xs badge-outline">${t}</span>`).join('')}
+								<div class="pt-2 border-t border-base-200 flex items-center justify-between text-[11px] gap-2">
+									<div class="flex gap-1 max-w-[160px] overflow-hidden">
+										${tags.slice(0, 1).map((t: string) => `<span class="badge badge-xs badge-outline truncate max-w-[130px] inline-block">${t}</span>`).join('')}
 									</div>
-									<span class="font-semibold text-primary">Tap to reveal talk-track →</span>
+									<span class="font-semibold text-primary shrink-0">Tap for talk-track →</span>
 								</div>
 							</div>
 
 							<!-- BACK -->
 							<div class="absolute inset-0 backface-hidden rotate-y-180 p-5 rounded-2xl border border-primary/40 bg-base-200 flex flex-col justify-between shadow-xl">
-								<div class="flex items-center justify-between border-b border-base-300 pb-2">
-									<span class="badge badge-xs badge-success font-bold">Winning Talk-Track</span>
-									<span class="text-[10px] font-mono text-base-content/60">Tap to Flip Back ↺</span>
+								<div class="flex items-center justify-between border-b border-base-300 pb-2 gap-2">
+									<span class="badge badge-xs badge-success font-bold shrink-0">Winning Talk-Track</span>
+									<span class="text-[10px] font-mono text-base-content/60 shrink-0">Flip Back ↺</span>
 								</div>
 
-								<div class="space-y-2 my-auto">
-									<div class="text-[11px] text-base-content leading-relaxed bg-base-100 p-3 rounded-xl border border-base-300 font-medium">
+								<div class="space-y-2 my-auto min-w-0">
+									<div class="text-[11px] text-base-content leading-relaxed bg-base-100 p-3 rounded-xl border border-base-300 font-medium break-words max-h-[140px] overflow-y-auto">
 										${c.winning_response || c.talk_track}
 									</div>
 									<div class="grid grid-cols-2 gap-1.5 text-[10px]">
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
+										<div class="p-2 rounded-lg bg-base-100 border border-base-300 min-w-0">
 											<span class="block text-base-content/60 uppercase font-mono">Proof:</span>
-											<span class="font-semibold truncate">${(c.proof_points || ['Validated metrics'])[0]}</span>
+											<span class="font-semibold truncate block">${(c.proof_points || ['Validated metrics'])[0]}</span>
 										</div>
-										<div class="p-2 rounded-lg bg-base-100 border border-base-300">
+										<div class="p-2 rounded-lg bg-base-100 border border-base-300 min-w-0">
 											<span class="block text-base-content/60 uppercase font-mono">Metric:</span>
-											<span class="font-semibold">${c.key_metric || '< 60-day break-even'}</span>
+											<span class="font-semibold truncate block">${c.key_metric || '< 60-day break-even'}</span>
 										</div>
 									</div>
 								</div>
@@ -963,6 +1360,13 @@ import Layout from '../layouts/Layout.astro';
 				if (bc > 0) appBadgeBc.classList.remove('hidden');
 			}
 
+			const comp = storedArtifacts.competitor ? 1 : 0;
+			if (appBadgeComp) {
+				appBadgeComp.textContent = comp.toString();
+				if (comp > 0) appBadgeComp.classList.remove('hidden');
+				else appBadgeComp.classList.add('hidden');
+			}
+
 			const deck = storedArtifacts.presentation?.content?.slides?.length || 0;
 			if (appBadgeDeck) {
 				appBadgeDeck.textContent = deck.toString();
@@ -1002,11 +1406,18 @@ import Layout from '../layouts/Layout.astro';
 			if (!chatStream) return;
 			if (welcomeTurn) welcomeTurn.classList.add('hidden');
 
+			const escaped = text
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#039;');
+
 			const turnDiv = document.createElement('div');
 			turnDiv.className = 'flex justify-end';
 			turnDiv.innerHTML = `
-				<div class="p-3.5 sm:p-4 bg-neutral text-neutral-content rounded-2xl text-xs sm:text-sm font-medium leading-relaxed max-w-[80%] shadow-xs">
-					${text}
+				<div class="p-3.5 sm:p-4 bg-neutral text-neutral-content rounded-2xl text-xs sm:text-sm font-medium leading-relaxed max-w-[85%] shadow-xs break-words whitespace-pre-wrap">
+					${escaped}
 				</div>
 			`;
 			chatStream.appendChild(turnDiv);
@@ -1037,7 +1448,7 @@ import Layout from '../layouts/Layout.astro';
 		function appendAgentTurn(data: any) {
 			if (!chatStream) return;
 			const turnDiv = document.createElement('div');
-			turnDiv.className = 'space-y-3.5 w-full';
+			turnDiv.className = 'space-y-3.5 w-full min-w-0';
 
 			// Record in conversation history for multi-turn cognitive context
 			if (data.agent_reply) {
@@ -1088,12 +1499,12 @@ import Layout from '../layouts/Layout.astro';
 			let rationaleHtml = '';
 			if (data.decision_rationale) {
 				rationaleHtml = `
-					<div class="p-3 bg-base-200/90 rounded-xl border border-base-300 text-xs space-y-1.5 font-sans">
-						<div class="flex items-center justify-between text-[11px] font-bold text-base-content/80 uppercase tracking-wider">
-							<span class="flex items-center gap-1.5">🧠 Tactical Decision Rationale</span>
-							${data.primary_risk ? `<span class="text-error font-medium normal-case">⚠️ Risk: ${data.primary_risk}</span>` : ''}
+					<div class="p-3 bg-base-200/90 rounded-xl border border-base-300 text-xs space-y-1.5 font-sans min-w-0 break-words">
+						<div class="flex items-center justify-between text-[11px] font-bold text-base-content/80 uppercase tracking-wider gap-2">
+							<span class="flex items-center gap-1.5 shrink-0">🧠 Tactical Decision Rationale</span>
+							${data.primary_risk ? `<span class="text-error font-medium normal-case truncate">⚠️ Risk: ${data.primary_risk}</span>` : ''}
 						</div>
-						<p class="text-base-content/85 leading-relaxed">${data.decision_rationale}</p>
+						<div class="text-base-content/85 leading-relaxed markdown-content">${renderMarkdown(data.decision_rationale)}</div>
 					</div>
 				`;
 			}
@@ -1107,6 +1518,7 @@ import Layout from '../layouts/Layout.astro';
 						${newKeys.map((k) => {
 							const labels: Record<string, string> = {
 								battlecards: '🎴 Battlecards',
+								competitor: '🎯 Competitor Intelligence',
 								presentation: '📊 Pitch Deck',
 								email: '✉️ Proposal Email',
 								flowchart: '🗺️ Mutual Action Plan',
@@ -1145,9 +1557,9 @@ import Layout from '../layouts/Layout.astro';
 			}
 
 			turnDiv.innerHTML = `
-				<div class="card bg-base-100 border border-base-200/90 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3">
-					<div class="text-xs sm:text-sm text-base-content leading-relaxed whitespace-pre-line font-medium">
-						${data.agent_reply || 'Plan executed.'}
+				<div class="card bg-base-100 border border-base-200/90 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3 min-w-0 break-words overflow-hidden">
+					<div class="text-xs sm:text-sm text-base-content leading-relaxed font-medium markdown-content min-w-0 break-words">
+						${renderMarkdown(data.agent_reply || 'Plan executed.')}
 					</div>
 					${rationaleHtml}
 					${generatedPillsHtml}
@@ -1324,14 +1736,30 @@ import Layout from '../layouts/Layout.astro';
 			sources.forEach((s) => {
 				const c = s.content || {};
 				const badge = document.createElement('div');
-				badge.className = 'badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs select-none';
+				badge.className = 'badge badge-xs badge-success gap-1 font-mono text-[10px] py-1 px-2 shadow-2xs select-none max-w-[200px] truncate flex items-center shrink-0';
 				const icon = s.source_type === 'github' ? '🐙' : s.source_type === 'pdf' ? '📄' : '🌐';
 				badge.innerHTML = `
-					<span>${icon}</span>
-					<span class="font-bold truncate max-w-[140px]">${c.title || c.url_or_path}</span>
-					<span class="text-success-content/80">✓ Grounded</span>
+					<span class="shrink-0">${icon}</span>
+					<span class="font-bold truncate max-w-[120px] inline-block">${c.title || c.url_or_path}</span>
+					<span class="text-success-content/80 shrink-0">✓</span>
+					<button type="button" class="btn-remove-source ml-0.5 hover:text-error cursor-pointer font-bold px-0.5 shrink-0" data-id="${s.id || c.url_or_path}" title="Remove source">✕</button>
 				`;
 				activeSourcesList.appendChild(badge);
+			});
+
+			activeSourcesList.querySelectorAll('.btn-remove-source').forEach((btn) => {
+				btn.addEventListener('click', async (e) => {
+					e.stopPropagation();
+					const sid = btn.getAttribute('data-id');
+					if (sid) {
+						try {
+							await fetch('/api/sources/' + encodeURIComponent(sid), { method: 'DELETE' });
+							await loadSources();
+						} catch (err) {
+							console.warn('Failed to delete source:', err);
+						}
+					}
+				});
 			});
 		}
 

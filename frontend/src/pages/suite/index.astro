@@ -74,8 +74,8 @@ import Layout from '../../layouts/Layout.astro';
 							</h1>
 						</div>
 						<div class="flex items-center gap-2 flex-wrap" id="suite-header-badges">
-							<span class="badge badge-sm badge-neutral font-semibold" id="suite-deal-size">$250,000 ARR</span>
-							<span class="badge badge-sm badge-success font-semibold" id="suite-payback-badge">&lt; 90 Days Payback</span>
+							<span class="badge badge-sm badge-neutral font-semibold" id="suite-deal-size">Strategic Deal Room</span>
+							<span class="badge badge-sm badge-success font-semibold" id="suite-payback-badge">Verified ROI</span>
 						</div>
 					</div>
 					<p class="text-xs text-base-content/85 leading-relaxed font-medium" id="suite-welcome-desc">
@@ -221,12 +221,12 @@ import Layout from '../../layouts/Layout.astro';
 					}
 
 					if (dealSizeBadge) {
-						dealSizeBadge.textContent = dealContext.deal_size || cfoMetrics.deal_arr || '$250,000 ARR';
+						dealSizeBadge.textContent = dealContext.deal_size || cfoMetrics.deal_arr || 'Enterprise Deal Room';
 					}
 
 					if (paybackBadge) {
-						const pb = cfoMetrics.payback_period_days || '< 90 Days Payback';
-						paybackBadge.textContent = `${pb} Break-Even`;
+						const pb = cfoMetrics.payback_period_days;
+						paybackBadge.textContent = pb ? `${pb} Break-Even` : 'Verified ROI Model';
 					}
 
 					if (welcomeDesc) {
@@ -235,10 +235,15 @@ import Layout from '../../layouts/Layout.astro';
 					}
 
 					// Populate CFO Metrics
-					if (cfoArr) cfoArr.textContent = cfoMetrics.deal_arr || dealContext.deal_size || '$250,000';
-					if (cfoSavings) cfoSavings.textContent = cfoMetrics.annual_projected_savings || '$450,000';
-					if (cfoPayback) cfoPayback.textContent = cfoMetrics.payback_period_days || '202 days';
-					if (cfoRoi) cfoRoi.textContent = cfoMetrics.projected_roi || '1.8x';
+					if (cfoMetrics.deal_arr || dealContext.deal_size) {
+						if (cfoArr) cfoArr.textContent = cfoMetrics.deal_arr || dealContext.deal_size || '';
+						if (cfoSavings) cfoSavings.textContent = cfoMetrics.annual_projected_savings || '$450,000';
+						if (cfoPayback) cfoPayback.textContent = cfoMetrics.payback_period_days || '202 days';
+						if (cfoRoi) cfoRoi.textContent = cfoMetrics.projected_roi || '1.8x';
+					} else {
+						const cfoSection = document.getElementById('suite-cfo-section');
+						if (cfoSection) cfoSection.classList.add('hidden');
+					}
 
 					// Render 4 Deliverables Cards
 					let cardsHtml = '';

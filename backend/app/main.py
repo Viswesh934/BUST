@@ -49,7 +49,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Enable CORS for Astro frontend
+# Enable CORS for Astro frontend (and Vercel)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -57,6 +57,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# AWS Lambda Handler (supports API Gateway HTTP v2, REST v1, and Lambda Function URLs)
+from mangum import Mangum
+handler = Mangum(app, lifespan="off")
 
 
 class TestLLMRequest(BaseModel):
@@ -70,19 +74,21 @@ class AgentChatRequest(BaseModel):
     history: Optional[List[Dict[str, str]]] = None
 
 
+@app.get("/")
 @app.get("/health")
 @app.get("/api/health")
-def health() -> Dict[str, str]:
+def health() -> Dict[str, Any]:
     """Health check endpoint."""
+    settings = get_settings()
     return {
         "status": "healthy",
         "service": "BUST Backend",
+        "model": settings.litellm_model,
     }
 
 
 @app.post("/api/agent/chat")
 @app.post("/api/agent/run")
-@neatlogs.span(kind="WORKFLOW", name="deal-agent-chat-turn")
 def agent_chat_endpoint(req: AgentChatRequest) -> Dict[str, Any]:
     """
     Conversational Agent Endpoint:
@@ -102,7 +108,6 @@ def agent_chat_endpoint(req: AgentChatRequest) -> Dict[str, Any]:
 
 
 @app.post("/api/test-llm")
-@neatlogs.span(kind="WORKFLOW")
 def test_llm(req: Optional[TestLLMRequest] = None) -> Dict[str, Any]:
     """
     Test endpoint: makes a short model request to LiteLLM gateway and returns response.
@@ -138,7 +143,6 @@ def test_llm(req: Optional[TestLLMRequest] = None) -> Dict[str, Any]:
 
 
 @app.post("/api/artifacts/battlecards")
-@neatlogs.span(kind="WORKFLOW", name="generate-battlecards-workflow")
 def generate_battlecards_endpoint(req: CreateBattlecardsRequest) -> Dict[str, Any]:
     """
     Generates structured competitive objection battlecards from account notes.
@@ -226,6 +230,80 @@ def get_sources_endpoint() -> List[Dict[str, Any]]:
     return get_all_grounded_sources()
 
 
+@app.delete("/api/sources/{source_id}")
+def delete_source_endpoint(source_id: str) -> Dict[str, Any]:
+    """Deletes an attached technical grounding source from SQLite."""
+    from app.services.grounding import delete_grounding_source
+
+    deleted = delete_grounding_source(source_id)
+    return {"status": "deleted" if deleted else "not_found", "source_id": source_id}
+
+
+class AnalyzeCompetitorRequest(BaseModel):
+    competitor: str
+    account_name: Optional[str] = "Enterprise"
+    deal_size: Optional[str] = ""
+    context: Optional[str] = ""
+
+
+@app.post("/api/competitor/analyze")
+def analyze_competitor_endpoint(req: AnalyzeCompetitorRequest) -> Dict[str, Any]:
+    """
+    Generates structured competitive intelligence, online revenue estimates,
+    pricing traps, and bake-off landmine questions.
+    """
+    try:
+        from app.tools.competitor import analyze_competitor_intelligence
+
+        artifact = analyze_competitor_intelligence(
+            competitor=req.competitor,
+            account_name=req.account_name or "Enterprise",
+            deal_size=req.deal_size or "",
+            context=req.context or "",
+        )
+        return {
+            "status": "success",
+            "artifact": artifact,
+        }
+    except Exception as exc:
+        logger.error(f"Failed to analyze competitor: {exc}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Competitor intelligence analysis failed: {str(exc)}",
+        )
+
+
+class CrustdataResearchRequest(BaseModel):
+    competitor: str
+    account_name: Optional[str] = "Enterprise"
+    domain: Optional[str] = None
+
+
+@app.post("/api/competitor/deep-research")
+def crustdata_research_endpoint(req: CrustdataResearchRequest) -> Dict[str, Any]:
+    """
+    Executes deep B2B sales research on a company or competitor via Crustdata.
+    Returns headcount growth, funding history, hiring signals, and tech stack.
+    """
+    try:
+        from app.tools.competitor import run_crustdata_sales_research
+
+        artifact = run_crustdata_sales_research(
+            competitor=req.competitor,
+            account_name=req.account_name or "Enterprise",
+            domain=req.domain,
+        )
+        return {
+            "status": "success",
+            "artifact": artifact,
+        }
+    except Exception as exc:
+        logger.error(f"Failed to perform Crustdata deep research: {exc}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Crustdata deep research failed: {str(exc)}",
+        )
+
 
 # ==========================================
 # Milestone 3: Buyer Deal Rooms & Sharing Endpoints
@@ -233,7 +311,6 @@ def get_sources_endpoint() -> List[Dict[str, Any]]:
 
 
 @app.post("/api/artifacts/{artifact_id}/publish")
-@neatlogs.span(kind="WORKFLOW", name="publish-deal-suite")
 def publish_artifact_endpoint(artifact_id: str) -> Dict[str, Any]:
     """
     Publishes an artifact and generates a secure guest digital keycard share ID.

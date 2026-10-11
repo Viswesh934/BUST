@@ -68,7 +68,6 @@ You MUST return valid JSON adhering to this schema:
 """
 
 
-@neatlogs.span(kind="TOOL", name="create_presentation")
 def create_presentation(account_name: str, context: str, deal_size: str = "") -> Dict[str, Any]:
     """Generate structured 16:9 executive presentation slides."""
     settings = get_settings()
