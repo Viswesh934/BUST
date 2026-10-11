@@ -1,0 +1,1 @@
+refactor that damn index file into individual components it is way too big, the competitor over view is over flowing when content is too big, also it is dirty I just need a clean table

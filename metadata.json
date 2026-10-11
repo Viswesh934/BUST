@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P6XH60E9FB318TW4FMHM5X",
+  "strategy": "manual-commit",
+  "branch": "feat/p-3",
+  "checkpoints_count": 19,
+  "files_touched": [
+    "frontend/src/components/AppDock.astro",
+    "frontend/src/components/ChatWindow.astro",
+    "frontend/src/components/SidePanel.astro",
+    "frontend/src/components/deliverables/battlecards.ts",
+    "frontend/src/components/deliverables/competitor.ts",
+    "frontend/src/components/deliverables/email.ts",
+    "frontend/src/components/deliverables/flowchart.ts",
+    "frontend/src/components/deliverables/presentation.ts",
+    "frontend/src/components/deliverables/social.ts",
+    "frontend/src/components/deliverables/suite.ts",
+    "frontend/src/pages/competitor.astro",
+    "frontend/src/pages/index.astro"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ]
+}
