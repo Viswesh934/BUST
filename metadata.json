@@ -1,0 +1,63 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P6JA89KFM1YK1NV2VW3YJV",
+  "strategy": "manual-commit",
+  "branch": "feat/p-3",
+  "checkpoints_count": 19,
+  "files_touched": [
+    ".gitignore",
+    "backend/Dockerfile",
+    "backend/Dockerfile.lambda",
+    "backend/app/__init__.py",
+    "backend/app/agent/dag.py",
+    "backend/app/agent/orchestrator.py",
+    "backend/app/config.py",
+    "backend/app/llm.py",
+    "backend/app/main.py",
+    "backend/app/services/artifact_store.py",
+    "backend/app/services/crustdata.py",
+    "backend/app/services/grounding.py",
+    "backend/app/tools/battlecards.py",
+    "backend/app/tools/cfo.py",
+    "backend/app/tools/competitor.py",
+    "backend/app/tools/email.py",
+    "backend/app/tools/flowchart.py",
+    "backend/app/tools/presentation.py",
+    "backend/app/tools/social.py",
+    "backend/bust-backend.service",
+    "backend/docker-compose.yml",
+    "backend/lambda_function.py",
+    "backend/lambda_handler.py",
+    "backend/requirements.txt",
+    "backend/test_suite.py",
+    "frontend/astro.config.mjs",
+    "frontend/src/layouts/Layout.astro",
+    "frontend/src/pages/battlecards.astro",
+    "frontend/src/pages/competitor.astro",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/presentations.astro",
+    "frontend/src/pages/suite/[id].astro",
+    "frontend/src/pages/suite/index.astro",
+    "frontend/src/styles/global.css",
+    "frontend/src/utils/markdown.ts",
+    "frontend/vercel.json",
+    "scripts/build_lambda_zip.sh",
+    "scripts/deploy_ec2.sh",
+    "scripts/deploy_lambda.sh"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 203215,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 76390465,
+    "output_tokens": 132352,
+    "api_call_count": 507
+  }
+}

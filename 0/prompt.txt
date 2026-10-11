@@ -1,0 +1,156 @@
+I should be able to remove sources too and $150,000 ARR remove this, add a new tab and agent that does competitor analysis for us and post's revenue numbers available online if asked for, if not found it simply doesn't care
+
+---
+
+https://docs.crustdata.com/for-agents/mcp
+
+let's integrate crust data to do sales research of competitors and use it if we need deep research
+
+---
+
+I'll add the api key for crust data no need for mcp, just add a dummy var there
+
+---
+
+ok now test I am done with that
+
+---
+
+I mean added crust data key test it out
+
+---
+
+where are we using neat logs and is there a meaning ful way to show these off in the app, also we will deploy backend in ec2 we have aws cli with us and a pem file with me
+
+---
+
+just remove it that's pointless it seems
+
+---
+
+ssh -i "viswesh.pem" ubuntu@172.31.34.164  deploy here only backend we will send frontend to vercel
+
+---
+
+aws ec2 plan is cancelled it's lambda now
+
+---
+
+plese add build files to git ignore pleaes
+
+---
+
+zip it the backend we will upload to lambda ui and get things done
+
+---
+
+the env vars kms permission is not there need to add it in code directly
+
+---
+
+I added manually {
+  "Version": "2012-10-17",
+  "Id": "default",
+  "Statement": [
+    {
+      "Sid": "FunctionURLAllowInvokeAction",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "lambda:InvokeFunction",
+      "Resource": "arn:aws:lambda:us-east-1:082229155652:function:bust-backend",
+      "Condition": {
+        "Bool": {
+          "lambda:InvokedViaFunctionUrl": "true"
+        }
+      }
+    },
+    {
+      "Sid": "FunctionURLAllowPublicAccess",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "lambda:InvokeFunctionUrl",
+      "Resource": "arn:aws:lambda:us-east-1:082229155652:function:bust-backend",
+      "Condition": {
+        "StringEquals": {
+          "lambda:FunctionUrlAuthType": "NONE"
+        }
+      }
+    }
+  ]
+}
+
+---
+
+changed env can you zip again
+
+---
+
+Internal Server Error
+
+We are getting this from the function url errors show bad gateway
+
+---
+
+talk to me
+
+---
+
+where to find what the error is still it is internal server error
+
+---
+
+ok how to set handler
+
+---
+
+Status: Failed
+Test Event Name: hello-world
+
+Response:
+{
+  "errorMessage": "Unable to import module 'lambda_function': No module named 'lambda_function'",
+  "errorType": "Runtime.ImportModuleError",
+  "requestId": "",
+  "stackTrace": []
+}
+
+The area below shows the last 4 KB of the execution log.
+
+Function Logs:
+[WARNING]	2026-10-11T18:55:45.793Z		LAMBDA_WARNING: Unhandled exception. The most likely cause is an issue in the function code. However, in rare cases, a Lambda runtime update can cause unexpected function behavior. For functions using managed runtimes, runtime updates can be triggered by a function change, or can be applied automatically. To determine if the runtime has been updated, check the runtime version in the INIT_START log entry. If this error correlates with a change in the runtime version, you may be able to mitigate this error by temporarily rolling back to the previous runtime version. For more information, see https://docs.aws.amazon.com/lambda/latest/dg/runtimes-update.html
+[ERROR] Runtime.ImportModuleError: Unable to import module 'lambda_function': No module named 'lambda_function'
+Traceback (most recent call last):
+INIT_REPORT Init Duration: 91.74 ms	Phase: invoke	Status: error	Error Type: Runtime.ImportModuleError
+START RequestId: bd18819c-e871-41c6-a494-bcd7e5bf10b0 Version: $LATEST
+END RequestId: bd18819c-e871-41c6-a494-bcd7e5bf10b0
+REPORT RequestId: bd18819c-e871-41c6-a494-bcd7e5bf10b0	Duration: 109.61 ms	Billed Duration: 110 ms	Memory Size: 512 MB	Max Memory Used: 48 MB	Status: error	Error Type: Runtime.ImportModuleError
+
+Request ID: bd18819c-e871-41c6-a494-bcd7e5bf10b0
+
+Can't find runtime
+
+---
+
+what's the handler name the default is there
+
+---
+
+nope no need to update I'll change
+
+---
+
+{"status":"healthy","service":"BUST Backend","model":"claude-sonnet-4.6"}
+
+We are good now
+
+---
+
+the competitor analysis is overflowing with content
+
+---
+
+there is so much over flow out here, also markdown response we get in frontend should be parsed, ppt should show the total slide it is getting cut
+
+---
+
+hey sources,tags are overflowing for sources and stuff enforce truncate please there is so much over flow

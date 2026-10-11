@@ -1,0 +1,342 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P6JA89KFM1YK1NV2VW3YJV",
+  "session_id": "77ad5304-ab6c-4459-bb55-06cdea62fa7f",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T19:20:55.843730675Z",
+  "branch": "feat/p-3",
+  "checkpoints_count": 19,
+  "save_step_count": 18,
+  "files_touched": [
+    ".gitignore",
+    "backend/Dockerfile",
+    "backend/Dockerfile.lambda",
+    "backend/app/__init__.py",
+    "backend/app/agent/dag.py",
+    "backend/app/agent/orchestrator.py",
+    "backend/app/config.py",
+    "backend/app/llm.py",
+    "backend/app/main.py",
+    "backend/app/services/artifact_store.py",
+    "backend/app/services/crustdata.py",
+    "backend/app/services/grounding.py",
+    "backend/app/tools/battlecards.py",
+    "backend/app/tools/cfo.py",
+    "backend/app/tools/competitor.py",
+    "backend/app/tools/email.py",
+    "backend/app/tools/flowchart.py",
+    "backend/app/tools/presentation.py",
+    "backend/app/tools/social.py",
+    "backend/bust-backend.service",
+    "backend/docker-compose.yml",
+    "backend/lambda_function.py",
+    "backend/lambda_handler.py",
+    "backend/requirements.txt",
+    "backend/test_suite.py",
+    "frontend/astro.config.mjs",
+    "frontend/src/layouts/Layout.astro",
+    "frontend/src/pages/battlecards.astro",
+    "frontend/src/pages/competitor.astro",
+    "frontend/src/pages/index.astro",
+    "frontend/src/pages/presentations.astro",
+    "frontend/src/pages/suite/[id].astro",
+    "frontend/src/pages/suite/index.astro",
+    "frontend/src/styles/global.css",
+    "frontend/src/utils/markdown.ts",
+    "frontend/vercel.json",
+    "scripts/build_lambda_zip.sh",
+    "scripts/deploy_ec2.sh",
+    "scripts/deploy_lambda.sh"
+  ],
+  "agent": "Antigravity",
+  "model": "",
+  "turn_id": "3a9906791509",
+  "checkpoint_transcript_start": 2144,
+  "transcript_lines_at_start": 2144,
+  "token_usage": {
+    "input_tokens": 203215,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 76390465,
+    "output_tokens": 132352,
+    "api_call_count": 507
+  },
+  "session_metrics": {
+    "turn_count": 44
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T19:20:55.285831465Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 5164,
+    "human_modified": 1111,
+    "human_removed": 0,
+    "total_committed": 5164,
+    "total_lines_changed": 6277,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 363,
+      "user_lines_removed": 4,
+      "agent_lines_added": 510,
+      "agent_lines_removed": 28,
+      "user_added_per_file": {
+        "backend/app/agent/orchestrator.py": 5,
+        "backend/app/config.py": 3,
+        "backend/app/main.py": 33,
+        "backend/app/services/crustdata.py": 166,
+        "backend/app/tools/competitor.py": 36,
+        "frontend/src/pages/index.astro": 120
+      },
+      "user_removed_per_file": {
+        "backend/app/agent/orchestrator.py": 4
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 183,
+      "user_lines_removed": 0,
+      "agent_lines_added": 832,
+      "agent_lines_removed": 28,
+      "user_added_per_file": {
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 296,
+      "user_lines_removed": 66,
+      "agent_lines_added": 832,
+      "agent_lines_removed": 28,
+      "user_added_per_file": {
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 445,
+      "user_lines_removed": 66,
+      "agent_lines_added": 832,
+      "agent_lines_removed": 28,
+      "user_added_per_file": {
+        "backend/app/agent/orchestrator.py": 84,
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/requirements.txt": 1,
+        "backend/test_suite.py": 147,
+        "frontend/src/pages/index.astro": 64
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 296,
+      "user_lines_removed": 66,
+      "agent_lines_added": 1025,
+      "agent_lines_removed": 30,
+      "user_added_per_file": {
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 296,
+      "user_lines_removed": 66,
+      "agent_lines_added": 1025,
+      "agent_lines_removed": 30,
+      "user_added_per_file": {
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 296,
+      "user_lines_removed": 66,
+      "agent_lines_added": 1290,
+      "agent_lines_removed": 33,
+      "user_added_per_file": {
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 296,
+      "user_lines_removed": 66,
+      "agent_lines_added": 1323,
+      "agent_lines_removed": 42,
+      "user_added_per_file": {
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 303,
+      "user_lines_removed": 70,
+      "agent_lines_added": 1323,
+      "agent_lines_removed": 42,
+      "user_added_per_file": {
+        "backend/app/config.py": 4,
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147,
+        "scripts/build_lambda_zip.sh": 3
+      },
+      "user_removed_per_file": {
+        "backend/app/config.py": 4,
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 299,
+      "user_lines_removed": 66,
+      "agent_lines_added": 1326,
+      "agent_lines_removed": 45,
+      "user_added_per_file": {
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147,
+        "scripts/build_lambda_zip.sh": 3
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 299,
+      "user_lines_removed": 66,
+      "agent_lines_added": 1326,
+      "agent_lines_removed": 45,
+      "user_added_per_file": {
+        "backend/app/services/crustdata.py": 113,
+        "backend/app/tools/competitor.py": 36,
+        "backend/test_suite.py": 147,
+        "scripts/build_lambda_zip.sh": 3
+      },
+      "user_removed_per_file": {
+        "backend/app/services/crustdata.py": 66
+      }
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 147,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1425,
+      "agent_lines_removed": 60,
+      "user_added_per_file": {
+        "backend/test_suite.py": 147
+      }
+    },
+    {
+      "checkpoint_number": 14,
+      "user_lines_added": 147,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1437,
+      "agent_lines_removed": 60,
+      "user_added_per_file": {
+        "backend/test_suite.py": 147
+      }
+    },
+    {
+      "checkpoint_number": 15,
+      "user_lines_added": 147,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1437,
+      "agent_lines_removed": 60,
+      "user_added_per_file": {
+        "backend/test_suite.py": 147
+      }
+    },
+    {
+      "checkpoint_number": 16,
+      "user_lines_added": 147,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1437,
+      "agent_lines_removed": 60,
+      "user_added_per_file": {
+        "backend/test_suite.py": 147
+      }
+    },
+    {
+      "checkpoint_number": 17,
+      "user_lines_added": 147,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1437,
+      "agent_lines_removed": 60,
+      "user_added_per_file": {
+        "backend/test_suite.py": 147
+      }
+    },
+    {
+      "checkpoint_number": 18,
+      "user_lines_added": 147,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1437,
+      "agent_lines_removed": 60,
+      "user_added_per_file": {
+        "backend/test_suite.py": 147
+      }
+    },
+    {
+      "checkpoint_number": 19,
+      "user_lines_added": 989,
+      "user_lines_removed": 226,
+      "agent_lines_added": 1437,
+      "agent_lines_removed": 60,
+      "user_added_per_file": {
+        "backend/test_suite.py": 147,
+        "frontend/package-lock.json": 14,
+        "frontend/package.json": 2,
+        "frontend/src/pages/competitor.astro": 371,
+        "frontend/src/pages/index.astro": 298,
+        "frontend/src/pages/presentations.astro": 33,
+        "frontend/src/styles/global.css": 107,
+        "frontend/src/utils/markdown.ts": 17
+      },
+      "user_removed_per_file": {
+        "frontend/package-lock.json": 1,
+        "frontend/package.json": 1,
+        "frontend/src/pages/index.astro": 191,
+        "frontend/src/pages/presentations.astro": 33
+      }
+    }
+  ]
+}
