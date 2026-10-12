@@ -37,14 +37,16 @@ flowchart LR
 
 ---
 
-## 3. Technology Stack & Integrations
+## 3. Partner Integrations & Hackathon Evidence
 
+> 🏆 **Full Verification & Incident Resolution Document**: See [**docs/EVIDENCE.md**](file:///workspaces/BUST/docs/EVIDENCE.md) for detailed incident resolution traces, Entire git checkpoints, and cfo.ai financial models.
+
+- **[NeatLogs](https://neatlogs.com/) Observability & Tracing**: Python SDK (`neatlogs[openai]`) with regional ingest (`https://ingest.neatlogs.com`). All LLM calls and sales DAG steps are instrumented with `@neatlogs.span` and client wrapping. We used NeatLogs telemetry to detect and resolve **Incident `INC-20261011-01`** (LLM JSON extraction latency spike & markdown parse failure).
+- **[Entire CLI](https://entire.io/) Agent Development**: Automated pre-tool hooks (`.agents/hooks.json`) and git-refs checkpoints (`.entire/settings.json`). Every major agent improvement is preserved across **11+ commits with `Entire-Checkpoint` headers** (`git log --grep="Entire-Checkpoint"`). **Live Public Session**: [entire.io/gh/Viswesh934/BUST/session/77ad5304-ab6c-4459-bb55-06cdea62fa7f](https://entire.io/gh/Viswesh934/BUST/session/77ad5304-ab6c-4459-bb55-06cdea62fa7f).
+- **[cfo.ai](https://cfo.ai/) Business Planning & Deal Intelligence**: Connected to the Wysbryx workspace (`Org: 103176`, Scenario: `Main Scenario#52f`). Used to plan BUST's own SaaS pricing tiers ($36k standard / $120k growth / $240k enterprise) and dynamically injects labor savings, ARR payback days, and ROI multipliers into generated pitch decks, battlecards, and emails (`backend/app/tools/cfo.py`).
+- **AI Gateway**: Hackathon [LiteLLM](https://litellm.ai/) endpoint (`https://litellm.vision.aivar.app/v1`, using `nova-pro`) via OpenAI-compatible SDK.
 - **Frontend**: [Astro](https://astro.build/) (`frontend/`) — Responsive, fast deal workspace UI.
 - **Backend**: Python + [FastAPI](https://fastapi.tiangolo.com/) (`backend/`) — Agent orchestrator, deterministic sales tools, and artifact store.
-- **AI Gateway**: Hackathon [LiteLLM](https://litellm.ai/) endpoint (`https://litellm.vision.aivar.app/v1`, using `nova-pro`) via OpenAI-compatible SDK.
-- **Observability**: [NeatLogs](https://neatlogs.com/) Python SDK (`neatlogs[openai]`) with regional ingest (`https://ingest.neatlogs.com`) for tracking deal orchestration spans, tool executions, and latency.
-- **Development Workflow**: [Entire CLI](https://entire.io/) tracking agent checkpoints and git history.
-- **Business & Financial Intelligence**: [cfo.ai](https://cfo.ai/) connected via AGY Model Context Protocol (MCP) for contract ARR, runway impact, and pricing models.
 
 ---
 
