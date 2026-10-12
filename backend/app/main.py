@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional
 
 import neatlogs
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.agent.orchestrator import run_agent_turn
@@ -49,14 +48,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Enable CORS for Astro frontend (and Vercel)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # AWS Lambda Handler (supports API Gateway HTTP v2, REST v1, and Lambda Function URLs)
 from mangum import Mangum
